@@ -6,6 +6,9 @@
 #ifndef __LIGHTING_H__
 #define __LIGHTING_H__
 
+#include "types.h"
+#include "structs.h"
+
 extern LightListStruct VisionList[MAXVISION];
 extern BYTE lightactive[MAXLIGHTS];
 extern LightListStruct LightList[MAXLIGHTS];

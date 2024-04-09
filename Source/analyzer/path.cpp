@@ -1,14 +1,15 @@
 #include "path.h"
 
+#include <cstdint>
 #include <iostream>
+#include <optional>
 
-#include "../../types.h"
-
-#include "puzzler.h"
-#include "../funkMapGen.h"
-#include "../objects.h"
-#include "../path.h"
-#include "../quests.h"
+#include "types.h"
+#include "Source/analyzer/puzzler.h"
+#include "Source/funkMapGen.h"
+#include "Source/objects.h"
+#include "Source/path.h"
+#include "Source/quests.h"
 
 namespace {
 

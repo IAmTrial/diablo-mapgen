@@ -3,7 +3,18 @@
  *
  * Implementation of functionality the special quest dungeons.
  */
-#include "all.h"
+
+#include "Source/setmaps.h"
+
+#include "types.h"
+#include "Source/drlg_l1.h"
+#include "Source/drlg_l2.h"
+#include "Source/drlg_l3.h"
+#include "Source/engine.h"
+#include "Source/gendung.h"
+#include "Source/quests.h"
+#include "Source/objects.h"
+#include "Source/trigs.h"
 
 // BUGFIX: constant data should be const
 BYTE SkelKingTrans1[] = {

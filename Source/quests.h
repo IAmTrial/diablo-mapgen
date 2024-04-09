@@ -6,6 +6,10 @@
 #ifndef __QUESTS_H__
 #define __QUESTS_H__
 
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+
 extern BOOL questlog;
 extern BYTE *pQLogCel;
 extern QuestStruct quests[MAXQUESTS];

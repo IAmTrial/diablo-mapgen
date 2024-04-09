@@ -68,6 +68,8 @@ add_executable(${BIN_TARGET}
   Source/trigs.cpp
   )
 
+target_include_directories(${BIN_TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" AND CMAKE_BUILD_TYPE MATCHES "Debug")
 	target_link_libraries(${BIN_TARGET} PUBLIC "-fsanitize=undefined")
 endif()

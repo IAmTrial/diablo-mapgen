@@ -3,7 +3,20 @@
  *
  * Implementation of the theme room placing algorithms.
  */
-#include "all.h"
+
+#include "Source/themes.h"
+
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+
+#include "Source/engine.h"
+#include "Source/gendung.h"
+#include "Source/items.h"
+#include "Source/monster.h"
+#include "Source/objects.h"
+#include "Source/quests.h"
+#include "Source/trigs.h"
 
 int numthemes;
 BOOL armorFlag;

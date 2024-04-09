@@ -6,6 +6,8 @@
 #ifndef __MONSTDAT_H__
 #define __MONSTDAT_H__
 
+#include "structs.h"
+
 extern MonsterData monsterdata[];
 #ifdef HELLFIRE
 extern int MonstConvTbl[];

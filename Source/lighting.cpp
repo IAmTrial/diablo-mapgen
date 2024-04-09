@@ -3,7 +3,14 @@
  *
  * Implementation of light and vision.
  */
-#include "all.h"
+
+#include "Source/lighting.h"
+
+#include "defs.h"
+#include "types.h"
+#include "structs.h"
+#include "Source/engine.h"
+#include "Source/gendung.h"
 
 LightListStruct VisionList[MAXVISION];
 BYTE lightactive[MAXLIGHTS];

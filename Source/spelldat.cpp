@@ -3,7 +3,11 @@
  *
  * Implementation of all spell data.
  */
-#include "all.h"
+
+#include "Source/spelldat.h"
+
+#include "enums.h"
+#include "structs.h"
 
 /** Data related to each spell ID. */
 SpellData spelldata[] = {

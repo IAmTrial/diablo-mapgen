@@ -6,6 +6,11 @@
 #ifndef __DRLG_L2_H__
 #define __DRLG_L2_H__
 
+#include <optional>
+
+#include "structs.h"
+#include "types.h"
+
 void LoadL2Dungeon(const char *sFileName, int vx, int vy);
 void LoadPreL2Dungeon(const char *sFileName, int vx, int vy);
 std::optional<uint32_t> CreateL2Dungeon(DWORD rseed, int entry, DungeonMode mode);

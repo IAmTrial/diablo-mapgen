@@ -6,6 +6,11 @@
 #ifndef __DRLG_L1_H__
 #define __DRLG_L1_H__
 
+#include <optional>
+
+#include "structs.h"
+#include "types.h"
+
 #ifdef HELLFIRE
 extern int UberRow;
 extern int UberCol;

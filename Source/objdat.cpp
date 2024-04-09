@@ -3,7 +3,11 @@
  *
  * Implementation of all object data.
  */
-#include "all.h"
+
+#include "Source/objdat.h"
+
+#include "enums.h"
+#include "structs.h"
 
 /** Maps from dun_object_id to object_id. */
 int ObjTypeConv[] = {

@@ -3,7 +3,13 @@
  *
  * Implementation of the path finding algorithms.
  */
-#include "all.h"
+
+#include "Source/path.h"
+
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+#include "Source/engine.h"
 
 /** Notes visisted by the path finding algorithm. */
 PATHNODE path_nodes[MAXPATHNODES];

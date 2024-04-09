@@ -3,7 +3,17 @@
  *
  * Implementation of the cathedral level generation algorithms.
  */
-#include "all.h"
+
+#include "Source/drlg_l1.h"
+
+#include <optional>
+
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+#include "Source/engine.h"
+#include "Source/lighting.h"
+#include "Source/quests.h"
 
 /** Represents a tile ID map of twice the size, repeating each tile of the original map in blocks of 4. */
 BYTE L5dungeon[80][80];

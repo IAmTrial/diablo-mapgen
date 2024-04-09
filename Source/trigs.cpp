@@ -3,7 +3,14 @@
  *
  * Implementation of functionality for triggering events when the player enters an area.
  */
-#include "all.h"
+
+#include "Source/trigs.h"
+
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+#include "Source/gendung.h"
+#include "Source/quests.h"
 
 BOOL townwarps[3];
 BOOL trigflag;

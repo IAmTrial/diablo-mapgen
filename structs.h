@@ -4,6 +4,12 @@
  * Various global structures.
  */
 
+#ifndef _STRUCTS_H
+#define _STRUCTS_H
+
+#include "enums.h"
+#include "types.h"
+
 //////////////////////////////////////////////////
 // control
 //////////////////////////////////////////////////
@@ -1681,3 +1687,5 @@ typedef struct TDataInfo {
 	DWORD destOffset;
 	DWORD size;
 } TDataInfo;
+
+#endif

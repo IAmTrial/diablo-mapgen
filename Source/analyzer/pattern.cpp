@@ -2,12 +2,12 @@
 
 #include <cstdint>
 #include <iostream>
+#include <optional>
 
-#include "../../types.h"
-
-#include "../engine.h"
-#include "../gendung.h"
-#include "../quests.h"
+#include "types.h"
+#include "Source/engine.h"
+#include "Source/gendung.h"
+#include "Source/quests.h"
 
 #define TEMPLATEX 8
 #define TEMPLATEY 9

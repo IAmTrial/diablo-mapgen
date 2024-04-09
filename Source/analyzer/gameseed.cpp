@@ -1,11 +1,13 @@
 #include "gameseed.h"
 
+#include <cstdint>
 #include <iostream>
+#include <optional>
 
-#include "../../types.h"
-
-#include "../funkMapGen.h"
-#include "../monster.h"
+#include "structs.h"
+#include "types.h"
+#include "Source/funkMapGen.h"
+#include "Source/monster.h"
 
 DungeonMode ScannerGameSeed::getDungeonMode()
 {

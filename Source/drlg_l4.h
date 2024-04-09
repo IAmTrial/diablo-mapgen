@@ -6,6 +6,11 @@
 #ifndef __DRLG_L4_H__
 #define __DRLG_L4_H__
 
+#include <optional>
+
+#include "structs.h"
+#include "types.h"
+
 extern int diabquad1x;
 extern int diabquad1y;
 extern int diabquad2x;

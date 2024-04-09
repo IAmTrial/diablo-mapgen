@@ -3,7 +3,20 @@
  *
  * Implementation of object functionality, interaction, spawning, loading, etc.
  */
-#include "all.h"
+
+#include "Source/objects.h"
+
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+#include "Source/drlg_l4.h"
+#include "Source/engine.h"
+#include "Source/lighting.h"
+#include "Source/monster.h"
+#include "Source/objdat.h"
+#include "Source/quests.h"
+#include "Source/setmaps.h"
+#include "Source/themes.h"
 
 int trapid;
 int trapdir;

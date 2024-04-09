@@ -1,10 +1,11 @@
-#include "warp.h"
+#include "Source/analyzer/warp.h"
 
+#include <cstdint>
 #include <iostream>
+#include <optional>
 
-#include "../../types.h"
-
-#include "../funkMapGen.h"
+#include "types.h"
+#include "Source/funkMapGen.h"
 
 bool ScannerWarp::skipLevel(int level)
 {

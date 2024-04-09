@@ -6,7 +6,8 @@
 #ifndef __TRIGS_H__
 #define __TRIGS_H__
 
-#include "../types.h"
+#include "structs.h"
+#include "types.h"
 
 extern BOOL trigflag;
 extern int numtrigs;

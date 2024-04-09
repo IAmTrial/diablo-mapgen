@@ -6,6 +6,8 @@
 #ifndef __ITEMDAT_H__
 #define __ITEMDAT_H__
 
+#include "structs.h"
+
 extern ItemDataStruct AllItemsList[];
 extern const PLStruct PL_Prefix[];
 extern const PLStruct PL_Suffix[];

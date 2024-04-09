@@ -3,7 +3,12 @@
  *
  * Implementation of all monster data.
  */
-#include "all.h"
+
+#include "Source/monstdat.h"
+
+#include "enums.h"
+#include "structs.h"
+#include "types.h"
 
 /** Contains the data related to each monster ID. */
 MonsterData monsterdata[] = {

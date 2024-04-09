@@ -3,7 +3,16 @@
  *
  * Implementation of the hell level generation algorithms.
  */
-#include "all.h"
+
+#include "Source/drlg_l4.h"
+
+#include <optional>
+
+#include "structs.h"
+#include "types.h"
+#include "Source/drlg_l1.h"
+#include "Source/engine.h"
+#include "Source/quests.h"
 
 int diabquad1x;
 int diabquad1y;

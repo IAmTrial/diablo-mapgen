@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../funkMapGen.h"
+#include "Source/funkMapGen.h"
 
 class ScannerQuest : public Scanner {
 public:

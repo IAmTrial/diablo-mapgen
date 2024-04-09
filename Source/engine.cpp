@@ -1,9 +1,14 @@
+
+#include "Source/engine.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <iostream>
-#include <malloc.h>
-#include <stdio.h>
+#include <string>
 #ifdef _WIN32
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
@@ -12,8 +17,10 @@
 #include <unistd.h>
 #endif
 
-#include "engine.h"
-#include "gendung.h"
+#include "structs.h"
+#include "types.h"
+#include "Source/gendung.h"
+#include "Source/objects.h"
 
 PlayerStruct plr[MAX_PLRS];
 DWORD glSeedTbl[NUMLEVELS];

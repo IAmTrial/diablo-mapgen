@@ -1,9 +1,14 @@
-#pragma once
-#include "../types.h"
-#include "gendung.h"
-#include "objects.h"
+
+#ifndef __ENGINE_H__
+#define __ENGINE_H__
 
 #include <string>
+
+#include "structs.h"
+#include "types.h"
+#include "Source/gendung.h"
+#include "Source/objects.h"
+
 #define assert_fail(exp) ((void)(exp))
 
 struct Point {
@@ -115,3 +120,5 @@ void LoadLvlGFX();
 void SetMapObjects(BYTE *pMap, int startx, int starty);
 
 void SetMapMonsters(BYTE *pMap, int startx, int starty);
+
+#endif

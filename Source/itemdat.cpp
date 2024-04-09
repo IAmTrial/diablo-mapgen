@@ -3,7 +3,11 @@
  *
  * Implementation of all item data.
  */
-#include "all.h"
+
+#include "Source/itemdat.h"
+
+#include "enums.h"
+#include "structs.h"
 
 /** Contains the data related to each item ID. */
 ItemDataStruct AllItemsList[] = {

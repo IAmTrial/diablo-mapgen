@@ -3,7 +3,15 @@
  *
  * Implementation of functionality for handling quests.
  */
-#include "all.h"
+
+#include "Source/quests.h"
+
+#include "defs.h"
+#include "enums.h"
+#include "structs.h"
+#include "types.h"
+#include "Source/engine.h"
+#include "Source/gendung.h"
 
 int qtopline;
 BOOL questlog;

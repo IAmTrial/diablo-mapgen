@@ -6,9 +6,7 @@
 #ifndef _TYPES_H
 #define _TYPES_H
 
-#include "resource.h"
 #include <cstdint>
-#include <optional>
 
 #ifdef _WIN32
 #define NOMINMAX
@@ -63,10 +61,6 @@ typedef uint64_t LPDIRECTSOUNDBUFFER;
 #pragma warning(disable : 4302) // VC2017: type cast truncation
 #pragma warning(disable : 4334) // VC2017: result of 32-bit shift implicitly converted to 64 bits
 #endif
-
-#include "defs.h"
-#include "enums.h"
-#include "structs.h"
 
 #if (_MSC_VER >= 800) && (_MSC_VER <= 1200)
 #define USE_ASM

@@ -3,7 +3,20 @@
  *
  * Implementation of item functionality.
  */
-#include "all.h"
+
+#include "Source/items.h"
+
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+
+#include "Source/engine.h"
+#include "Source/gendung.h"
+#include "Source/itemdat.h"
+#include "Source/monster.h"
+#include "Source/quests.h"
+#include "Source/spelldat.h"
+
 #ifdef HELLFIRE
 #include "../3rdParty/Storm/Source/storm.h"
 #endif

@@ -1,10 +1,13 @@
-#include "puzzler.h"
 
+#include "Source/analyzer/puzzler.h"
+
+#include <cstdint>
 #include <iostream>
+#include <optional>
 
-#include "../items.h"
-#include "../monster.h"
-#include "../objects.h"
+#include "Source/items.h"
+#include "Source/monster.h"
+#include "Source/objects.h"
 
 void CreateItemsFromObject(int oid)
 {

@@ -6,6 +6,10 @@
 #ifndef __MONSTER_H__
 #define __MONSTER_H__
 
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+
 extern int monstkills[MAXMONSTERS];
 extern int monstactive[MAXMONSTERS];
 extern int nummonsters;

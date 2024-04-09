@@ -1,6 +1,10 @@
 #pragma once
 
-#include "../funkMapGen.h"
+#include <cstdint>
+#include <optional>
+
+#include "structs.h"
+#include "Source/funkMapGen.h"
 
 class ScannerPattern : public Scanner {
 public:

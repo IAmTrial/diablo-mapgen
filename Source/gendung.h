@@ -6,6 +6,10 @@
 #ifndef __GENDUNG_H__
 #define __GENDUNG_H__
 
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+
 extern BYTE dungeon[DMAXX][DMAXY];
 extern BYTE pdungeon[DMAXX][DMAXY];
 extern char dflags[DMAXX][DMAXY];

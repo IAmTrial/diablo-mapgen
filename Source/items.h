@@ -6,6 +6,10 @@
 #ifndef __ITEMS_H__
 #define __ITEMS_H__
 
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+
 extern int itemactive[MAXITEMS];
 extern BOOL uitemflag;
 extern int itemavail[MAXITEMS];

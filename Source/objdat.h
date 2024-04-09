@@ -6,6 +6,8 @@
 #ifndef __OBJDAT_H__
 #define __OBJDAT_H__
 
+#include "structs.h"
+
 extern int ObjTypeConv[];
 extern ObjDataStruct AllObjects[];
 extern const char *const ObjMasterLoadList[];

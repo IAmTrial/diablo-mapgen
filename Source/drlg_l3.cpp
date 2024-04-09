@@ -3,8 +3,19 @@
  *
  * Implementation of the caves level generation algorithms.
  */
+
+#include "Source/drlg_l3.h"
+
 #ifndef SPAWN
-#include "all.h"
+
+#include <optional>
+
+#include "Source/drlg_l1.h"
+#include "Source/engine.h"
+#include "Source/lighting.h"
+#include "Source/quests.h"
+#include "structs.h"
+#include "types.h"
 
 /** This will be true if a lava pool has been generated for the level */
 

@@ -3,7 +3,13 @@
  *
  * Implementation of general dungeon generation code.
  */
-#include "all.h"
+
+#include "Source/gendung.h"
+
+#include "defs.h"
+#include "types.h"
+#include "Source/engine.h"
+#include "Source/lighting.h"
 
 /** Contains the tile IDs of the map. */
 BYTE dungeon[DMAXX][DMAXY];

@@ -1,11 +1,10 @@
-#include "quest.h"
+#include "Source/analyzer/quest.h"
 
 #include <iostream>
 
-#include "../../types.h"
-
-#include "../funkMapGen.h"
-#include "../quests.h"
+#include "types.h"
+#include "Source/funkMapGen.h"
+#include "Source/quests.h"
 
 bool ScannerQuest::skipSeed()
 {

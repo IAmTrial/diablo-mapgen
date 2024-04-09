@@ -1,6 +1,9 @@
 #pragma once
 
-#include "../funkMapGen.h"
+#include <cstdint>
+#include <optional>
+
+#include "Source/funkMapGen.h"
 
 class ScannerPuzzler : public Scanner {
 public:

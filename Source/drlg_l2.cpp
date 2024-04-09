@@ -3,10 +3,19 @@
  *
  * Implementation of the catacombs level generation algorithms.
  */
+
+#include "Source/drlg_l2.h"
+
 #ifndef SPAWN
-#include "all.h"
 
 #include <iostream>
+#include <optional>
+
+#include "structs.h"
+#include "types.h"
+#include "Source/drlg_l1.h"
+#include "Source/engine.h"
+#include "Source/quests.h"
 
 int nSx1;
 int nSy1;

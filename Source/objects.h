@@ -6,6 +6,10 @@
 #ifndef __OBJECTS_H__
 #define __OBJECTS_H__
 
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+
 extern int objectactive[MAXOBJECTS];
 extern int nobjects;
 extern int objectavail[MAXOBJECTS];

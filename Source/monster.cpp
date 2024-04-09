@@ -3,7 +3,21 @@
  *
  * Implementation of monster functionality, AI, actions, spawning, loading, etc.
  */
-#include "all.h"
+
+#include "Source/monster.h"
+
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+#include "Source/drlg_l4.h"
+#include "Source/engine.h"
+#include "Source/gendung.h"
+#include "Source/lighting.h"
+#include "Source/monstdat.h"
+#include "Source/quests.h"
+#include "Source/quests.h"
+#include "Source/themes.h"
+#include "Source/trigs.h"
 
 /** Tracks which missile files are already loaded */
 int MissileFileFlag;

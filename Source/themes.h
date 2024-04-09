@@ -6,6 +6,10 @@
 #ifndef __THEMES_H__
 #define __THEMES_H__
 
+#include "defs.h"
+#include "structs.h"
+#include "types.h"
+
 extern int numthemes;
 extern BOOL armorFlag;
 extern BOOL weaponFlag;

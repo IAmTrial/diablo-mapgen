@@ -4,6 +4,11 @@
  * Various global enumerators.
  */
 
+#ifndef _ENUMS_H
+#define _ENUMS_H
+
+#include "defs.h"
+
 typedef enum item_quality {
 	ITEM_QUALITY_NORMAL = 0,
 	ITEM_QUALITY_MAGIC  = 1,
@@ -3556,3 +3561,5 @@ enum class DungeonMode {
 	BreakOnSuccess,
 	BreakOnFailureOrNoContent,
 };
+
+#endif
