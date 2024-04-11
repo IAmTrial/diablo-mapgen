@@ -8,6 +8,6 @@
 
 #include "structs.h"
 
-extern SpellData spelldata[];
+extern const SpellData spelldata[];
 
 #endif /* __SPELLDAT_H__ */
