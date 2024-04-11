@@ -16,7 +16,7 @@ namespace {
 #define MAXVIEWX 21
 #define MAXVIEWY 21
 
-bool isVisible[MAXVIEWY][MAXVIEWX] = {
+const bool isVisible[MAXVIEWY][MAXVIEWX] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //	-y
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 },

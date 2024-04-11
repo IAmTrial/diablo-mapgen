@@ -483,7 +483,7 @@ const BYTE byte_48A3D4[4] = { 1, 1, 2, 202 };
 /* data */
 
 #ifdef HELLFIRE
-BYTE UberRoomPattern[26] = {
+const BYTE UberRoomPattern[26] = {
 	// clang-format off
 	4, 6, // width, height
 
@@ -495,7 +495,7 @@ BYTE UberRoomPattern[26] = {
 	  7,   2,   3, 13,
 	// clang-format on
 };
-BYTE CornerstoneRoomPattern[27] = {
+const BYTE CornerstoneRoomPattern[27] = {
 	// clang-format off
 	5, 5, // width, height
 
@@ -511,7 +511,7 @@ BYTE CornerstoneRoomPattern[27] = {
  * A lookup table for the 16 possible patterns of a 2x2 area,
  * where each cell either contains a SW wall or it doesn't.
  */
-BYTE L5ConvTbl[16] = { 22, 13, 1, 13, 2, 13, 13, 13, 4, 13, 1, 13, 2, 13, 16, 13 };
+const BYTE L5ConvTbl[16] = { 22, 13, 1, 13, 2, 13, 13, 13, 4, 13, 1, 13, 2, 13, 16, 13 };
 
 #ifdef HELLFIRE
 void DRLG_InitL5Vals()

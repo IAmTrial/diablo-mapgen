@@ -122,7 +122,7 @@ void PutItemRecord(int nSeed, WORD wCI, int nIndex);
 extern int MaxGold;
 #endif
 
-extern BYTE ItemCAnimTbl[];
-extern int ItemInvSnds[];
+extern const BYTE ItemCAnimTbl[];
+extern const int ItemInvSnds[];
 
 #endif /* __ITEMS_H__ */

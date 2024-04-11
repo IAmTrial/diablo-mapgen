@@ -45,7 +45,7 @@ const char pathydir[8] = { -1, 1, -1, 1, 0, -1, 0, 1 };
  * dy 0|2 0 3
  *    1|8 4 7
  */
-char path_directions[9] = { 5, 1, 6, 2, 0, 3, 8, 4, 7 };
+const char path_directions[9] = { 5, 1, 6, 2, 0, 3, 8, 4, 7 };
 
 /**
  * find the shortest path from (sx,sy) to (dx,dy), using PosOk(PosOkArg,x,y) to

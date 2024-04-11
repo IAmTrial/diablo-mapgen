@@ -719,7 +719,7 @@ void DRLG_CopyTrans(int sx, int sy, int dx, int dy)
 }
 
 #ifndef SPAWN
-void DRLG_ListTrans(int num, BYTE *List)
+void DRLG_ListTrans(int num, const BYTE *List)
 {
 	int i;
 	BYTE x1, y1, x2, y2;
@@ -733,7 +733,7 @@ void DRLG_ListTrans(int num, BYTE *List)
 	}
 }
 
-void DRLG_AreaTrans(int num, BYTE *List)
+void DRLG_AreaTrans(int num, const BYTE *List)
 {
 	int i;
 	BYTE x1, y1, x2, y2;

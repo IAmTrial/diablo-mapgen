@@ -85,7 +85,7 @@ const BYTE counsmiss[4] = { MIS_FIREBOLT, MIS_CBOLT, MIS_LIGHTCTRL, MIS_FIREBALL
 //   };
 
 /** Maps from monster walk animation frame num to monster velocity. */
-int MWVel[24][3] = {
+const int MWVel[24][3] = {
 	{ 256, 512, 1024 },
 	{ 128, 256, 512 },
 	{ 85, 170, 341 },
@@ -112,28 +112,28 @@ int MWVel[24][3] = {
 	{ 10, 21, 42 }
 };
 /** Maps from monster action to monster animation letter. */
-char animletter[7] = "nwahds";
+const char animletter[7] = "nwahds";
 /** Maps from direction to a left turn from the direction. */
-int left[8] = { 7, 0, 1, 2, 3, 4, 5, 6 };
+const int left[8] = { 7, 0, 1, 2, 3, 4, 5, 6 };
 /** Maps from direction to a right turn from the direction. */
-int right[8] = { 1, 2, 3, 4, 5, 6, 7, 0 };
+const int right[8] = { 1, 2, 3, 4, 5, 6, 7, 0 };
 /** Maps from direction to the opposite direction. */
-int opposite[8] = { 4, 5, 6, 7, 0, 1, 2, 3 };
+const int opposite[8] = { 4, 5, 6, 7, 0, 1, 2, 3 };
 /** Maps from direction to delta X-offset. */
-int offset_x[8] = { 1, 0, -1, -1, -1, 0, 1, 1 };
+const int offset_x[8] = { 1, 0, -1, -1, -1, 0, 1, 1 };
 /** Maps from direction to delta Y-offset. */
-int offset_y[8] = { 1, 1, 1, 0, -1, -1, -1, 0 };
+const int offset_y[8] = { 1, 1, 1, 0, -1, -1, -1, 0 };
 
 #ifdef HELLFIRE
-int HorkXAdd[8] = { 1, 0, -1, -1, -1, 0, 1, 1 }; // CODEFIX: same values as offset_x, remove it and use offset_x instead
-int HorkYAdd[8] = { 1, 1, 1, 0, -1, -1, -1, 0 }; // CODEFIX: same values as offset_y, remove it and use offset_y instead
+const int HorkXAdd[8] = { 1, 0, -1, -1, -1, 0, 1, 1 }; // CODEFIX: same values as offset_x, remove it and use offset_x instead
+const int HorkYAdd[8] = { 1, 1, 1, 0, -1, -1, -1, 0 }; // CODEFIX: same values as offset_y, remove it and use offset_y instead
 #endif
 
 /** unused */
-int rnd5[4] = { 5, 10, 15, 20 };
-int rnd10[4] = { 10, 15, 20, 30 };
-int rnd20[4] = { 20, 30, 40, 50 };
-int rnd60[4] = { 60, 70, 80, 90 };
+const int rnd5[4] = { 5, 10, 15, 20 };
+const int rnd10[4] = { 10, 15, 20, 30 };
+const int rnd20[4] = { 20, 30, 40, 50 };
+const int rnd60[4] = { 60, 70, 80, 90 };
 
 ///** Maps from monster AI ID to monster AI function. */
 //void (*AiProc[])(int i) = {

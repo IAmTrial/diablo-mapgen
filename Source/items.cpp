@@ -44,9 +44,9 @@ ItemStruct golditem;
 /* data */
 
 #ifdef HELLFIRE
-int OilLevels[] = { 1, 10, 1, 10, 4, 1, 5, 17, 1, 10 };
-int OilValues[] = { 500, 2500, 500, 2500, 1500, 100, 2500, 15000, 500, 2500 };
-int OilMagic[] = {
+const int OilLevels[] = { 1, 10, 1, 10, 4, 1, 5, 17, 1, 10 };
+const int OilValues[] = { 500, 2500, 500, 2500, 1500, 100, 2500, 15000, 500, 2500 };
+const int OilMagic[] = {
 	IMISC_OILACC,
 	IMISC_OILMAST,
 	IMISC_OILSHARP,
@@ -58,7 +58,7 @@ int OilMagic[] = {
 	IMISC_OILHARD,
 	IMISC_OILIMP,
 };
-char OilNames[10][25] = {
+const char OilNames[10][25] = {
 	"Oil of Accuracy",
 	"Oil of Mastery",
 	"Oil of Sharpness",
@@ -70,11 +70,11 @@ char OilNames[10][25] = {
 	"Oil of Hardening",
 	"Oil of Imperviousness"
 };
-int MaxGold = GOLD_MAX_LIMIT;
+const int MaxGold = GOLD_MAX_LIMIT;
 #endif
 
 /** Maps from item_cursor_graphic to in-memory item type. */
-BYTE ItemCAnimTbl[] = {
+const BYTE ItemCAnimTbl[] = {
 #ifndef HELLFIRE
 	20, 16, 16, 16, 4, 4, 4, 12, 12, 12,
 	12, 12, 12, 12, 12, 21, 21, 25, 12, 28,
@@ -168,7 +168,7 @@ const char *const ItemDropNames[] = {
 #endif
 };
 /** Maps of item drop animation length. */
-BYTE ItemAnimLs[] = {
+const BYTE ItemAnimLs[] = {
 	15,
 	13,
 	16,
@@ -216,7 +216,7 @@ BYTE ItemAnimLs[] = {
 #endif
 };
 /** Maps of drop sounds effect of dropping the item on ground. */
-int ItemDropSnds[] = {
+const int ItemDropSnds[] = {
 	IS_FHARM,
 	IS_FAXE,
 	IS_FPOT,
@@ -264,7 +264,7 @@ int ItemDropSnds[] = {
 #endif
 };
 /** Maps of drop sounds effect of placing the item in the inventory. */
-int ItemInvSnds[] = {
+const int ItemInvSnds[] = {
 	IS_IHARM,
 	IS_IAXE,
 	IS_IPOT,
@@ -315,9 +315,9 @@ int ItemInvSnds[] = {
 char *CornerStoneRegKey = "SItem";
 #endif
 /** Specifies the current Y-coordinate used for validation of items on ground. */
-int idoppely = 16;
+const int idoppely = 16;
 /** Maps from Griswold premium item number to a quality level delta as added to the base quality level. */
-int premiumlvladd[SMITH_PREMIUM_ITEMS] = {
+const int premiumlvladd[SMITH_PREMIUM_ITEMS] = {
 	// clang-format off
 	-1,
 	-1,

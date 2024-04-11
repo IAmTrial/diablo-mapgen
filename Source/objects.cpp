@@ -35,9 +35,9 @@ int dword_6DE0E0;
 #endif
 
 /** Specifies the X-coordinate delta between barrels. */
-int bxadd[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+const int bxadd[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
 /** Specifies the Y-coordinate delta between barrels. */
-int byadd[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
+const int byadd[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 /** Maps from shrine_id to shrine name. */
 const char *const shrinestrs[NUM_SHRINETYPE] = {
 	"Mysterious",
@@ -78,7 +78,7 @@ const char *const shrinestrs[NUM_SHRINETYPE] = {
 #endif
 };
 /** Specifies the minimum dungeon level on which each shrine will appear. */
-char shrinemin[NUM_SHRINETYPE] = {
+const char shrinemin[NUM_SHRINETYPE] = {
 	1, // Mysterious
 	1, // Hidden
 	1, // Gloomy
@@ -117,7 +117,7 @@ char shrinemin[NUM_SHRINETYPE] = {
 #endif
 };
 /** Specifies the maximum dungeon level on which each shrine will appear. */
-char shrinemax[NUM_SHRINETYPE] = {
+const char shrinemax[NUM_SHRINETYPE] = {
 	MAX_LVLS, // Mysterious
 	MAX_LVLS, // Hidden
 	MAX_LVLS, // Gloomy
@@ -162,7 +162,7 @@ char shrinemax[NUM_SHRINETYPE] = {
  * SHRINETYPE_MULTI - 2 - mp only
  */
 
-BYTE shrineavail[NUM_SHRINETYPE] = {
+const BYTE shrineavail[NUM_SHRINETYPE] = {
 	SHRINETYPE_ANY,    // SHRINE_MYSTERIOUS
 	SHRINETYPE_ANY,    // SHRINE_HIDDEN
 	SHRINETYPE_SINGLE, // SHRINE_GLOOMY
@@ -222,7 +222,7 @@ const char *const StoryBookName[] = {
 #endif
 };
 /** Specifies the speech IDs of each dungeon type narrator book, for each player class. */
-int StoryText[3][3] = {
+const int StoryText[3][3] = {
 	{ TEXT_BOOK11, TEXT_BOOK12, TEXT_BOOK13 },
 	{ TEXT_BOOK21, TEXT_BOOK22, TEXT_BOOK23 },
 	{ TEXT_BOOK31, TEXT_BOOK32, TEXT_BOOK33 }

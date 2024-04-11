@@ -49,7 +49,7 @@ BOOL lightflag;
  *    |  526
  *    +-------> x
  */
-char CrawlTable[2749] = {
+const char CrawlTable[2749] = {
 	1,
 	0, 0,
 	4,
@@ -414,7 +414,7 @@ char CrawlTable[2749] = {
 };
 
 /** pCrawlTable maps from circle radius to the X- and Y-coordinate deltas from the center of a circle. */
-char *pCrawlTable[19] = {
+const char *pCrawlTable[19] = {
 	CrawlTable,
 	CrawlTable + 3,
 	CrawlTable + 12,
@@ -436,7 +436,7 @@ char *pCrawlTable[19] = {
 	CrawlTable + 2460
 };
 /** vCrawlTable specifies the X- Y-coordinate offsets of lighting visions. */
-BYTE vCrawlTable[23][30] = {
+const BYTE vCrawlTable[23][30] = {
 	{ 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10, 0, 11, 0, 12, 0, 13, 0, 14, 0, 15, 0 },
 	{ 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 1, 9, 1, 10, 1, 11, 1, 12, 1, 13, 1, 14, 1, 15, 1 },
 	{ 1, 0, 2, 0, 3, 0, 4, 1, 5, 1, 6, 1, 7, 1, 8, 1, 9, 1, 10, 1, 11, 1, 12, 2, 13, 2, 14, 2, 15, 2 },
@@ -462,7 +462,7 @@ BYTE vCrawlTable[23][30] = {
 	{ 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10, 0, 11, 0, 12, 0, 13, 0, 14, 0, 15 }
 };
 /** unused */
-BYTE byte_49463C[18][18] = {
+const BYTE byte_49463C[18][18] = {
 	{ 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
 	{ 0, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
 	{ 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
@@ -484,7 +484,7 @@ BYTE byte_49463C[18][18] = {
 };
 
 /** RadiusAdj maps from vCrawlTable index to lighting vision radius adjustment. */
-BYTE RadiusAdj[23] = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0 };
+const BYTE RadiusAdj[23] = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 4, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0 };
 
 void RotateRadius(int *x, int *y, int *dx, int *dy, int *lx, int *ly, int *bx, int *by)
 {

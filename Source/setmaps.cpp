@@ -17,17 +17,17 @@
 #include "Source/trigs.h"
 
 // BUGFIX: constant data should be const
-BYTE SkelKingTrans1[] = {
+const BYTE SkelKingTrans1[] = {
 	19, 47, 26, 55,
 	26, 49, 30, 53
 };
 
-BYTE SkelKingTrans2[] = {
+const BYTE SkelKingTrans2[] = {
 	33, 19, 47, 29,
 	37, 29, 43, 39
 };
 
-BYTE SkelKingTrans3[] = {
+const BYTE SkelKingTrans3[] = {
 	27, 53, 35, 61,
 	27, 35, 34, 42,
 	45, 35, 53, 43,
@@ -35,7 +35,7 @@ BYTE SkelKingTrans3[] = {
 	31, 39, 49, 57
 };
 
-BYTE SkelKingTrans4[] = {
+const BYTE SkelKingTrans4[] = {
 	49, 45, 58, 51,
 	57, 31, 62, 37,
 	63, 31, 69, 40,
@@ -45,7 +45,7 @@ BYTE SkelKingTrans4[] = {
 	79, 43, 89, 53
 };
 
-BYTE SkelChamTrans1[] = {
+const BYTE SkelChamTrans1[] = {
 	43, 19, 50, 26,
 	51, 19, 59, 26,
 	35, 27, 42, 34,
@@ -53,12 +53,12 @@ BYTE SkelChamTrans1[] = {
 	50, 27, 59, 34
 };
 
-BYTE SkelChamTrans2[] = {
+const BYTE SkelChamTrans2[] = {
 	19, 31, 34, 47,
 	34, 35, 42, 42
 };
 
-BYTE SkelChamTrans3[] = {
+const BYTE SkelChamTrans3[] = {
 	43, 35, 50, 42,
 	51, 35, 62, 42,
 	63, 31, 66, 46,

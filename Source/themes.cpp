@@ -36,9 +36,9 @@ BOOL bFountainFlag;
 BOOL bCrossFlag;
 
 /** Specifies the set of special theme IDs from which one will be selected at random. */
-int ThemeGood[4] = { THEME_GOATSHRINE, THEME_SHRINE, THEME_SKELROOM, THEME_LIBRARY };
+const int ThemeGood[4] = { THEME_GOATSHRINE, THEME_SHRINE, THEME_SKELROOM, THEME_LIBRARY };
 /** Specifies a 5x5 area to fit theme objects. */
-int trm5x[] = {
+const int trm5x[] = {
 	-2, -1, 0, 1, 2,
 	-2, -1, 0, 1, 2,
 	-2, -1, 0, 1, 2,
@@ -46,7 +46,7 @@ int trm5x[] = {
 	-2, -1, 0, 1, 2
 };
 /** Specifies a 5x5 area to fit theme objects. */
-int trm5y[] = {
+const int trm5y[] = {
 	-2, -2, -2, -2, -2,
 	-1, -1, -1, -1, -1,
 	0, 0, 0, 0, 0,
@@ -54,13 +54,13 @@ int trm5y[] = {
 	2, 2, 2, 2, 2
 };
 /** Specifies a 3x3 area to fit theme objects. */
-int trm3x[] = {
+const int trm3x[] = {
 	-1, 0, 1,
 	-1, 0, 1,
 	-1, 0, 1
 };
 /** Specifies a 3x3 area to fit theme objects. */
-int trm3y[] = {
+const int trm3y[] = {
 	-1, -1, -1,
 	0, 0, 0,
 	1, 1, 1
