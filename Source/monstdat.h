@@ -16,6 +16,6 @@ extern int MonstAvailTbl[];
 extern const char MonstConvTbl[];
 extern const char MonstAvailTbl[];
 #endif
-extern UniqMonstStruct UniqMonst[];
+extern const UniqMonstStruct UniqMonst[];
 
 #endif /* __MONSTDAT_H__ */

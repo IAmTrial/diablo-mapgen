@@ -605,7 +605,7 @@ void PlaceUniqueMonst(int uniqindex, int miniontype, int bosspacksize)
 	int count2;
 	char filestr[64];
 	BOOL zharflag, done;
-	UniqMonstStruct *Uniq;
+	const UniqMonstStruct *Uniq;
 	MonsterStruct *Monst;
 	int count;
 
