@@ -16,16 +16,11 @@
 #include "Source/universe/universe.h"
 
 #ifndef SPAWN
-BOOL hallok[20];
-int l4holdx;
-int l4holdy;
-int SP4x1;
-int SP4y1;
-int SP4x2;
-int SP4y2;
-BYTE L4dungeon[80][80];
-BYTE dung[20][20];
-//int dword_52A4DC;
+
+BYTE *lpSetPiece1;
+BYTE *lpSetPiece2;
+BYTE *lpSetPiece3;
+BYTE *lpSetPiece4;
 
 /**
  * A lookup table for the 16 possible patterns of a 2x2 area,
@@ -142,7 +137,7 @@ const BYTE L4BTYPES[140] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static BYTE GetDung(int x, int y)
+static BYTE GetDung(Universe& universe, int x, int y)
 {
 	if (x < 0 || y < 0 || x >= 20 || y >= 20) {
 		int index = x * 20 + y;
@@ -153,10 +148,10 @@ static BYTE GetDung(int x, int y)
 			return 0;
 		}
 	}
-	return dung[x][y];
+	return universe.dung[x][y];
 }
 
-static void SetDung(int x, int y, int value)
+static void SetDung(Universe& universe, int x, int y, int value)
 {
 	if (x < 0 || y < 0 || x >= 20 || y >= 20) {
 		int index = x * 20 + y;
@@ -167,7 +162,7 @@ static void SetDung(int x, int y, int value)
 			return;
 		}
 	}
-	dung[x][y] = value;
+	universe.dung[x][y] = value;
 }
 
 static void DRLG_L4Shadows()
@@ -203,12 +198,12 @@ static void DRLG_L4Shadows()
 	}
 }
 
-static void InitL4Dungeon()
+static void InitL4Dungeon(Universe& universe)
 {
 	int i, j;
 
-	memset(dung, 0, sizeof(dung));
-	memset(L4dungeon, 0, sizeof(L4dungeon));
+	memset(universe.dung, 0, sizeof(universe.dung));
+	memset(universe.L4dungeon, 0, sizeof(universe.L4dungeon));
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
@@ -264,16 +259,16 @@ void DRLG_L4SetSPRoom(int rx1, int ry1)
 	}
 }
 
-static void L4makeDmt()
+static void L4makeDmt(Universe& universe)
 {
 	int i, j, idx, val, dmtx, dmty;
 
 	for (j = 0, dmty = 1; dmty <= 77; j++, dmty += 2) {
 		for (i = 0, dmtx = 1; dmtx <= 77; i++, dmtx += 2) {
-			val = 8 * L4dungeon[dmtx + 1][dmty + 1]
-			    + 4 * L4dungeon[dmtx][dmty + 1]
-			    + 2 * L4dungeon[dmtx + 1][dmty]
-			    + L4dungeon[dmtx][dmty];
+			val = 8 * universe.L4dungeon[dmtx + 1][dmty + 1]
+			    + 4 * universe.L4dungeon[dmtx][dmty + 1]
+			    + 2 * universe.L4dungeon[dmtx + 1][dmty]
+			    + universe.L4dungeon[dmtx][dmty];
 			idx = L4ConvTbl[val];
 			SetDungeon(i, j, idx);
 		}
@@ -966,7 +961,7 @@ static void DRLG_L4Subs()
 	}
 }
 
-static void L4makeDungeon()
+static void L4makeDungeon(Universe& universe)
 {
 	int i, j, k, l;
 
@@ -974,59 +969,59 @@ static void L4makeDungeon()
 		for (i = 0; i < 20; i++) {
 			k = i << 1;
 			l = j << 1;
-			L4dungeon[k][l] = dung[i][j];
-			L4dungeon[k][l + 1] = dung[i][j];
-			L4dungeon[k + 1][l] = dung[i][j];
-			L4dungeon[k + 1][l + 1] = dung[i][j];
+			universe.L4dungeon[k][l] = universe.dung[i][j];
+			universe.L4dungeon[k][l + 1] = universe.dung[i][j];
+			universe.L4dungeon[k + 1][l] = universe.dung[i][j];
+			universe.L4dungeon[k + 1][l + 1] = universe.dung[i][j];
 		}
 	}
 	for (j = 0; j < 20; j++) {
 		for (i = 0; i < 20; i++) {
 			k = i << 1;
 			l = j << 1;
-			L4dungeon[k][l + 40] = dung[i][19 - j];
-			L4dungeon[k][l + 41] = dung[i][19 - j];
-			L4dungeon[k + 1][l + 40] = dung[i][19 - j];
-			L4dungeon[k + 1][l + 41] = dung[i][19 - j];
+			universe.L4dungeon[k][l + 40] = universe.dung[i][19 - j];
+			universe.L4dungeon[k][l + 41] = universe.dung[i][19 - j];
+			universe.L4dungeon[k + 1][l + 40] = universe.dung[i][19 - j];
+			universe.L4dungeon[k + 1][l + 41] = universe.dung[i][19 - j];
 		}
 	}
 	for (j = 0; j < 20; j++) {
 		for (i = 0; i < 20; i++) {
 			k = i << 1;
 			l = j << 1;
-			L4dungeon[k + 40][l] = dung[19 - i][j];
-			L4dungeon[k + 40][l + 1] = dung[19 - i][j];
-			L4dungeon[k + 41][l] = dung[19 - i][j];
-			L4dungeon[k + 41][l + 1] = dung[19 - i][j];
+			universe.L4dungeon[k + 40][l] = universe.dung[19 - i][j];
+			universe.L4dungeon[k + 40][l + 1] = universe.dung[19 - i][j];
+			universe.L4dungeon[k + 41][l] = universe.dung[19 - i][j];
+			universe.L4dungeon[k + 41][l + 1] = universe.dung[19 - i][j];
 		}
 	}
 	for (j = 0; j < 20; j++) {
 		for (i = 0; i < 20; i++) {
 			k = i << 1;
 			l = j << 1;
-			L4dungeon[k + 40][l + 40] = dung[19 - i][19 - j];
-			L4dungeon[k + 40][l + 41] = dung[19 - i][19 - j];
-			L4dungeon[k + 41][l + 40] = dung[19 - i][19 - j];
-			L4dungeon[k + 41][l + 41] = dung[19 - i][19 - j];
+			universe.L4dungeon[k + 40][l + 40] = universe.dung[19 - i][19 - j];
+			universe.L4dungeon[k + 40][l + 41] = universe.dung[19 - i][19 - j];
+			universe.L4dungeon[k + 41][l + 40] = universe.dung[19 - i][19 - j];
+			universe.L4dungeon[k + 41][l + 41] = universe.dung[19 - i][19 - j];
 		}
 	}
 }
 
-static void uShape()
+static void uShape(Universe& universe)
 {
 	int j, i, rv;
 
 	for (j = 19; j >= 0; j--) {
 		for (i = 19; i >= 0; i--) {
-			if (dung[i][j] != 1) {
-				hallok[j] = FALSE;
+			if (universe.dung[i][j] != 1) {
+				universe.hallok[j] = FALSE;
 			}
-			if (dung[i][j] == 1) {
+			if (universe.dung[i][j] == 1) {
 				// BUGFIX: check that i + 1 < 20 and j + 1 < 20
-				if (dung[i][j + 1] == 1 && dung[i + 1][j + 1] == 0) {
-					hallok[j] = TRUE;
+				if (universe.dung[i][j + 1] == 1 && universe.dung[i + 1][j + 1] == 0) {
+					universe.hallok[j] = TRUE;
 				} else {
-					hallok[j] = FALSE;
+					universe.hallok[j] = FALSE;
 				}
 				i = 0;
 			}
@@ -1035,14 +1030,14 @@ static void uShape()
 
 	rv = random_(0, 19) + 1;
 	do {
-		if (hallok[rv]) {
+		if (universe.hallok[rv]) {
 			for (i = 19; i >= 0; i--) {
-				if (dung[i][rv] == 1) {
+				if (universe.dung[i][rv] == 1) {
 					i = -1;
 					rv = 0;
 				} else {
-					dung[i][rv] = 1;
-					dung[i][rv + 1] = 1;
+					universe.dung[i][rv] = 1;
+					universe.dung[i][rv + 1] = 1;
 				}
 			}
 		} else {
@@ -1055,15 +1050,15 @@ static void uShape()
 
 	for (i = 19; i >= 0; i--) {
 		for (j = 19; j >= 0; j--) {
-			if (dung[i][j] != 1) {
-				hallok[i] = FALSE;
+			if (universe.dung[i][j] != 1) {
+				universe.hallok[i] = FALSE;
 			}
-			if (dung[i][j] == 1) {
+			if (universe.dung[i][j] == 1) {
 				// BUGFIX: check that i + 1 < 20 and j + 1 < 20
-				if (GetDung(i + 1, j) == 1 && GetDung(i + 1, j + 1) == 0) {
-					hallok[i] = TRUE;
+				if (GetDung(universe, i + 1, j) == 1 && GetDung(universe, i + 1, j + 1) == 0) {
+					universe.hallok[i] = TRUE;
 				} else {
-					hallok[i] = FALSE;
+					universe.hallok[i] = FALSE;
 				}
 				j = 0;
 			}
@@ -1072,14 +1067,14 @@ static void uShape()
 
 	rv = random_(0, 19) + 1;
 	do {
-		if (hallok[rv]) {
+		if (universe.hallok[rv]) {
 			for (j = 19; j >= 0; j--) {
-				if (dung[rv][j] == 1) {
+				if (universe.dung[rv][j] == 1) {
 					j = -1;
 					rv = 0;
 				} else {
-					dung[rv][j] = 1;
-					dung[rv + 1][j] = 1;
+					universe.dung[rv][j] = 1;
+					universe.dung[rv + 1][j] = 1;
 				}
 			}
 		} else {
@@ -1091,7 +1086,7 @@ static void uShape()
 	} while (rv != 0);
 }
 
-static long GetArea()
+static long GetArea(Universe& universe)
 {
 	int i, j;
 	long rv;
@@ -1100,7 +1095,7 @@ static long GetArea()
 
 	for (j = 0; j < 20; j++) {
 		for (i = 0; i < 20; i++) {
-			if (dung[i][j] == 1) {
+			if (universe.dung[i][j] == 1) {
 				rv++;
 			}
 		}
@@ -1109,18 +1104,18 @@ static long GetArea()
 	return rv;
 }
 
-static void L4drawRoom(int x, int y, int width, int height)
+static void L4drawRoom(Universe& universe, int x, int y, int width, int height)
 {
 	int i, j;
 
 	for (j = 0; j < height; j++) {
 		for (i = 0; i < width; i++) {
-			SetDung(i + x, j + y, 1);
+			SetDung(universe, i + x, j + y, 1);
 		}
 	}
 }
 
-static BOOL L4checkRoom(int x, int y, int width, int height)
+static BOOL L4checkRoom(Universe& universe, int x, int y, int width, int height)
 {
 	int i, j;
 
@@ -1133,7 +1128,7 @@ static BOOL L4checkRoom(int x, int y, int width, int height)
 			if (i + x < 0 || i + x >= 20 || j + y < 0 || j + y >= 20) {
 				return FALSE;
 			}
-			if (dung[i + x][j + y] != 0) {
+			if (universe.dung[i + x][j + y] != 0) {
 				return FALSE;
 			}
 		}
@@ -1142,7 +1137,7 @@ static BOOL L4checkRoom(int x, int y, int width, int height)
 	return TRUE;
 }
 
-static void L4roomGen(int x, int y, int w, int h, int dir)
+static void L4roomGen(Universe& universe, int x, int y, int w, int h, int dir)
 {
 	int num;
 	BOOL ran, ran2;
@@ -1158,20 +1153,20 @@ static void L4roomGen(int x, int y, int w, int h, int dir)
 			ch = (random_(0, 5) + 2) & ~1;
 			cy1 = h / 2 + y - ch / 2;
 			cx1 = x - cw;
-			ran = L4checkRoom(cx1 - 1, cy1 - 1, ch + 2, cw + 1); /// BUGFIX: swap args 3 and 4 ("ch+2" and "cw+1")
+			ran = L4checkRoom(universe, cx1 - 1, cy1 - 1, ch + 2, cw + 1); /// BUGFIX: swap args 3 and 4 ("ch+2" and "cw+1")
 			num++;
 		} while (ran == FALSE && num < 20);
 
 		if (ran == TRUE)
-			L4drawRoom(cx1, cy1, cw, ch);
+			L4drawRoom(universe, cx1, cy1, cw, ch);
 		cx2 = x + w;
-		ran2 = L4checkRoom(cx2, cy1 - 1, cw + 1, ch + 2);
+		ran2 = L4checkRoom(universe, cx2, cy1 - 1, cw + 1, ch + 2);
 		if (ran2 == TRUE)
-			L4drawRoom(cx2, cy1, cw, ch);
+			L4drawRoom(universe, cx2, cy1, cw, ch);
 		if (ran == TRUE)
-			L4roomGen(cx1, cy1, cw, ch, 1);
+			L4roomGen(universe, cx1, cy1, cw, ch, 1);
 		if (ran2 == TRUE)
-			L4roomGen(cx2, cy1, cw, ch, 1);
+			L4roomGen(universe, cx2, cy1, cw, ch, 1);
 	} else {
 		num = 0;
 		do {
@@ -1179,24 +1174,24 @@ static void L4roomGen(int x, int y, int w, int h, int dir)
 			height = (random_(0, 5) + 2) & ~1;
 			rx = w / 2 + x - width / 2;
 			ry = y - height;
-			ran = L4checkRoom(rx - 1, ry - 1, width + 2, height + 1);
+			ran = L4checkRoom(universe, rx - 1, ry - 1, width + 2, height + 1);
 			num++;
 		} while (ran == FALSE && num < 20);
 
 		if (ran == TRUE)
-			L4drawRoom(rx, ry, width, height);
+			L4drawRoom(universe, rx, ry, width, height);
 		ry2 = y + h;
-		ran2 = L4checkRoom(rx - 1, ry2, width + 2, height + 1);
+		ran2 = L4checkRoom(universe, rx - 1, ry2, width + 2, height + 1);
 		if (ran2 == TRUE)
-			L4drawRoom(rx, ry2, width, height);
+			L4drawRoom(universe, rx, ry2, width, height);
 		if (ran == TRUE)
-			L4roomGen(rx, ry, width, height, 0);
+			L4roomGen(universe, rx, ry, width, height, 0);
 		if (ran2 == TRUE)
-			L4roomGen(rx, ry2, width, height, 0);
+			L4roomGen(universe, rx, ry2, width, height, 0);
 	}
 }
 
-static void L4firstRoom()
+static void L4firstRoom(Universe& universe)
 {
 	int x, y, w, h, rndx, rndy, xmin, xmax, ymin, ymax, tx, ty;
 
@@ -1237,31 +1232,31 @@ static void L4firstRoom()
 	}
 
 	if (currlevel == 16) {
-		l4holdx = x;
-		l4holdy = y;
+		universe.l4holdx = x;
+		universe.l4holdy = y;
 	}
 	if (QuestStatus(Q_WARLORD) || currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
-		SP4x1 = x + 1;
-		SP4y1 = y + 1;
-		SP4x2 = SP4x1 + w;
-		SP4y2 = SP4y1 + h;
+		universe.SP4x1 = x + 1;
+		universe.SP4y1 = y + 1;
+		universe.SP4x2 = universe.SP4x1 + w;
+		universe.SP4y2 = universe.SP4y1 + h;
 	} else {
-		SP4x1 = 0;
-		SP4y1 = 0;
-		SP4x2 = 0;
-		SP4y2 = 0;
+		universe.SP4x1 = 0;
+		universe.SP4y1 = 0;
+		universe.SP4x2 = 0;
+		universe.SP4y2 = 0;
 	}
 
-	L4drawRoom(x, y, w, h);
-	L4roomGen(x, y, w, h, random_(0, 2));
+	L4drawRoom(universe, x, y, w, h);
+	L4roomGen(universe, x, y, w, h, random_(0, 2));
 }
 
-void L4SaveQuads()
+void L4SaveQuads(Universe& universe)
 {
 	int i, j, x, y;
 
-	x = l4holdx;
-	y = l4holdy;
+	x = universe.l4holdx;
+	y = universe.l4holdy;
 
 	for (j = 0; j < 14; j++) {
 		for (i = 0; i < 14; i++) {
@@ -1273,10 +1268,10 @@ void L4SaveQuads()
 	}
 }
 
-void DRLG_L4SetRoom(BYTE *pSetPiece, int rx1, int ry1)
+void DRLG_L4SetRoom(const BYTE *pSetPiece, int rx1, int ry1)
 {
 	int rw, rh, i, j;
-	BYTE *sp;
+	const BYTE *sp;
 
 	rw = pSetPiece[0];
 	rh = pSetPiece[2];
@@ -1294,11 +1289,6 @@ void DRLG_L4SetRoom(BYTE *pSetPiece, int rx1, int ry1)
 		}
 	}
 }
-
-BYTE *lpSetPiece1;
-BYTE *lpSetPiece2;
-BYTE *lpSetPiece3;
-BYTE *lpSetPiece4;
 
 void DRLG_PreLoadDiabQuads()
 {
@@ -1318,24 +1308,24 @@ void DRLG_FreeDiabQuads()
 
 void DRLG_LoadDiabQuads(Universe& universe, BOOL preflag)
 {
-	universe.diabquad1x = 4 + l4holdx;
-	universe.diabquad1y = 4 + l4holdy;
+	universe.diabquad1x = 4 + universe.l4holdx;
+	universe.diabquad1y = 4 + universe.l4holdy;
 	DRLG_L4SetRoom(lpSetPiece1, universe.diabquad1x, universe.diabquad1y);
 
-	universe.diabquad2x = 27 - l4holdx;
-	universe.diabquad2y = 1 + l4holdy;
+	universe.diabquad2x = 27 - universe.l4holdx;
+	universe.diabquad2y = 1 + universe.l4holdy;
 	DRLG_L4SetRoom(lpSetPiece2, universe.diabquad2x, universe.diabquad2y);
 
-	universe.diabquad3x = 1 + l4holdx;
-	universe.diabquad3y = 27 - l4holdy;
+	universe.diabquad3x = 1 + universe.l4holdx;
+	universe.diabquad3y = 27 - universe.l4holdy;
 	DRLG_L4SetRoom(lpSetPiece3, universe.diabquad3x, universe.diabquad3y);
 
-	universe.diabquad4x = 28 - l4holdx;
-	universe.diabquad4y = 28 - l4holdy;
+	universe.diabquad4x = 28 - universe.l4holdx;
+	universe.diabquad4y = 28 - universe.l4holdy;
 	DRLG_L4SetRoom(lpSetPiece4, universe.diabquad4x, universe.diabquad4y);
 }
 
-static BOOL DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int ldir)
+static BOOL DRLG_L4PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, bailcnt;
 	BOOL found;
@@ -1355,7 +1345,7 @@ static BOOL DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 		found = FALSE;
 		for (bailcnt = 0; !found && bailcnt < 200; bailcnt++) {
 			found = TRUE;
-			if (sx >= SP4x1 && sx <= SP4x2 && sy >= SP4y1 && sy <= SP4y2) {
+			if (sx >= universe.SP4x1 && sx <= universe.SP4x2 && sy >= universe.SP4y1 && sy <= universe.SP4y2) {
 				found = FALSE;
 			}
 			if (cx != -1 && sx >= cx - sw && sx <= cx + 12) {
@@ -1577,15 +1567,15 @@ static void DRLG_L4Corners()
 	}
 }
 
-void L4FixRim()
+void L4FixRim(Universe& universe)
 {
 	int i, j;
 
 	for (i = 0; i < 20; i++) {
-		dung[i][0] = 0;
+		universe.dung[i][0] = 0;
 	}
 	for (j = 0; j < 20; j++) {
-		dung[0][j] = 0;
+		universe.dung[0][j] = 0;
 	}
 }
 
@@ -1613,25 +1603,25 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 		DRLG_InitTrans();
 		do {
 			levelSeed = GetRndState();
-			InitL4Dungeon();
-			L4firstRoom();
-			L4FixRim();
-			ar = GetArea();
+			InitL4Dungeon(universe);
+			L4firstRoom(universe);
+			L4FixRim(universe);
+			ar = GetArea(universe);
 			if (ar >= 173) {
-				uShape();
+				uShape(universe);
 			}
 			if (mode == DungeonMode::BreakOnFailure && ar < 173)
 				return std::nullopt;
 		} while (ar < 173);
-		L4makeDungeon();
-		L4makeDmt();
+		L4makeDungeon(universe);
+		L4makeDmt(universe);
 		L4tileFix();
 		if (currlevel == 16) {
-			L4SaveQuads();
+			L4SaveQuads(universe);
 		}
 		if (QuestStatus(Q_WARLORD) || currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
-			for (spi = SP4x1; spi < SP4x2; spi++) {
-				for (spj = SP4y1; spj < SP4y2; spj++) {
+			for (spi = universe.SP4x1; spi < universe.SP4x2; spi++) {
+				for (spj = universe.SP4y1; spj < universe.SP4y2; spj++) {
 					dflags[spi][spj] = 1;
 				}
 			}
@@ -1640,79 +1630,79 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 		DRLG_L4FloodTVal();
 		DRLG_L4TransFix();
 		if (setloadflag) {
-			DRLG_L4SetSPRoom(SP4x1, SP4y1);
+			DRLG_L4SetSPRoom(universe.SP4x1, universe.SP4y1);
 		}
 		if (currlevel == 16) {
 			DRLG_LoadDiabQuads(universe, TRUE);
 		}
 		if (QuestStatus(Q_WARLORD)) {
 			if (entry == ENTRY_MAIN) {
-				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, TRUE, 0);
+				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, TRUE, 0);
 				if (doneflag && currlevel == 13) {
-					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, FALSE, 6);
+					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, FALSE, 6);
 				}
 				ViewX++;
 			} else if (entry == ENTRY_PREV) {
-				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
+				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
 				if (doneflag && currlevel == 13) {
-					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, FALSE, 6);
+					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, FALSE, 6);
 				}
 				ViewX = 2 * setpc_x + 22;
 				ViewY = 2 * setpc_y + 22;
 			} else {
-				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
+				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
 				if (doneflag && currlevel == 13) {
-					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, TRUE, 6);
+					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, TRUE, 6);
 				}
 				ViewX++;
 			}
 		} else if (currlevel != 15) {
 			if (entry == ENTRY_MAIN) {
-				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, TRUE, 0);
+				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, TRUE, 0);
 				if (doneflag && currlevel != 16) {
-					doneflag = DRLG_L4PlaceMiniSet(L4DSTAIRS, 1, 1, -1, -1, FALSE, 1);
+					doneflag = DRLG_L4PlaceMiniSet(universe, L4DSTAIRS, 1, 1, -1, -1, FALSE, 1);
 				}
 				if (doneflag && currlevel == 13) {
-					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, FALSE, 6);
+					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, FALSE, 6);
 				}
 				ViewX++;
 			} else if (entry == ENTRY_PREV) {
-				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
+				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
 				if (doneflag && currlevel != 16) {
-					doneflag = DRLG_L4PlaceMiniSet(L4DSTAIRS, 1, 1, -1, -1, TRUE, 1);
+					doneflag = DRLG_L4PlaceMiniSet(universe, L4DSTAIRS, 1, 1, -1, -1, TRUE, 1);
 				}
 				if (doneflag && currlevel == 13) {
-					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, FALSE, 6);
+					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, FALSE, 6);
 				}
 				ViewY++;
 			} else {
-				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
+				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
 				if (doneflag && currlevel != 16) {
-					doneflag = DRLG_L4PlaceMiniSet(L4DSTAIRS, 1, 1, -1, -1, FALSE, 1);
+					doneflag = DRLG_L4PlaceMiniSet(universe, L4DSTAIRS, 1, 1, -1, -1, FALSE, 1);
 				}
 				if (doneflag && currlevel == 13) {
-					doneflag = DRLG_L4PlaceMiniSet(L4TWARP, 1, 1, -1, -1, TRUE, 6);
+					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, TRUE, 6);
 				}
 				ViewX++;
 			}
 		} else {
 			if (entry == ENTRY_MAIN) {
-				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, TRUE, 0);
+				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, TRUE, 0);
 				if (doneflag) {
 					if (gbMaxPlayers == 1 && quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
-						doneflag = DRLG_L4PlaceMiniSet(L4PENTA, 1, 1, -1, -1, FALSE, 1);
+						doneflag = DRLG_L4PlaceMiniSet(universe, L4PENTA, 1, 1, -1, -1, FALSE, 1);
 					} else {
-						doneflag = DRLG_L4PlaceMiniSet(L4PENTA2, 1, 1, -1, -1, FALSE, 1);
+						doneflag = DRLG_L4PlaceMiniSet(universe, L4PENTA2, 1, 1, -1, -1, FALSE, 1);
 					}
 				}
 				ViewX++;
 			} else {
-				doneflag = DRLG_L4PlaceMiniSet(L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
+				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
 				if (doneflag) {
 					if (gbMaxPlayers == 1 && quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
-						doneflag = DRLG_L4PlaceMiniSet(L4PENTA, 1, 1, -1, -1, TRUE, 1);
+						doneflag = DRLG_L4PlaceMiniSet(universe, L4PENTA, 1, 1, -1, -1, TRUE, 1);
 					} else {
-						doneflag = DRLG_L4PlaceMiniSet(L4PENTA2, 1, 1, -1, -1, TRUE, 1);
+						doneflag = DRLG_L4PlaceMiniSet(universe, L4PENTA2, 1, 1, -1, -1, TRUE, 1);
 					}
 				}
 				ViewY++;
@@ -1744,7 +1734,7 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 		}
 	}
 
-	DRLG_CheckQuests(SP4x1, SP4y1);
+	DRLG_CheckQuests(universe.SP4x1, universe.SP4y1);
 
 	if (currlevel == 15) {
 		for (j = 0; j < DMAXY; j++) {
