@@ -8,13 +8,13 @@
 
 #include "structs.h"
 
-extern MonsterData monsterdata[];
+extern const MonsterData monsterdata[];
 #ifdef HELLFIRE
-extern int MonstConvTbl[];
+extern const int MonstConvTbl[];
 extern int MonstAvailTbl[];
 #else
-extern char MonstConvTbl[];
-extern char MonstAvailTbl[];
+extern const char MonstConvTbl[];
+extern const char MonstAvailTbl[];
 #endif
 extern UniqMonstStruct UniqMonst[];
 

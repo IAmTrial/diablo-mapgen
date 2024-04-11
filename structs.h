@@ -562,7 +562,7 @@ typedef struct CMonster {
 	BOOL has_special;
 	unsigned char mAFNum;
 	char mdeadval;
-	MonsterData *MData;
+	const MonsterData *MData;
 	// A TRN file contains a sequence of colour transitions, represented
 	// as indexes into a palette. (a 256 byte array of palette indices)
 	BYTE *trans_file;
@@ -646,7 +646,7 @@ typedef struct MonsterStruct { // note: missing field _mAFNum
 	unsigned char mlid;
 	const char *mName;
 	CMonster *MType;
-	MonsterData *MData;
+	const MonsterData *MData;
 } MonsterStruct;
 
 typedef struct UniqMonstStruct {
