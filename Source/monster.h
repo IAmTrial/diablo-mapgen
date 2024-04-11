@@ -9,6 +9,7 @@
 #include "defs.h"
 #include "structs.h"
 #include "types.h"
+#include "Source/universe/universe.h"
 
 extern int monstkills[MAXMONSTERS];
 extern int monstactive[MAXMONSTERS];
@@ -26,7 +27,7 @@ void ClrAllMonsters();
 void monster_some_crypt();
 #endif
 void PlaceGroup(int mtype, int num, int leaderf, int leader);
-void InitMonsters();
+void InitMonsters(Universe& universe);
 void SetMapMonsters(BYTE *pMap, int startx, int starty);
 void DeleteMonster(int i);
 int AddMonster(int x, int y, int dir, int mtype, BOOL InMap);

@@ -10,16 +10,9 @@
 
 #include "structs.h"
 #include "types.h"
+#include "Source/universe/universe.h"
 
-extern int diabquad1x;
-extern int diabquad1y;
-extern int diabquad2x;
-extern int diabquad2y;
-extern int diabquad3x;
-extern int diabquad3y;
-extern int diabquad4x;
-extern int diabquad4y;
-std::optional<uint32_t> CreateL4Dungeon(DWORD rseed, int entry, DungeonMode mode);
+std::optional<uint32_t> CreateL4Dungeon(Universe& universe, DWORD rseed, int entry, DungeonMode mode);
 void DRLG_PreLoadDiabQuads();
 void DRLG_FreeDiabQuads();
 

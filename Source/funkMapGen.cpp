@@ -8,25 +8,26 @@
 #include <sstream>
 #include <vector>
 
-#include "analyzer/gameseed.h"
-#include "analyzer/path.h"
-#include "analyzer/pattern.h"
-#include "analyzer/puzzler.h"
-#include "analyzer/quest.h"
-#include "analyzer/stairs.h"
-#include "analyzer/warp.h"
-#include "drlg_l1.h"
-#include "drlg_l2.h"
-#include "drlg_l3.h"
-#include "drlg_l4.h"
-#include "items.h"
-#include "level.h"
-#include "lighting.h"
-#include "monster.h"
-#include "objects.h"
-#include "quests.h"
-#include "themes.h"
-#include "trigs.h"
+#include "Source/analyzer/gameseed.h"
+#include "Source/analyzer/path.h"
+#include "Source/analyzer/pattern.h"
+#include "Source/analyzer/puzzler.h"
+#include "Source/analyzer/quest.h"
+#include "Source/analyzer/stairs.h"
+#include "Source/analyzer/warp.h"
+#include "Source/drlg_l1.h"
+#include "Source/drlg_l2.h"
+#include "Source/drlg_l3.h"
+#include "Source/drlg_l4.h"
+#include "Source/items.h"
+#include "Source/level.h"
+#include "Source/lighting.h"
+#include "Source/monster.h"
+#include "Source/objects.h"
+#include "Source/quests.h"
+#include "Source/themes.h"
+#include "Source/trigs.h"
+#include "Source/universe/universe.h"
 
 int MonsterItems;
 int ObjectItems;
@@ -141,7 +142,7 @@ void FindStairCordinates()
 	}
 }
 
-void CreateDungeonContent()
+void CreateDungeonContent(Universe& universe)
 {
 	InitDungeonMonsters();
 
@@ -150,16 +151,16 @@ void CreateDungeonContent()
 	HoldThemeRooms();
 	GetRndSeed();
 
-	InitMonsters();
+	InitMonsters(universe);
 	GetRndSeed();
 
-	InitObjects();
+	InitObjects(universe);
 
 	InitItems();
 	CreateThemeRooms();
 }
 
-std::optional<uint32_t> CreateDungeon(DungeonMode mode)
+std::optional<uint32_t> CreateDungeon(Universe& universe, DungeonMode mode)
 {
 	uint32_t lseed = glSeedTbl[currlevel];
 	std::optional<uint32_t> levelSeed = std::nullopt;
@@ -170,13 +171,13 @@ std::optional<uint32_t> CreateDungeon(DungeonMode mode)
 	if (leveltype == DTYPE_CAVES)
 		levelSeed = CreateL3Dungeon(lseed, 0, mode);
 	if (leveltype == DTYPE_HELL)
-		levelSeed = CreateL4Dungeon(lseed, 0, mode);
+		levelSeed = CreateL4Dungeon(universe, lseed, 0, mode);
 
 	if (mode == DungeonMode::Full || mode == DungeonMode::NoContent || mode == DungeonMode::BreakOnFailureOrNoContent) {
 		InitTriggers();
 
 		if (mode != DungeonMode::NoContent && mode != DungeonMode::BreakOnFailureOrNoContent)
-			CreateDungeonContent();
+			CreateDungeonContent(universe);
 
 		if (currlevel == 15) {
 			// Locate Lazarus warp point
@@ -401,6 +402,8 @@ int main(int argc, char **argv)
 
 	ProgressseedMicros = micros();
 	for (uint32_t seedIndex = 0; seedIndex < Config.seedCount; seedIndex++) {
+		Universe universe;
+
 		uint32_t seed = seedIndex + Config.startSeed;
 		if (!SeedsFromFile.empty()) {
 			seed = SeedsFromFile[seed];
@@ -416,7 +419,7 @@ int main(int argc, char **argv)
 				continue;
 
 			InitiateLevel(level);
-			std::optional<uint32_t> levelSeed = CreateDungeon(scanner->getDungeonMode());
+			std::optional<uint32_t> levelSeed = CreateDungeon(universe, scanner->getDungeonMode());
 			if (!scanner->levelMatches(levelSeed))
 				continue;
 

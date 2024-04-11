@@ -13,15 +13,8 @@
 #include "Source/drlg_l1.h"
 #include "Source/engine.h"
 #include "Source/quests.h"
+#include "Source/universe/universe.h"
 
-int diabquad1x;
-int diabquad1y;
-int diabquad2x;
-int diabquad2y;
-int diabquad3x;
-int diabquad3y;
-int diabquad4x;
-int diabquad4y;
 #ifndef SPAWN
 BOOL hallok[20];
 int l4holdx;
@@ -1323,23 +1316,23 @@ void DRLG_FreeDiabQuads()
 	mem_free_dbg(lpSetPiece4);
 }
 
-void DRLG_LoadDiabQuads(BOOL preflag)
+void DRLG_LoadDiabQuads(Universe& universe, BOOL preflag)
 {
-	diabquad1x = 4 + l4holdx;
-	diabquad1y = 4 + l4holdy;
-	DRLG_L4SetRoom(lpSetPiece1, diabquad1x, diabquad1y);
+	universe.diabquad1x = 4 + l4holdx;
+	universe.diabquad1y = 4 + l4holdy;
+	DRLG_L4SetRoom(lpSetPiece1, universe.diabquad1x, universe.diabquad1y);
 
-	diabquad2x = 27 - l4holdx;
-	diabquad2y = 1 + l4holdy;
-	DRLG_L4SetRoom(lpSetPiece2, diabquad2x, diabquad2y);
+	universe.diabquad2x = 27 - l4holdx;
+	universe.diabquad2y = 1 + l4holdy;
+	DRLG_L4SetRoom(lpSetPiece2, universe.diabquad2x, universe.diabquad2y);
 
-	diabquad3x = 1 + l4holdx;
-	diabquad3y = 27 - l4holdy;
-	DRLG_L4SetRoom(lpSetPiece3, diabquad3x, diabquad3y);
+	universe.diabquad3x = 1 + l4holdx;
+	universe.diabquad3y = 27 - l4holdy;
+	DRLG_L4SetRoom(lpSetPiece3, universe.diabquad3x, universe.diabquad3y);
 
-	diabquad4x = 28 - l4holdx;
-	diabquad4y = 28 - l4holdy;
-	DRLG_L4SetRoom(lpSetPiece4, diabquad4x, diabquad4y);
+	universe.diabquad4x = 28 - l4holdx;
+	universe.diabquad4y = 28 - l4holdy;
+	DRLG_L4SetRoom(lpSetPiece4, universe.diabquad4x, universe.diabquad4y);
 }
 
 static BOOL DRLG_L4PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int ldir)
@@ -1609,7 +1602,7 @@ void DRLG_L4GeneralFix()
 	}
 }
 
-std::optional<uint32_t> DRLG_L4(int entry, DungeonMode mode)
+std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 {
 	int i, j, spi, spj, ar;
 	BOOL doneflag;
@@ -1650,7 +1643,7 @@ std::optional<uint32_t> DRLG_L4(int entry, DungeonMode mode)
 			DRLG_L4SetSPRoom(SP4x1, SP4y1);
 		}
 		if (currlevel == 16) {
-			DRLG_LoadDiabQuads(TRUE);
+			DRLG_LoadDiabQuads(universe, TRUE);
 		}
 		if (QuestStatus(Q_WARLORD)) {
 			if (entry == ENTRY_MAIN) {
@@ -1771,7 +1764,7 @@ std::optional<uint32_t> DRLG_L4(int entry, DungeonMode mode)
 				pdungeon[i][j] = GetDungeon(i, j);
 			}
 		}
-		DRLG_LoadDiabQuads(FALSE);
+		DRLG_LoadDiabQuads(universe, FALSE);
 	}
 
 	return levelSeed;
@@ -1876,7 +1869,7 @@ static void DRLG_L4Pass3()
 	}
 }
 
-std::optional<uint32_t> CreateL4Dungeon(DWORD rseed, int entry, DungeonMode mode)
+std::optional<uint32_t> CreateL4Dungeon(Universe& universe, DWORD rseed, int entry, DungeonMode mode)
 {
 	SetRndSeed(rseed);
 
@@ -1890,7 +1883,7 @@ std::optional<uint32_t> CreateL4Dungeon(DWORD rseed, int entry, DungeonMode mode
 
 	DRLG_InitSetPC();
 	DRLG_LoadL4SP();
-	std::optional<uint32_t> levelSeed = DRLG_L4(entry, mode);
+	std::optional<uint32_t> levelSeed = DRLG_L4(universe, entry, mode);
 	if (mode == DungeonMode::BreakOnFailure || mode == DungeonMode::BreakOnSuccess) {
 		DRLG_FreeL4SP();
 		return levelSeed;

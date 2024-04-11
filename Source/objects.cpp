@@ -17,6 +17,7 @@
 #include "Source/quests.h"
 #include "Source/setmaps.h"
 #include "Source/themes.h"
+#include "Source/universe/universe.h"
 
 int trapid;
 int trapdir;
@@ -737,18 +738,18 @@ void LoadMapObjs(BYTE *pMap, int startx, int starty)
 	InitObjFlag = FALSE;
 }
 
-void AddDiabObjs()
+void AddDiabObjs(Universe& universe)
 {
 	BYTE *lpSetPiece;
 
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * diabquad1x, 2 * diabquad1y, diabquad2x, diabquad2y, 11, 12, 1);
+	LoadMapObjects(lpSetPiece, 2 * universe.diabquad1x, 2 * universe.diabquad1y, universe.diabquad2x, universe.diabquad2y, 11, 12, 1);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab2a.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * diabquad2x, 2 * diabquad2y, diabquad3x, diabquad3y, 11, 11, 2);
+	LoadMapObjects(lpSetPiece, 2 * universe.diabquad2x, 2 * universe.diabquad2y, universe.diabquad3x, universe.diabquad3y, 11, 11, 2);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab3a.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * diabquad3x, 2 * diabquad3y, diabquad4x, diabquad4y, 9, 9, 3);
+	LoadMapObjects(lpSetPiece, 2 * universe.diabquad3x, 2 * universe.diabquad3y, universe.diabquad4x, universe.diabquad4y, 9, 9, 3);
 	mem_free_dbg(lpSetPiece);
 }
 
@@ -955,7 +956,7 @@ void AddLazStand()
 	AddObject(OBJ_STORYCANDLE, xp - 1, yp + 1);
 }
 
-void InitObjects()
+void InitObjects(Universe& universe)
 {
 	int sp_id;
 	BYTE *mem;
@@ -965,7 +966,7 @@ void InitObjects()
 	dword_6DE0E0 = 0;
 #endif
 	if (currlevel == 16) {
-		AddDiabObjs();
+		AddDiabObjs(universe);
 	} else {
 		InitObjFlag = TRUE;
 		GetRndSeed();

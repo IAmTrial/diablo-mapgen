@@ -18,6 +18,7 @@
 #include "Source/quests.h"
 #include "Source/themes.h"
 #include "Source/trigs.h"
+#include "Source/universe/universe.h"
 
 /** Tracks which missile files are already loaded */
 int MissileFileFlag;
@@ -1026,26 +1027,26 @@ void PlaceGroup(int mtype, int num, int leaderf, int leader)
 }
 
 #ifndef SPAWN
-void LoadDiabMonsts()
+void LoadDiabMonsts(Universe& universe)
 {
 	BYTE *lpSetPiece;
 
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * diabquad1x, 2 * diabquad1y);
+	SetMapMonsters(lpSetPiece, 2 * universe.diabquad1x, 2 * universe.diabquad1y);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab2a.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * diabquad2x, 2 * diabquad2y);
+	SetMapMonsters(lpSetPiece, 2 * universe.diabquad2x, 2 * universe.diabquad2y);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab3a.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * diabquad3x, 2 * diabquad3y);
+	SetMapMonsters(lpSetPiece, 2 * universe.diabquad3x, 2 * universe.diabquad3y);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab4a.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * diabquad4x, 2 * diabquad4y);
+	SetMapMonsters(lpSetPiece, 2 * universe.diabquad4x, 2 * universe.diabquad4y);
 	mem_free_dbg(lpSetPiece);
 }
 #endif
 
-void InitMonsters()
+void InitMonsters(Universe& universe)
 {
 	int na, nt;
 	int i, s, t;
@@ -1063,7 +1064,7 @@ void InitMonsters()
 	}
 #ifndef SPAWN
 	if (!setlevel && currlevel == 16)
-		LoadDiabMonsts();
+		LoadDiabMonsts(universe);
 #endif
 	nt = numtrigs;
 	if (currlevel == 15)
