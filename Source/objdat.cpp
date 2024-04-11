@@ -10,7 +10,7 @@
 #include "structs.h"
 
 /** Maps from dun_object_id to object_id. */
-int ObjTypeConv[] = {
+const int ObjTypeConv[] = {
 	0,
 	OBJ_LEVER,
 	OBJ_CRUX1,
@@ -153,7 +153,7 @@ int ObjTypeConv[] = {
 };
 
 /** Contains the data related to each object ID. */
-ObjDataStruct AllObjects[] = {
+const ObjDataStruct AllObjects[] = {
 	// clang-format off
 	// oload, ofindex,   ominlvl, omaxlvl, olvltype,        otheme,                  oquest,     oAnimFlag, oAnimDelay, oAnimLen, oAnimWidth, oSolidFlag, oMissFlag, oLightFlag, oBreak, oSelFlag, oTrapFlag
 	{      1, OFILE_L1BRAZ,    1,       4, DTYPE_CATHEDRAL, THEME_NONE,              -1,                 1,          1,       26,         64, TRUE,       TRUE,      FALSE,           0,        0, FALSE     },
@@ -323,7 +323,7 @@ const char *const ObjMasterLoadList[] = {
 };
 #ifdef HELLFIRE
 /** Maps from object_graphic_id to object CEL name (Hellfire Crypt overwrite). */
-char *ObjCryptLoadList[] = {
+const char *ObjCryptLoadList[] = {
 	"L1Braz",
 	"L5Door",
 	"L5Lever",
@@ -382,7 +382,7 @@ char *ObjCryptLoadList[] = {
 	"LzStand",
 };
 /** Maps from object_graphic_id to object CEL name (Hellfire Hive overwrite). */
-char *ObjHiveLoadList[] = {
+const char *ObjHiveLoadList[] = {
 	"L1Braz",
 	"L1Doors",
 	"Lever",
