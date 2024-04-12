@@ -18,14 +18,6 @@
 #include "Source/quests.h"
 #include "Source/universe/universe.h"
 
-/** This will be true if a lava pool has been generated for the level */
-
-BOOLEAN lavapool;
-/** unused */
-int abyssx;
-int lockoutcnt;
-BOOLEAN lockout[DMAXX][DMAXY];
-
 /**
  * A lookup table for the 16 possible patterns of a 2x2 area,
  * where each cell either contains a SW wall or it doesn't.
@@ -1542,9 +1534,9 @@ static BOOL DRLG_L3Spawn(int x, int y, int *totarea)
 /**
  * Flood fills dirt and wall tiles looking for
  * an area of at most 40 tiles and disconnected from the map edge.
- * If it finds one, converts it to lava tiles and sets lavapool to TRUE.
+ * If it finds one, converts it to lava tiles and sets universe.lavapool to TRUE.
  */
-static void DRLG_L3Pool()
+static void DRLG_L3Pool(Universe& universe)
 {
 	int i, j, dunx, duny, totarea, poolchance;
 	BOOL found;
@@ -1590,7 +1582,7 @@ static void DRLG_L3Pool()
 							if (k != 0 && k <= 37) {
 								SetDungeon(i, j, k);
 							}
-							lavapool = TRUE;
+							universe.lavapool = TRUE;
 						}
 					}
 				}
@@ -2289,21 +2281,21 @@ void FixL3HallofHeroes()
 	}
 }
 
-void DRLG_L3LockRec(int x, int y)
+void DRLG_L3LockRec(Universe& universe, int x, int y)
 {
-	if (!lockout[x][y]) {
+	if (!universe.lockout[x][y]) {
 		return;
 	}
 
-	lockout[x][y] = FALSE;
-	lockoutcnt++;
-	DRLG_L3LockRec(x, y - 1);
-	DRLG_L3LockRec(x, y + 1);
-	DRLG_L3LockRec(x - 1, y);
-	DRLG_L3LockRec(x + 1, y);
+	universe.lockout[x][y] = FALSE;
+	universe.lockoutcnt++;
+	DRLG_L3LockRec(universe, x, y - 1);
+	DRLG_L3LockRec(universe, x, y + 1);
+	DRLG_L3LockRec(universe, x - 1, y);
+	DRLG_L3LockRec(universe, x + 1, y);
 }
 
-BOOL DRLG_L3Lockout()
+BOOL DRLG_L3Lockout(Universe& universe)
 {
 	int i, j, t, fx, fy;
 
@@ -2311,28 +2303,28 @@ BOOL DRLG_L3Lockout()
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
 			if (GetDungeon(i, j) != 0) {
-				lockout[i][j] = TRUE;
+				universe.lockout[i][j] = TRUE;
 				fx = i;
 				fy = j;
 				t++;
 			} else {
-				lockout[i][j] = FALSE;
+				universe.lockout[i][j] = FALSE;
 			}
 		}
 	}
 
-	lockoutcnt = 0;
-	DRLG_L3LockRec(fx, fy);
+	universe.lockoutcnt = 0;
+	DRLG_L3LockRec(universe, fx, fy);
 
-	return t == lockoutcnt;
+	return t == universe.lockoutcnt;
 }
 
-static std::optional<uint32_t> DRLG_L3(int entry, DungeonMode mode)
+static std::optional<uint32_t> DRLG_L3(Universe& universe, int entry, DungeonMode mode)
 {
 	int x1, y1, x2, y2, i, j;
 	BOOL found, genok;
 
-	lavapool = FALSE;
+	universe.lavapool = FALSE;
 
 	std::optional<uint32_t> levelSeed = std::nullopt;
 	do {
@@ -2362,7 +2354,7 @@ static std::optional<uint32_t> DRLG_L3(int entry, DungeonMode mode)
 				DRLG_L3FillDiags();
 				DRLG_L3Edges();
 				if (DRLG_L3GetFloorArea() >= 600) {
-					found = DRLG_L3Lockout();
+					found = DRLG_L3Lockout(universe);
 				} else {
 					found = FALSE;
 				}
@@ -2469,20 +2461,20 @@ static std::optional<uint32_t> DRLG_L3(int entry, DungeonMode mode)
 #ifdef HELLFIRE
 		if (currlevel < 17) {
 #endif
-			DRLG_L3Pool();
+			DRLG_L3Pool(universe);
 #ifdef HELLFIRE
 		} else {
-			lavapool += drlg_l3_hive_rnd_piece(byte_48A998, 30);
-			lavapool += drlg_l3_hive_rnd_piece(byte_48A9C8, 40);
-			lavapool += drlg_l3_hive_rnd_piece(byte_48A948, 50);
-			lavapool += drlg_l3_hive_rnd_piece(byte_48A970, 60);
-			if (lavapool < 3)
-				lavapool = FALSE;
+			universe.lavapool += drlg_l3_hive_rnd_piece(byte_48A998, 30);
+			universe.lavapool += drlg_l3_hive_rnd_piece(byte_48A9C8, 40);
+			universe.lavapool += drlg_l3_hive_rnd_piece(byte_48A948, 50);
+			universe.lavapool += drlg_l3_hive_rnd_piece(byte_48A970, 60);
+			if (universe.lavapool < 3)
+				universe.lavapool = FALSE;
 		}
 #endif
-		if (mode == DungeonMode::BreakOnFailure && !lavapool)
+		if (mode == DungeonMode::BreakOnFailure && !universe.lavapool)
 			return std::nullopt;
-	} while (!lavapool);
+	} while (!universe.lavapool);
 
 	if (mode == DungeonMode::BreakOnSuccess)
 		return levelSeed;
@@ -2731,7 +2723,7 @@ static void DRLG_L3Pass3()
 	}
 }
 
-std::optional<uint32_t> CreateL3Dungeon(DWORD rseed, int entry, DungeonMode mode)
+std::optional<uint32_t> CreateL3Dungeon(Universe& universe, DWORD rseed, int entry, DungeonMode mode)
 {
 	int i, j;
 
@@ -2742,7 +2734,7 @@ std::optional<uint32_t> CreateL3Dungeon(DWORD rseed, int entry, DungeonMode mode
 	dmaxy = 96;
 	DRLG_InitTrans();
 	DRLG_InitSetPC();
-	std::optional<uint32_t> levelSeed = DRLG_L3(entry, mode);
+	std::optional<uint32_t> levelSeed = DRLG_L3(universe, entry, mode);
 	if (mode == DungeonMode::BreakOnFailure || mode == DungeonMode::BreakOnSuccess)
 		return levelSeed;
 	DRLG_L3Pass3();
@@ -2804,7 +2796,7 @@ void LoadL3Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 		}
 	}
 
-	abyssx = MAXDUNX; // Unused
+	universe.abyssx = MAXDUNX; // Unused
 	DRLG_L3Pass3();
 	DRLG_Init_Globals();
 	ViewX = 31;

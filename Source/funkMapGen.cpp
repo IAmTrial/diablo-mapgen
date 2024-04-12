@@ -169,7 +169,7 @@ std::optional<uint32_t> CreateDungeon(Universe& universe, DungeonMode mode)
 	if (leveltype == DTYPE_CATACOMBS)
 		levelSeed = CreateL2Dungeon(universe, lseed, 0, mode);
 	if (leveltype == DTYPE_CAVES)
-		levelSeed = CreateL3Dungeon(lseed, 0, mode);
+		levelSeed = CreateL3Dungeon(universe, lseed, 0, mode);
 	if (leveltype == DTYPE_HELL)
 		levelSeed = CreateL4Dungeon(universe, lseed, 0, mode);
 

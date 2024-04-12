@@ -56,6 +56,16 @@ struct Universe {
 	HALLNODE *pHallList;
 #endif  // SPAWN
 
+	// drlg_l3.cpp
+#ifndef SPAWN
+	/** This will be true if a lava pool has been generated for the level */
+	BOOLEAN lavapool;
+	/** unused */
+	int abyssx;
+	int lockoutcnt;
+	BOOLEAN lockout[DMAXX][DMAXY];
+#endif  // SPAWN
+
 	// drlg_l4.h
 	int diabquad1x;
 	int diabquad1y;

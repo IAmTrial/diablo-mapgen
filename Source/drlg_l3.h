@@ -12,7 +12,7 @@
 #include "types.h"
 #include "Source/universe/universe.h"
 
-std::optional<uint32_t> CreateL3Dungeon(DWORD rseed, int entry, DungeonMode mode);
+std::optional<uint32_t> CreateL3Dungeon(Universe& universe, DWORD rseed, int entry, DungeonMode mode);
 void LoadL3Dungeon(Universe& universe, const char *sFileName, int vx, int vy);
 void LoadPreL3Dungeon(const char *sFileName, int vx, int vy);
 
