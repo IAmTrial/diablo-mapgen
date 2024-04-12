@@ -10,6 +10,7 @@
 #include "Source/objects.h"
 #include "Source/path.h"
 #include "Source/quests.h"
+#include "Source/universe/universe.h"
 
 namespace {
 
@@ -301,6 +302,8 @@ bool IsGoodLevel()
 bool Ended;
 
 }
+
+ScannerPath::ScannerPath(Universe& universe) : Scanner(universe) {}
 
 bool ScannerPath::skipSeed()
 {

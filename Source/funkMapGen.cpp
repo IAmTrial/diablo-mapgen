@@ -47,7 +47,7 @@ constexpr uint64_t ProgressInterval = 10 * 1000 * 1000;
 BYTE previousLevelType = DTYPE_NONE;
 Scanner *scanner;
 
-void InitEngine()
+void InitEngine(Universe& universe)
 {
 	gnDifficulty = DIFF_NORMAL;
 	leveltype = DTYPE_NONE;
@@ -56,21 +56,21 @@ void InitEngine()
 	DRLG_PreLoadDiabQuads();
 
 	if (Config.scanner == Scanners::None) {
-		scanner = new Scanner();
+		scanner = new Scanner(universe);
 	} else if (Config.scanner == Scanners::Path) {
-		scanner = new ScannerPath();
+		scanner = new ScannerPath(universe);
 	} else if (Config.scanner == Scanners::Quest) {
-		scanner = new ScannerQuest();
+		scanner = new ScannerQuest(universe);
 	} else if (Config.scanner == Scanners::Puzzler) {
-		scanner = new ScannerPuzzler();
+		scanner = new ScannerPuzzler(universe);
 	} else if (Config.scanner == Scanners::Warp) {
-		scanner = new ScannerWarp();
+		scanner = new ScannerWarp(universe);
 	} else if (Config.scanner == Scanners::Stairs) {
-		scanner = new ScannerStairs();
+		scanner = new ScannerStairs(universe);
 	} else if (Config.scanner == Scanners::Pattern) {
-		scanner = new ScannerPattern();
+		scanner = new ScannerPattern(universe);
 	} else if (Config.scanner == Scanners::GameSeed) {
-		scanner = new ScannerGameSeed();
+		scanner = new ScannerGameSeed(universe);
 	}
 }
 
@@ -396,13 +396,14 @@ void InitDungeonMonsters()
 
 int main(int argc, char **argv)
 {
+	Universe universe;
+
 	ParseArguments(argc, argv);
-	InitEngine();
+	InitEngine(universe);
 	readFromFile();
 
 	ProgressseedMicros = micros();
 	for (uint32_t seedIndex = 0; seedIndex < Config.seedCount; seedIndex++) {
-		Universe universe;
 
 		uint32_t seed = seedIndex + Config.startSeed;
 		if (!SeedsFromFile.empty()) {

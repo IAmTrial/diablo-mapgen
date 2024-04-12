@@ -8,6 +8,7 @@
 #include "Source/engine.h"
 #include "Source/gendung.h"
 #include "Source/quests.h"
+#include "Source/universe/universe.h"
 
 #define TEMPLATEX 8
 #define TEMPLATEY 9
@@ -218,6 +219,8 @@ const uint8_t GROOBO16[TEMPLATEX][TEMPLATEY] = {
     {   0,  0,  0,  0,  0,  0,  0,116,125 },
 	// clang-format on
 };
+
+ScannerPattern::ScannerPattern(Universe& universe) : Scanner(universe) {}
 
 bool UseSolidScanner(int level)
 {

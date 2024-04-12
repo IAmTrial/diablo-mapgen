@@ -8,6 +8,7 @@
 #include "Source/items.h"
 #include "Source/monster.h"
 #include "Source/objects.h"
+#include "Source/universe/universe.h"
 
 void CreateItemsFromObject(int oid)
 {
@@ -122,6 +123,8 @@ void DropAllItems()
 		CreateItemsFromObject(oid);
 	}
 }
+
+ScannerPuzzler::ScannerPuzzler(Universe& universe) : Scanner(universe) {}
 
 bool ScannerPuzzler::skipLevel(int level)
 {

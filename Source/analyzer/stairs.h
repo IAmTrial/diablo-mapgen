@@ -1,9 +1,12 @@
 #pragma once
 
-#include "../funkMapGen.h"
+#include "Source/funkMapGen.h"
+#include "Source/universe/universe.h"
 
 class ScannerStairs : public Scanner {
 public:
+	explicit ScannerStairs(Universe& universe);
+
 	DungeonMode getDungeonMode() override;
 	bool skipSeed() override;
 	bool skipLevel(int level) override;

@@ -5,6 +5,9 @@
 #include "types.h"
 #include "Source/funkMapGen.h"
 #include "Source/quests.h"
+#include "Source/universe/universe.h"
+
+ScannerQuest::ScannerQuest(Universe& universe) : Scanner(universe) {}
 
 bool ScannerQuest::skipSeed()
 {

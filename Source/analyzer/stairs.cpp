@@ -2,12 +2,12 @@
 
 #include <iostream>
 
-#include "../../types.h"
-
-#include "../funkMapGen.h"
-#include "../objects.h"
-#include "../path.h"
-#include "../quests.h"
+#include "types.h"
+#include "Source/funkMapGen.h"
+#include "Source/objects.h"
+#include "Source/path.h"
+#include "Source/quests.h"
+#include "Source/universe/universe.h"
 
 namespace {
 
@@ -68,6 +68,8 @@ int GetDistance(Point start, Point end, int maxDistance)
 bool Failed;
 
 }
+
+ScannerStairs::ScannerStairs(Universe& universe) : Scanner(universe) {}
 
 DungeonMode ScannerStairs::getDungeonMode()
 {

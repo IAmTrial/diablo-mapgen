@@ -8,6 +8,9 @@
 #include "types.h"
 #include "Source/funkMapGen.h"
 #include "Source/monster.h"
+#include "Source/universe/universe.h"
+
+ScannerGameSeed::ScannerGameSeed(Universe& universe) : Scanner(universe) {}
 
 DungeonMode ScannerGameSeed::getDungeonMode()
 {

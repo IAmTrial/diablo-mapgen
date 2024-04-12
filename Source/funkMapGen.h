@@ -31,8 +31,11 @@ struct Configuration {
 extern Configuration Config;
 
 class Scanner {
+protected:
+	Universe& universe;
+
 public:
-	virtual void init() {};
+	explicit Scanner(Universe& universe_) : universe(universe_) {}
 
 	virtual DungeonMode getDungeonMode()
 	{
@@ -54,9 +57,7 @@ public:
 		return true;
 	};
 
-	virtual ~Scanner()
-	{
-	}
+	virtual ~Scanner() = default;
 };
 
 extern int MonsterItems;

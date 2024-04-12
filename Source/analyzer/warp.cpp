@@ -6,6 +6,9 @@
 
 #include "types.h"
 #include "Source/funkMapGen.h"
+#include "Source/universe/universe.h"
+
+ScannerWarp::ScannerWarp(Universe& universe) : Scanner(universe) {}
 
 bool ScannerWarp::skipLevel(int level)
 {
