@@ -159,7 +159,7 @@ void LoadSetMap(Universe& universe)
 			quests[Q_SKELKING]._qactive = QUEST_ACTIVE;
 			quests[Q_SKELKING]._qvar1 = 1;
 		}
-		LoadPreL1Dungeon("Levels\\L1Data\\SklKng1.DUN", 83, 45);
+		LoadPreL1Dungeon(universe, "Levels\\L1Data\\SklKng1.DUN", 83, 45);
 		LoadL1Dungeon(universe, "Levels\\L1Data\\SklKng2.DUN", 83, 45);
 		DRLG_AreaTrans(sizeof(SkelKingTrans1) / 4, &SkelKingTrans1[0]);
 		DRLG_ListTrans(sizeof(SkelKingTrans2) / 4, &SkelKingTrans2[0]);
@@ -180,7 +180,7 @@ void LoadSetMap(Universe& universe)
 		InitSChambTriggers();
 		break;
 	case SL_MAZE:
-		LoadPreL1Dungeon("Levels\\L1Data\\Lv1MazeA.DUN", 20, 50);
+		LoadPreL1Dungeon(universe, "Levels\\L1Data\\Lv1MazeA.DUN", 20, 50);
 		LoadL1Dungeon(universe, "Levels\\L1Data\\Lv1MazeB.DUN", 20, 50);
 		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
 		DRLG_SetMapTrans("Levels\\L1Data\\Lv1MazeA.DUN");
@@ -198,7 +198,7 @@ void LoadSetMap(Universe& universe)
 		} else if (quests[Q_BETRAYER]._qactive == QUEST_ACTIVE) {
 			quests[Q_BETRAYER]._qvar2 = 3;
 		}
-		LoadPreL1Dungeon("Levels\\L1Data\\Vile1.DUN", 35, 36);
+		LoadPreL1Dungeon(universe, "Levels\\L1Data\\Vile1.DUN", 35, 36);
 		LoadL1Dungeon(universe, "Levels\\L1Data\\Vile2.DUN", 35, 36);
 		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
 		AddVileObjs();

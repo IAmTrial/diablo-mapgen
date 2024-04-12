@@ -16,26 +16,6 @@
 #include "Source/quests.h"
 #include "Source/universe/universe.h"
 
-/** Represents a tile ID map of twice the size, repeating each tile of the original map in blocks of 4. */
-BYTE L5dungeon[80][80];
-BYTE L5dflags[DMAXX][DMAXY];
-/** Specifies whether a single player quest DUN has been loaded. */
-BOOL L5setloadflag;
-/** Specifies whether to generate a horizontal room at position 1 in the Cathedral. */
-int HR1;
-/** Specifies whether to generate a horizontal room at position 2 in the Cathedral. */
-int HR2;
-/** Specifies whether to generate a horizontal room at position 3 in the Cathedral. */
-int HR3;
-/** Specifies whether to generate a vertical room at position 1 in the Cathedral. */
-BOOL VR1;
-/** Specifies whether to generate a vertical room at position 2 in the Cathedral. */
-BOOL VR2;
-/** Specifies whether to generate a vertical room at position 3 in the Cathedral. */
-BOOL VR3;
-/** Contains the contents of the single player quest DUN file. */
-BYTE *L5pSetPiece;
-
 /** Contains shadows for 2x2 blocks of base tile IDs in the Cathedral. */
 const ShadowStruct SPATS[37] = {
 	// clang-format off
@@ -524,10 +504,10 @@ void DRLG_InitL5Vals()
 }
 #endif
 
-static void DRLG_PlaceDoor(int x, int y)
+static void DRLG_PlaceDoor(Universe& universe, int x, int y)
 {
-	if ((L5dflags[x][y] & DLRG_PROTECTED) == 0) {
-		BYTE df = L5dflags[x][y] & 0x7F;
+	if ((universe.L5dflags[x][y] & DLRG_PROTECTED) == 0) {
+		BYTE df = universe.L5dflags[x][y] & 0x7F;
 		BYTE c = GetDungeon(x, y);
 
 		if (df == 1) {
@@ -580,7 +560,7 @@ static void DRLG_PlaceDoor(int x, int y)
 		}
 	}
 
-	L5dflags[x][y] = DLRG_PROTECTED;
+	universe.L5dflags[x][y] = DLRG_PROTECTED;
 }
 
 #ifdef HELLFIRE
@@ -875,7 +855,7 @@ void drlg_l1_crypt_lavafloor()
 }
 #endif
 
-static void DRLG_L1Shadows()
+static void DRLG_L1Shadows(Universe& universe)
 {
 	int x, y, i;
 	BYTE sd[2][2];
@@ -899,11 +879,11 @@ static void DRLG_L1Shadows()
 					if (SPATS[i].s3 && SPATS[i].s3 != sd[1][0])
 						patflag = FALSE;
 					if (patflag == TRUE) {
-						if (SPATS[i].nv1 && !L5dflags[x - 1][y - 1])
+						if (SPATS[i].nv1 && !universe.L5dflags[x - 1][y - 1])
 							SetDungeon(x - 1, y - 1, SPATS[i].nv1);
-						if (SPATS[i].nv2 && !L5dflags[x][y - 1])
+						if (SPATS[i].nv2 && !universe.L5dflags[x][y - 1])
 							SetDungeon(x, y - 1, SPATS[i].nv2);
-						if (SPATS[i].nv3 && !L5dflags[x - 1][y])
+						if (SPATS[i].nv3 && !universe.L5dflags[x - 1][y])
 							SetDungeon(x - 1, y, SPATS[i].nv3);
 					}
 				}
@@ -913,7 +893,7 @@ static void DRLG_L1Shadows()
 
 	for (y = 1; y < DMAXY; y++) {
 		for (x = 1; x < DMAXX; x++) {
-			if (GetDungeon(x - 1, y) == 139 && !L5dflags[x - 1][y]) {
+			if (GetDungeon(x - 1, y) == 139 && !universe.L5dflags[x - 1][y]) {
 				tnv3 = 139;
 				if (GetDungeon(x, y) == 29)
 					tnv3 = 141;
@@ -929,7 +909,7 @@ static void DRLG_L1Shadows()
 					tnv3 = 141;
 				SetDungeon(x - 1, y, tnv3);
 			}
-			if (GetDungeon(x - 1, y) == 149 && !L5dflags[x - 1][y]) {
+			if (GetDungeon(x - 1, y) == 149 && !universe.L5dflags[x - 1][y]) {
 				tnv3 = 149;
 				if (GetDungeon(x, y) == 29)
 					tnv3 = 153;
@@ -945,7 +925,7 @@ static void DRLG_L1Shadows()
 					tnv3 = 153;
 				SetDungeon(x - 1, y, tnv3);
 			}
-			if (GetDungeon(x - 1, y) == 148 && !L5dflags[x - 1][y]) {
+			if (GetDungeon(x - 1, y) == 148 && !universe.L5dflags[x - 1][y]) {
 				tnv3 = 148;
 				if (GetDungeon(x, y) == 29)
 					tnv3 = 154;
@@ -965,7 +945,7 @@ static void DRLG_L1Shadows()
 	}
 }
 
-static int DRLG_PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int noquad, int ldir)
+static int DRLG_PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int noquad, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, found, t;
 	BOOL abort;
@@ -1021,7 +1001,7 @@ static int DRLG_PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, in
 				for (xx = 0; xx < sw && abort == TRUE; xx++) {
 					if (miniset[ii] && GetDungeon(xx + sx, sy + yy) != miniset[ii])
 						abort = FALSE;
-					if (L5dflags[xx + sx][sy + yy])
+					if (universe.L5dflags[xx + sx][sy + yy])
 						abort = FALSE;
 					ii++;
 				}
@@ -1079,14 +1059,14 @@ static int DRLG_PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, in
 		return 3;
 }
 
-static void DRLG_L1Floor()
+static void DRLG_L1Floor(Universe& universe)
 {
 	int i, j;
 	LONG rv;
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (L5dflags[i][j] == 0 && GetDungeon(i, j) == 13) {
+			if (universe.L5dflags[i][j] == 0 && GetDungeon(i, j) == 13) {
 				rv = random_(0, 3);
 
 				if (rv == 1)
@@ -1184,26 +1164,26 @@ static void DRLG_L1Pass3()
 	}
 }
 
-static void DRLG_LoadL1SP()
+static void DRLG_LoadL1SP(Universe& universe)
 {
-	L5setloadflag = FALSE;
+	universe.L5setloadflag = FALSE;
 	if (QuestStatus(Q_BUTCHER)) {
-		L5pSetPiece = LoadFileInMem("Levels\\L1Data\\rnd6.DUN", NULL);
-		L5setloadflag = TRUE;
+		universe.L5pSetPiece = LoadFileInMem("Levels\\L1Data\\rnd6.DUN", NULL);
+		universe.L5setloadflag = TRUE;
 	}
 	if (QuestStatus(Q_SKELKING) && gbMaxPlayers == 1) {
-		L5pSetPiece = LoadFileInMem("Levels\\L1Data\\SKngDO.DUN", NULL);
-		L5setloadflag = TRUE;
+		universe.L5pSetPiece = LoadFileInMem("Levels\\L1Data\\SKngDO.DUN", NULL);
+		universe.L5setloadflag = TRUE;
 	}
 	if (QuestStatus(Q_LTBANNER)) {
-		L5pSetPiece = LoadFileInMem("Levels\\L1Data\\Banner2.DUN", NULL);
-		L5setloadflag = TRUE;
+		universe.L5pSetPiece = LoadFileInMem("Levels\\L1Data\\Banner2.DUN", NULL);
+		universe.L5setloadflag = TRUE;
 	}
 }
 
-static void DRLG_FreeL1SP()
+static void DRLG_FreeL1SP(Universe& universe)
 {
-	MemFreeDbg(L5pSetPiece);
+	MemFreeDbg(universe.L5pSetPiece);
 }
 
 void DRLG_Init_Globals()
@@ -1287,7 +1267,7 @@ void LoadL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
 			SetDungeon(i, j, 22);
-			L5dflags[i][j] = 0;
+			universe.L5dflags[i][j] = 0;
 		}
 	}
 
@@ -1301,7 +1281,7 @@ void LoadL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 		for (i = 0; i < rw; i++) {
 			if (*lm != 0) {
 				SetDungeon(i, j, *lm);
-				L5dflags[i][j] |= DLRG_PROTECTED;
+				universe.L5dflags[i][j] |= DLRG_PROTECTED;
 			} else {
 				SetDungeon(i, j, 13);
 			}
@@ -1309,7 +1289,7 @@ void LoadL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 		}
 	}
 
-	DRLG_L1Floor();
+	DRLG_L1Floor(universe);
 	ViewX = vx;
 	ViewY = vy;
 	DRLG_L1Pass3();
@@ -1319,7 +1299,7 @@ void LoadL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 	mem_free_dbg(pLevelMap);
 }
 
-void LoadPreL1Dungeon(const char *sFileName, int vx, int vy)
+void LoadPreL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
@@ -1334,7 +1314,7 @@ void LoadPreL1Dungeon(const char *sFileName, int vx, int vy)
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
 			SetDungeon(i, j, 22);
-			L5dflags[i][j] = 0;
+			universe.L5dflags[i][j] = 0;
 		}
 	}
 
@@ -1348,7 +1328,7 @@ void LoadPreL1Dungeon(const char *sFileName, int vx, int vy)
 		for (i = 0; i < rw; i++) {
 			if (*lm != 0) {
 				SetDungeon(i, j, *lm);
-				L5dflags[i][j] |= DLRG_PROTECTED;
+				universe.L5dflags[i][j] |= DLRG_PROTECTED;
 			} else {
 				SetDungeon(i, j, 13);
 			}
@@ -1356,7 +1336,7 @@ void LoadPreL1Dungeon(const char *sFileName, int vx, int vy)
 		}
 	}
 
-	DRLG_L1Floor();
+	DRLG_L1Floor(universe);
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
@@ -1368,25 +1348,25 @@ void LoadPreL1Dungeon(const char *sFileName, int vx, int vy)
 }
 #endif
 
-static void InitL5Dungeon()
+static void InitL5Dungeon(Universe& universe)
 {
 	int i, j;
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
 			SetDungeon(i, j, 0);
-			L5dflags[i][j] = 0;
+			universe.L5dflags[i][j] = 0;
 		}
 	}
 }
 
-static void L5ClearFlags()
+static void L5ClearFlags(Universe& universe)
 {
 	int i, j;
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			L5dflags[i][j] &= 0xBF;
+			universe.L5dflags[i][j] &= 0xBF;
 		}
 	}
 }
@@ -1472,7 +1452,7 @@ static void L5roomGen(int x, int y, int w, int h, int dir)
 	}
 }
 
-static void L5firstRoom()
+static void L5firstRoom(Universe& universe)
 {
 	int ys, ye, y;
 	int xs, xe, x;
@@ -1481,20 +1461,20 @@ static void L5firstRoom()
 		ys = 1;
 		ye = DMAXY - 1;
 
-		VR1 = random_(0, 2);
-		VR2 = random_(0, 2);
-		VR3 = random_(0, 2);
+		universe.VR1 = random_(0, 2);
+		universe.VR2 = random_(0, 2);
+		universe.VR3 = random_(0, 2);
 
-		if (VR1 + VR3 <= 1)
-			VR2 = 1;
-		if (VR1)
+		if (universe.VR1 + universe.VR3 <= 1)
+			universe.VR2 = 1;
+		if (universe.VR1)
 			L5drawRoom(15, 1, 10, 10);
 		else
 			ys = 18;
 
-		if (VR2)
+		if (universe.VR2)
 			L5drawRoom(15, 15, 10, 10);
-		if (VR3)
+		if (universe.VR3)
 			L5drawRoom(15, 29, 10, 10);
 		else
 			ye = 22;
@@ -1508,34 +1488,34 @@ static void L5firstRoom()
 			SetDungeon(22, y, 1);
 		}
 
-		if (VR1)
+		if (universe.VR1)
 			L5roomGen(15, 1, 10, 10, 0);
-		if (VR2)
+		if (universe.VR2)
 			L5roomGen(15, 15, 10, 10, 0);
-		if (VR3)
+		if (universe.VR3)
 			L5roomGen(15, 29, 10, 10, 0);
 
-		HR3 = 0;
-		HR2 = 0;
-		HR1 = 0;
+		universe.HR3 = 0;
+		universe.HR2 = 0;
+		universe.HR1 = 0;
 	} else {
 		xs = 1;
 		xe = DMAXX - 1;
 
-		HR1 = random_(0, 2);
-		HR2 = random_(0, 2);
-		HR3 = random_(0, 2);
+		universe.HR1 = random_(0, 2);
+		universe.HR2 = random_(0, 2);
+		universe.HR3 = random_(0, 2);
 
-		if (HR1 + HR3 <= 1)
-			HR2 = 1;
-		if (HR1)
+		if (universe.HR1 + universe.HR3 <= 1)
+			universe.HR2 = 1;
+		if (universe.HR1)
 			L5drawRoom(1, 15, 10, 10);
 		else
 			xs = 18;
 
-		if (HR2)
+		if (universe.HR2)
 			L5drawRoom(15, 15, 10, 10);
-		if (HR3)
+		if (universe.HR3)
 			L5drawRoom(29, 15, 10, 10);
 		else
 			xe = 22;
@@ -1549,16 +1529,16 @@ static void L5firstRoom()
 			SetDungeon(x, 22, 1);
 		}
 
-		if (HR1)
+		if (universe.HR1)
 			L5roomGen(1, 15, 10, 10, 1);
-		if (HR2)
+		if (universe.HR2)
 			L5roomGen(15, 15, 10, 10, 1);
-		if (HR3)
+		if (universe.HR3)
 			L5roomGen(29, 15, 10, 10, 1);
 
-		VR3 = 0;
-		VR2 = 0;
-		VR1 = 0;
+		universe.VR3 = 0;
+		universe.VR2 = 0;
+		universe.VR1 = 0;
 	}
 }
 
@@ -1579,7 +1559,7 @@ static int L5GetArea()
 	return rv;
 }
 
-static void L5makeDungeon()
+static void L5makeDungeon(Universe& universe)
 {
 	int i, j;
 	int i_2, j_2;
@@ -1588,15 +1568,15 @@ static void L5makeDungeon()
 		for (i = 0; i < DMAXX; i++) {
 			j_2 = j << 1;
 			i_2 = i << 1;
-			L5dungeon[i_2][j_2] = GetDungeon(i, j);
-			L5dungeon[i_2][j_2 + 1] = GetDungeon(i, j);
-			L5dungeon[i_2 + 1][j_2] = GetDungeon(i, j);
-			L5dungeon[i_2 + 1][j_2 + 1] = GetDungeon(i, j);
+			universe.L5dungeon[i_2][j_2] = GetDungeon(i, j);
+			universe.L5dungeon[i_2][j_2 + 1] = GetDungeon(i, j);
+			universe.L5dungeon[i_2 + 1][j_2] = GetDungeon(i, j);
+			universe.L5dungeon[i_2 + 1][j_2 + 1] = GetDungeon(i, j);
 		}
 	}
 }
 
-static void L5makeDmt()
+static void L5makeDmt(Universe& universe)
 {
 	int i, j, idx, val, dmtx, dmty;
 
@@ -1608,23 +1588,23 @@ static void L5makeDmt()
 
 	for (j = 0, dmty = 1; dmty <= 77; j++, dmty += 2) {
 		for (i = 0, dmtx = 1; dmtx <= 77; i++, dmtx += 2) {
-			val = 8 * L5dungeon[dmtx + 1][dmty + 1]
-			    + 4 * L5dungeon[dmtx][dmty + 1]
-			    + 2 * L5dungeon[dmtx + 1][dmty]
-			    + L5dungeon[dmtx][dmty];
+			val = 8 * universe.L5dungeon[dmtx + 1][dmty + 1]
+			    + 4 * universe.L5dungeon[dmtx][dmty + 1]
+			    + 2 * universe.L5dungeon[dmtx + 1][dmty]
+			    + universe.L5dungeon[dmtx][dmty];
 			idx = L5ConvTbl[val];
 			SetDungeon(i, j, idx);
 		}
 	}
 }
 
-static int L5HWallOk(int i, int j)
+static int L5HWallOk(Universe& universe, int i, int j)
 {
 	int x;
 	BOOL wallok;
 
 	for (x = 1; GetDungeon(i + x, j) == 13; x++) {
-		if (GetDungeon(i + x, j - 1) != 13 || GetDungeon(i + x, j + 1) != 13 || L5dflags[i + x][j])
+		if (GetDungeon(i + x, j - 1) != 13 || GetDungeon(i + x, j + 1) != 13 || universe.L5dflags[i + x][j])
 			break;
 	}
 
@@ -1644,13 +1624,13 @@ static int L5HWallOk(int i, int j)
 		return -1;
 }
 
-static int L5VWallOk(int i, int j)
+static int L5VWallOk(Universe& universe, int i, int j)
 {
 	int y;
 	BOOL wallok;
 
 	for (y = 1; GetDungeon(i, j + y) == 13; y++) {
-		if (GetDungeon(i - 1, j + y) != 13 || GetDungeon(i + 1, j + y) != 13 || L5dflags[i][j + y])
+		if (GetDungeon(i - 1, j + y) != 13 || GetDungeon(i + 1, j + y) != 13 || universe.L5dflags[i][j + y])
 			break;
 	}
 
@@ -1670,7 +1650,7 @@ static int L5VWallOk(int i, int j)
 		return -1;
 }
 
-static void L5HorizWall(int i, int j, char p, int dx)
+static void L5HorizWall(Universe& universe, int i, int j, char p, int dx)
 {
 	int xx;
 	char wt, dt;
@@ -1715,11 +1695,11 @@ static void L5HorizWall(int i, int j, char p, int dx)
 		SetDungeon(i + xx, j, wt);
 	} else {
 		SetDungeon(i + xx, j, 2);
-		L5dflags[i + xx][j] |= DLRG_HDOOR;
+		universe.L5dflags[i + xx][j] |= DLRG_HDOOR;
 	}
 }
 
-static void L5VertWall(int i, int j, char p, int dy)
+static void L5VertWall(Universe& universe, int i, int j, char p, int dy)
 {
 	int yy;
 	char wt, dt;
@@ -1764,53 +1744,53 @@ static void L5VertWall(int i, int j, char p, int dy)
 		SetDungeon(i, j + yy, wt);
 	} else {
 		SetDungeon(i, j + yy, 1);
-		L5dflags[i][j + yy] |= DLRG_VDOOR;
+		universe.L5dflags[i][j + yy] |= DLRG_VDOOR;
 	}
 }
 
-static void L5AddWall()
+static void L5AddWall(Universe& universe)
 {
 	int i, j, x, y;
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (!L5dflags[i][j]) {
+			if (!universe.L5dflags[i][j]) {
 				if (GetDungeon(i, j) == 3 && random_(0, 100) < 100) {
-					x = L5HWallOk(i, j);
+					x = L5HWallOk(universe, i, j);
 					if (x != -1)
-						L5HorizWall(i, j, 2, x);
+						L5HorizWall(universe, i, j, 2, x);
 				}
 				if (GetDungeon(i, j) == 3 && random_(0, 100) < 100) {
-					y = L5VWallOk(i, j);
+					y = L5VWallOk(universe, i, j);
 					if (y != -1)
-						L5VertWall(i, j, 1, y);
+						L5VertWall(universe, i, j, 1, y);
 				}
 				if (GetDungeon(i, j) == 6 && random_(0, 100) < 100) {
-					x = L5HWallOk(i, j);
+					x = L5HWallOk(universe, i, j);
 					if (x != -1)
-						L5HorizWall(i, j, 4, x);
+						L5HorizWall(universe, i, j, 4, x);
 				}
 				if (GetDungeon(i, j) == 7 && random_(0, 100) < 100) {
-					y = L5VWallOk(i, j);
+					y = L5VWallOk(universe, i, j);
 					if (y != -1)
-						L5VertWall(i, j, 4, y);
+						L5VertWall(universe, i, j, 4, y);
 				}
 				if (GetDungeon(i, j) == 2 && random_(0, 100) < 100) {
-					x = L5HWallOk(i, j);
+					x = L5HWallOk(universe, i, j);
 					if (x != -1)
-						L5HorizWall(i, j, 2, x);
+						L5HorizWall(universe, i, j, 2, x);
 				}
 				if (GetDungeon(i, j) == 1 && random_(0, 100) < 100) {
-					y = L5VWallOk(i, j);
+					y = L5VWallOk(universe, i, j);
 					if (y != -1)
-						L5VertWall(i, j, 1, y);
+						L5VertWall(universe, i, j, 1, y);
 				}
 			}
 		}
 	}
 }
 
-static void DRLG_L5GChamber(int sx, int sy, BOOL topflag, BOOL bottomflag, BOOL leftflag, BOOL rightflag)
+static void DRLG_L5GChamber(Universe& universe, int sx, int sy, BOOL topflag, BOOL bottomflag, BOOL leftflag, BOOL rightflag)
 {
 	int i, j;
 
@@ -1858,7 +1838,7 @@ static void DRLG_L5GChamber(int sx, int sy, BOOL topflag, BOOL bottomflag, BOOL 
 	for (j = 1; j < 11; j++) {
 		for (i = 1; i < 11; i++) {
 			SetDungeon(i + sx, j + sy, 13);
-			L5dflags[i + sx][j + sy] |= DLRG_CHAMBER;
+			universe.L5dflags[i + sx][j + sy] |= DLRG_CHAMBER;
 		}
 	}
 
@@ -1885,7 +1865,7 @@ static void DRLG_L5GHall(int x1, int y1, int x2, int y2)
 	}
 }
 
-static void L5tileFix()
+static void L5tileFix(Universe& universe)
 {
 	int i, j;
 
@@ -2014,7 +1994,7 @@ void drlg_l1_crypt_rndset(const BYTE *miniset, int rndper)
 					if (miniset[ii] != 0 && GetDungeon(xx + sx, yy + sy) != miniset[ii]) {
 						found = FALSE;
 					}
-					if (dflags[xx + sx][yy + sy] != 0) { // BUGFIX: Should be L5dflags or it will always be false
+					if (dflags[xx + sx][yy + sy] != 0) { // BUGFIX: Should be universe.L5dflags or it will always be false
 						found = FALSE;
 					}
 					ii++;
@@ -2053,7 +2033,7 @@ void drlg_l1_crypt_rndset(const BYTE *miniset, int rndper)
 }
 #endif
 
-static void DRLG_L5Subs()
+static void DRLG_L5Subs(Universe& universe)
 {
 	int x, y, rv, i;
 
@@ -2062,7 +2042,7 @@ static void DRLG_L5Subs()
 			if (random_(0, 4) == 0) {
 				BYTE c = L5BTYPES[GetDungeon(x, y)];
 
-				if (c && !L5dflags[x][y]) {
+				if (c && !universe.L5dflags[x][y]) {
 					rv = random_(0, 16);
 					i = -1;
 
@@ -2075,14 +2055,14 @@ static void DRLG_L5Subs()
 
 					// BUGFIX: Add `&& y > 0` to the if statement.
 					if (i == 89) {
-						if (L5BTYPES[GetDungeon(x, y - 1)] != 79 || L5dflags[x][y - 1])
+						if (L5BTYPES[GetDungeon(x, y - 1)] != 79 || universe.L5dflags[x][y - 1])
 							i = 79;
 						else
 							SetDungeon(x, y - 1, 90);
 					}
 					// BUGFIX: Add `&& x + 1 < DMAXX` to the if statement.
 					if (i == 91) {
-						if (L5BTYPES[GetDungeon(x + 1, y)] != 80 || L5dflags[x + 1][y])
+						if (L5BTYPES[GetDungeon(x + 1, y)] != 80 || universe.L5dflags[x + 1][y])
 							i = 80;
 						else
 							SetDungeon(x + 1, y, 92);
@@ -2094,26 +2074,26 @@ static void DRLG_L5Subs()
 	}
 }
 
-static void DRLG_L5SetRoom(int rx1, int ry1)
+static void DRLG_L5SetRoom(Universe& universe, int rx1, int ry1)
 {
 	int rw, rh, i, j;
 	BYTE *sp;
 
-	rw = *L5pSetPiece;
-	rh = *(L5pSetPiece + 2);
+	rw = *universe.L5pSetPiece;
+	rh = *(universe.L5pSetPiece + 2);
 
 	setpc_x = rx1;
 	setpc_y = ry1;
 	setpc_w = rw;
 	setpc_h = rh;
 
-	sp = L5pSetPiece + 4;
+	sp = universe.L5pSetPiece + 4;
 
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp) {
 				SetDungeon(rx1 + i, ry1 + j, *sp);
-				L5dflags[rx1 + i][ry1 + j] |= DLRG_PROTECTED;
+				universe.L5dflags[rx1 + i][ry1 + j] |= DLRG_PROTECTED;
 			} else {
 				SetDungeon(rx1 + i, ry1 + j, 13);
 			}
@@ -2126,68 +2106,68 @@ static void L5FillChambers(Universe& universe)
 {
 	int c;
 
-	if (HR1)
-		DRLG_L5GChamber(0, 14, 0, 0, 0, 1);
+	if (universe.HR1)
+		DRLG_L5GChamber(universe, 0, 14, 0, 0, 0, 1);
 
-	if (HR2) {
-		if (HR1 && !HR3)
-			DRLG_L5GChamber(14, 14, 0, 0, 1, 0);
-		if (!HR1 && HR3)
-			DRLG_L5GChamber(14, 14, 0, 0, 0, 1);
-		if (HR1 && HR3)
-			DRLG_L5GChamber(14, 14, 0, 0, 1, 1);
-		if (!HR1 && !HR3)
-			DRLG_L5GChamber(14, 14, 0, 0, 0, 0);
+	if (universe.HR2) {
+		if (universe.HR1 && !universe.HR3)
+			DRLG_L5GChamber(universe, 14, 14, 0, 0, 1, 0);
+		if (!universe.HR1 && universe.HR3)
+			DRLG_L5GChamber(universe, 14, 14, 0, 0, 0, 1);
+		if (universe.HR1 && universe.HR3)
+			DRLG_L5GChamber(universe, 14, 14, 0, 0, 1, 1);
+		if (!universe.HR1 && !universe.HR3)
+			DRLG_L5GChamber(universe, 14, 14, 0, 0, 0, 0);
 	}
 
-	if (HR3)
-		DRLG_L5GChamber(28, 14, 0, 0, 1, 0);
-	if (HR1 && HR2)
+	if (universe.HR3)
+		DRLG_L5GChamber(universe, 28, 14, 0, 0, 1, 0);
+	if (universe.HR1 && universe.HR2)
 		DRLG_L5GHall(12, 18, 14, 18);
-	if (HR2 && HR3)
+	if (universe.HR2 && universe.HR3)
 		DRLG_L5GHall(26, 18, 28, 18);
-	if (HR1 && !HR2 && HR3)
+	if (universe.HR1 && !universe.HR2 && universe.HR3)
 		DRLG_L5GHall(12, 18, 28, 18);
-	if (VR1)
-		DRLG_L5GChamber(14, 0, 0, 1, 0, 0);
+	if (universe.VR1)
+		DRLG_L5GChamber(universe, 14, 0, 0, 1, 0, 0);
 
-	if (VR2) {
-		if (VR1 && !VR3)
-			DRLG_L5GChamber(14, 14, 1, 0, 0, 0);
-		if (!VR1 && VR3)
-			DRLG_L5GChamber(14, 14, 0, 1, 0, 0);
-		if (VR1 && VR3)
-			DRLG_L5GChamber(14, 14, 1, 1, 0, 0);
-		if (!VR1 && !VR3)
-			DRLG_L5GChamber(14, 14, 0, 0, 0, 0);
+	if (universe.VR2) {
+		if (universe.VR1 && !universe.VR3)
+			DRLG_L5GChamber(universe, 14, 14, 1, 0, 0, 0);
+		if (!universe.VR1 && universe.VR3)
+			DRLG_L5GChamber(universe, 14, 14, 0, 1, 0, 0);
+		if (universe.VR1 && universe.VR3)
+			DRLG_L5GChamber(universe, 14, 14, 1, 1, 0, 0);
+		if (!universe.VR1 && !universe.VR3)
+			DRLG_L5GChamber(universe, 14, 14, 0, 0, 0, 0);
 	}
 
-	if (VR3)
-		DRLG_L5GChamber(14, 28, 1, 0, 0, 0);
-	if (VR1 && VR2)
+	if (universe.VR3)
+		DRLG_L5GChamber(universe, 14, 28, 1, 0, 0, 0);
+	if (universe.VR1 && universe.VR2)
 		DRLG_L5GHall(18, 12, 18, 14);
-	if (VR2 && VR3)
+	if (universe.VR2 && universe.VR3)
 		DRLG_L5GHall(18, 26, 18, 28);
-	if (VR1 && !VR2 && VR3)
+	if (universe.VR1 && !universe.VR2 && universe.VR3)
 		DRLG_L5GHall(18, 12, 18, 28);
 
 #ifdef HELLFIRE
 	if (currlevel == 24) {
-		if (VR1 || VR2 || VR3) {
+		if (universe.VR1 || universe.VR2 || universe.VR3) {
 			c = 1;
-			if (!VR1 && VR2 && VR3 && random_(0, 2) != 0)
+			if (!universe.VR1 && universe.VR2 && universe.VR3 && random_(0, 2) != 0)
 				c = 2;
-			if (VR1 && VR2 && !VR3 && random_(0, 2) != 0)
+			if (universe.VR1 && universe.VR2 && !universe.VR3 && random_(0, 2) != 0)
 				c = 0;
 
-			if (VR1 && !VR2 && VR3) {
+			if (universe.VR1 && !universe.VR2 && universe.VR3) {
 				if (random_(0, 2) != 0)
 					c = 0;
 				else
 					c = 2;
 			}
 
-			if (VR1 && VR2 && VR3)
+			if (universe.VR1 && universe.VR2 && universe.VR3)
 				c = random_(0, 3);
 
 			switch (c) {
@@ -2203,19 +2183,19 @@ static void L5FillChambers(Universe& universe)
 			}
 		} else {
 			c = 1;
-			if (!HR1 && HR2 && HR3 && random_(0, 2) != 0)
+			if (!universe.HR1 && universe.HR2 && universe.HR3 && random_(0, 2) != 0)
 				c = 2;
-			if (HR1 && HR2 && !HR3 && random_(0, 2) != 0)
+			if (universe.HR1 && universe.HR2 && !universe.HR3 && random_(0, 2) != 0)
 				c = 0;
 
-			if (HR1 && !HR2 && HR3) {
+			if (universe.HR1 && !universe.HR2 && universe.HR3) {
 				if (random_(0, 2) != 0)
 					c = 0;
 				else
 					c = 2;
 			}
 
-			if (HR1 && HR2 && HR3)
+			if (universe.HR1 && universe.HR2 && universe.HR3)
 				c = random_(0, 3);
 
 			switch (c) {
@@ -2232,21 +2212,21 @@ static void L5FillChambers(Universe& universe)
 		}
 	}
 	if (currlevel == 21) {
-		if (VR1 || VR2 || VR3) {
+		if (universe.VR1 || universe.VR2 || universe.VR3) {
 			c = 1;
-			if (!VR1 && VR2 && VR3 && random_(0, 2) != 0)
+			if (!universe.VR1 && universe.VR2 && universe.VR3 && random_(0, 2) != 0)
 				c = 2;
-			if (VR1 && VR2 && !VR3 && random_(0, 2) != 0)
+			if (universe.VR1 && universe.VR2 && !universe.VR3 && random_(0, 2) != 0)
 				c = 0;
 
-			if (VR1 && !VR2 && VR3) {
+			if (universe.VR1 && !universe.VR2 && universe.VR3) {
 				if (random_(0, 2) != 0)
 					c = 0;
 				else
 					c = 2;
 			}
 
-			if (VR1 && VR2 && VR3)
+			if (universe.VR1 && universe.VR2 && universe.VR3)
 				c = random_(0, 3);
 
 			switch (c) {
@@ -2262,19 +2242,19 @@ static void L5FillChambers(Universe& universe)
 			}
 		} else {
 			c = 1;
-			if (!HR1 && HR2 && HR3 && random_(0, 2))
+			if (!universe.HR1 && universe.HR2 && universe.HR3 && random_(0, 2))
 				c = 2;
-			if (HR1 && HR2 && !HR3 && random_(0, 2))
+			if (universe.HR1 && universe.HR2 && !universe.HR3 && random_(0, 2))
 				c = 0;
 
-			if (HR1 && !HR2 && HR3) {
+			if (universe.HR1 && !universe.HR2 && universe.HR3) {
 				if (random_(0, 2))
 					c = 0;
 				else
 					c = 2;
 			}
 
-			if (HR1 && HR2 && HR3)
+			if (universe.HR1 && universe.HR2 && universe.HR3)
 				c = random_(0, 3);
 
 			switch (c) {
@@ -2291,61 +2271,61 @@ static void L5FillChambers(Universe& universe)
 		}
 	}
 #endif
-	if (L5setloadflag) {
-		if (VR1 || VR2 || VR3) {
+	if (universe.L5setloadflag) {
+		if (universe.VR1 || universe.VR2 || universe.VR3) {
 			c = 1;
-			if (!VR1 && VR2 && VR3 && random_(0, 2) != 0)
+			if (!universe.VR1 && universe.VR2 && universe.VR3 && random_(0, 2) != 0)
 				c = 2;
-			if (VR1 && VR2 && !VR3 && random_(0, 2) != 0)
+			if (universe.VR1 && universe.VR2 && !universe.VR3 && random_(0, 2) != 0)
 				c = 0;
 
-			if (VR1 && !VR2 && VR3) {
+			if (universe.VR1 && !universe.VR2 && universe.VR3) {
 				if (random_(0, 2) != 0)
 					c = 0;
 				else
 					c = 2;
 			}
 
-			if (VR1 && VR2 && VR3)
+			if (universe.VR1 && universe.VR2 && universe.VR3)
 				c = random_(0, 3);
 
 			switch (c) {
 			case 0:
-				DRLG_L5SetRoom(16, 2);
+				DRLG_L5SetRoom(universe, 16, 2);
 				break;
 			case 1:
-				DRLG_L5SetRoom(16, 16);
+				DRLG_L5SetRoom(universe, 16, 16);
 				break;
 			case 2:
-				DRLG_L5SetRoom(16, 30);
+				DRLG_L5SetRoom(universe, 16, 30);
 				break;
 			}
 		} else {
 			c = 1;
-			if (!HR1 && HR2 && HR3 && random_(0, 2) != 0)
+			if (!universe.HR1 && universe.HR2 && universe.HR3 && random_(0, 2) != 0)
 				c = 2;
-			if (HR1 && HR2 && !HR3 && random_(0, 2) != 0)
+			if (universe.HR1 && universe.HR2 && !universe.HR3 && random_(0, 2) != 0)
 				c = 0;
 
-			if (HR1 && !HR2 && HR3) {
+			if (universe.HR1 && !universe.HR2 && universe.HR3) {
 				if (random_(0, 2) != 0)
 					c = 0;
 				else
 					c = 2;
 			}
 
-			if (HR1 && HR2 && HR3)
+			if (universe.HR1 && universe.HR2 && universe.HR3)
 				c = random_(0, 3);
 
 			switch (c) {
 			case 0:
-				DRLG_L5SetRoom(2, 16);
+				DRLG_L5SetRoom(universe, 2, 16);
 				break;
 			case 1:
-				DRLG_L5SetRoom(16, 16);
+				DRLG_L5SetRoom(universe, 16, 16);
 				break;
 			case 2:
-				DRLG_L5SetRoom(30, 16);
+				DRLG_L5SetRoom(universe, 30, 16);
 				break;
 			}
 		}
@@ -2376,7 +2356,7 @@ void drlg_l1_set_crypt_room(Universe& universe, int rx1, int ry1)
 		for (i = 0; i < rw; i++) {
 			if (UberRoomPattern[sp]) {
 				SetDungeon(rx1 + i, ry1 + j, UberRoomPattern[sp]);
-				L5dflags[rx1 + i][ry1 + j] |= DLRG_PROTECTED;
+				universe.L5dflags[rx1 + i][ry1 + j] |= DLRG_PROTECTED;
 			} else {
 				SetDungeon(rx1 + i, ry1 + j, 13);
 			}
@@ -2403,7 +2383,7 @@ void drlg_l1_set_corner_room(int rx1, int ry1)
 		for (i = 0; i < rw; i++) {
 			if (CornerstoneRoomPattern[sp]) {
 				SetDungeon(rx1 + i, ry1 + j, CornerstoneRoomPattern[sp]);
-				L5dflags[rx1 + i][ry1 + j] |= DLRG_PROTECTED;
+				universe.L5dflags[rx1 + i][ry1 + j] |= DLRG_PROTECTED;
 			} else {
 				SetDungeon(rx1 + i, ry1 + j, 13);
 			}
@@ -2456,7 +2436,7 @@ static void DRLG_L5FTVR(int i, int j, int x, int y, int d)
 	}
 }
 
-static void DRLG_L5FloodTVal()
+static void DRLG_L5FloodTVal(Universe& universe)
 {
 	int xx, yy, i, j;
 
@@ -2573,15 +2553,15 @@ static void DRLG_L5DirtFix()
 #endif
 }
 
-static void DRLG_L5CornerFix()
+static void DRLG_L5CornerFix(Universe& universe)
 {
 	int i, j;
 
 	for (j = 1; j < DMAXY - 1; j++) {
 		for (i = 1; i < DMAXX - 1; i++) {
-			if (!(L5dflags[i][j] & DLRG_PROTECTED) && GetDungeon(i, j) == 17 && GetDungeon(i - 1, j) == 13 && GetDungeon(i, j - 1) == 1) {
+			if (!(universe.L5dflags[i][j] & DLRG_PROTECTED) && GetDungeon(i, j) == 17 && GetDungeon(i - 1, j) == 13 && GetDungeon(i, j - 1) == 1) {
 				SetDungeon(i, j, 16);
-				L5dflags[i][j - 1] &= DLRG_PROTECTED; // BUGFIX: Should be |= or it will clear all flags
+				universe.L5dflags[i][j - 1] &= DLRG_PROTECTED; // BUGFIX: Should be |= or it will clear all flags
 			}
 			if (GetDungeon(i, j) == 202 && GetDungeon(i + 1, j) == 13 && GetDungeon(i, j + 1) == 1) {
 				SetDungeon(i, j, 8);
@@ -2622,39 +2602,39 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 		bool failed;
 		do {
 			levelSeed = GetRndState();
-			InitL5Dungeon();
-			L5firstRoom();
+			InitL5Dungeon(universe);
+			L5firstRoom(universe);
 			failed = L5GetArea() < minarea;
 			if ((mode == DungeonMode::BreakOnFailure || mode == DungeonMode::BreakOnFailureOrNoContent) && failed)
 				return std::nullopt;
 		} while (failed);
 
-		L5makeDungeon();
-		L5makeDmt();
+		L5makeDungeon(universe);
+		L5makeDmt(universe);
 		L5FillChambers(universe);
-		L5tileFix();
-		L5AddWall();
-		L5ClearFlags();
-		DRLG_L5FloodTVal();
+		L5tileFix(universe);
+		L5AddWall(universe);
+		L5ClearFlags(universe);
+		DRLG_L5FloodTVal(universe);
 
 		doneflag = TRUE;
 
 		if (QuestStatus(Q_PWATER)) {
 			if (entry == ENTRY_MAIN) {
-				if (DRLG_PlaceMiniSet(PWATERIN, 1, 1, 0, 0, TRUE, -1, 0) < 0)
+				if (DRLG_PlaceMiniSet(universe, PWATERIN, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
 			} else {
-				if (DRLG_PlaceMiniSet(PWATERIN, 1, 1, 0, 0, FALSE, -1, 0) < 0)
+				if (DRLG_PlaceMiniSet(universe, PWATERIN, 1, 1, 0, 0, FALSE, -1, 0) < 0)
 					doneflag = FALSE;
 				ViewY--;
 			}
 		}
 		if (QuestStatus(Q_LTBANNER)) {
 			if (entry == ENTRY_MAIN) {
-				if (DRLG_PlaceMiniSet(STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
+				if (DRLG_PlaceMiniSet(universe, STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
 			} else {
-				if (DRLG_PlaceMiniSet(STAIRSUP, 1, 1, 0, 0, FALSE, -1, 0) < 0)
+				if (DRLG_PlaceMiniSet(universe, STAIRSUP, 1, 1, 0, 0, FALSE, -1, 0) < 0)
 					doneflag = FALSE;
 				if (entry == ENTRY_PREV) {
 					ViewX = 2 * setpc_x + 20;
@@ -2666,76 +2646,76 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 #ifdef HELLFIRE
 		} else if (entry == ENTRY_MAIN) {
 			if (currlevel < 21) {
-				if (DRLG_PlaceMiniSet(STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
+				if (DRLG_PlaceMiniSet(universe, STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
-				if (DRLG_PlaceMiniSet(STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
+				if (DRLG_PlaceMiniSet(universe, STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 					doneflag = FALSE;
 			} else if (currlevel == 21) {
-				if (DRLG_PlaceMiniSet(L5STAIRSTOWN, 1, 1, 0, 0, FALSE, -1, 6) < 0)
+				if (DRLG_PlaceMiniSet(universe, L5STAIRSTOWN, 1, 1, 0, 0, FALSE, -1, 6) < 0)
 					doneflag = FALSE;
-				if (DRLG_PlaceMiniSet(L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
+				if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 					doneflag = FALSE;
 				ViewY++;
 			} else {
-				if (DRLG_PlaceMiniSet(L5STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
+				if (DRLG_PlaceMiniSet(universe, L5STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
 				if (currlevel != 24) {
-					if (DRLG_PlaceMiniSet(L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
+					if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 						doneflag = FALSE;
 				}
 				ViewY++;
 			}
 		} else if (entry == ENTRY_PREV) {
 			if (currlevel < 21) {
-				if (DRLG_PlaceMiniSet(STAIRSUP, 1, 1, 0, 0, FALSE, -1, 0) < 0)
+				if (DRLG_PlaceMiniSet(universe, STAIRSUP, 1, 1, 0, 0, FALSE, -1, 0) < 0)
 					doneflag = FALSE;
-				if (DRLG_PlaceMiniSet(STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
+				if (DRLG_PlaceMiniSet(universe, STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
 					doneflag = FALSE;
 				ViewY--;
 			} else if (currlevel == 21) {
-				if (DRLG_PlaceMiniSet(L5STAIRSTOWN, 1, 1, 0, 0, FALSE, -1, 6) < 0)
+				if (DRLG_PlaceMiniSet(universe, L5STAIRSTOWN, 1, 1, 0, 0, FALSE, -1, 6) < 0)
 					doneflag = FALSE;
-				if (DRLG_PlaceMiniSet(L5STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
+				if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
 					doneflag = FALSE;
 				ViewY += 3;
 			} else {
-				if (DRLG_PlaceMiniSet(L5STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
+				if (DRLG_PlaceMiniSet(universe, L5STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
 				if (currlevel != 24) {
-					if (DRLG_PlaceMiniSet(L5STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
+					if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
 						doneflag = FALSE;
 				}
 				ViewY += 3;
 			}
 		} else {
 			if (currlevel < 21) {
-				if (DRLG_PlaceMiniSet(STAIRSUP, 1, 1, 0, 0, FALSE, -1, 0) < 0)
+				if (DRLG_PlaceMiniSet(universe, STAIRSUP, 1, 1, 0, 0, FALSE, -1, 0) < 0)
 					doneflag = FALSE;
-				if (DRLG_PlaceMiniSet(STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
+				if (DRLG_PlaceMiniSet(universe, STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 					doneflag = FALSE;
 			} else if (currlevel == 21) {
-				if (DRLG_PlaceMiniSet(L5STAIRSTOWN, 1, 1, 0, 0, TRUE, -1, 6) < 0)
+				if (DRLG_PlaceMiniSet(universe, L5STAIRSTOWN, 1, 1, 0, 0, TRUE, -1, 6) < 0)
 					doneflag = FALSE;
-				if (DRLG_PlaceMiniSet(L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
+				if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 					doneflag = FALSE;
 			} else {
-				if (DRLG_PlaceMiniSet(L5STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
+				if (DRLG_PlaceMiniSet(universe, L5STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
 				if (currlevel != 24) {
-					if (DRLG_PlaceMiniSet(L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
+					if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 						doneflag = FALSE;
 				}
 			}
 #else
 		} else if (entry == ENTRY_MAIN) {
-			if (DRLG_PlaceMiniSet(L5STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
+			if (DRLG_PlaceMiniSet(universe, L5STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 				doneflag = FALSE;
-			else if (DRLG_PlaceMiniSet(STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
+			else if (DRLG_PlaceMiniSet(universe, STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 				doneflag = FALSE;
 		} else {
-			if (DRLG_PlaceMiniSet(L5STAIRSUP, 1, 1, 0, 0, FALSE, -1, 0) < 0)
+			if (DRLG_PlaceMiniSet(universe, L5STAIRSUP, 1, 1, 0, 0, FALSE, -1, 0) < 0)
 				doneflag = FALSE;
-			else if (DRLG_PlaceMiniSet(STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
+			else if (DRLG_PlaceMiniSet(universe, STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
 				doneflag = FALSE;
 			ViewY--;
 #endif
@@ -2760,12 +2740,12 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 
 	DRLG_L5TransFix();
 	DRLG_L5DirtFix();
-	DRLG_L5CornerFix();
+	DRLG_L5CornerFix(universe);
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (L5dflags[i][j] & 0x7F)
-				DRLG_PlaceDoor(i, j);
+			if (universe.L5dflags[i][j] & 0x7F)
+				DRLG_PlaceDoor(universe, i, j);
 		}
 	}
 
@@ -2820,21 +2800,21 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 		}
 	}
 #else
-	DRLG_L5Subs();
+	DRLG_L5Subs(universe);
 #endif
 
 #ifdef HELLFIRE
 	if (currlevel < 21)
 #endif
-		DRLG_L1Shadows();
+		DRLG_L1Shadows(universe);
 #ifdef HELLFIRE
 	if (currlevel < 21)
 #endif
-		DRLG_PlaceMiniSet(LAMPS, 5, 10, 0, 0, FALSE, -1, 4);
+		DRLG_PlaceMiniSet(universe, LAMPS, 5, 10, 0, 0, FALSE, -1, 4);
 #ifdef HELLFIRE
 	if (currlevel < 21)
 #endif
-		DRLG_L1Floor();
+		DRLG_L1Floor(universe);
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
@@ -2874,15 +2854,15 @@ std::optional<uint32_t> CreateL5Dungeon(Universe& universe, DWORD rseed, int ent
 
 	DRLG_InitTrans();
 	DRLG_InitSetPC();
-	DRLG_LoadL1SP();
+	DRLG_LoadL1SP(universe);
 	std::optional<uint32_t> levelSeed = DRLG_L5(universe, entry, mode);
 	if (mode == DungeonMode::BreakOnFailure || mode == DungeonMode::BreakOnSuccess) {
-		DRLG_FreeL1SP();
+		DRLG_FreeL1SP(universe);
 		return levelSeed;
 	}
 	if (levelSeed)
 		DRLG_L1Pass3();
-	DRLG_FreeL1SP();
+	DRLG_FreeL1SP(universe);
 
 #ifdef HELLFIRE
 	if (currlevel < 17)

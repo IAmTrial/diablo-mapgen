@@ -14,7 +14,7 @@
 
 void DRLG_Init_Globals();
 void LoadL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy);
-void LoadPreL1Dungeon(const char *sFileName, int vx, int vy);
+void LoadPreL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy);
 std::optional<uint32_t> CreateL5Dungeon(Universe& universe, DWORD rseed, int entry, DungeonMode mode);
 #ifdef HELLFIRE
 void drlg_l1_set_crypt_room(Universe& universe, int rx1, int ry1);

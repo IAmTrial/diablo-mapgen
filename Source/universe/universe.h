@@ -5,6 +5,8 @@
  * State of the universe. (aka all global variables)
  */
 
+#include "defs.h"
+#include "enums.h"
 #include "types.h"
 
 struct Universe {
@@ -19,6 +21,27 @@ struct Universe {
 	int IsUberLeverActivated;
 	int UberDiabloMonsterIndex;
 #endif
+
+	// drlg_l1.cpp
+	/** Represents a tile ID map of twice the size, repeating each tile of the original map in blocks of 4. */
+	BYTE L5dungeon[80][80];
+	BYTE L5dflags[DMAXX][DMAXY];
+	/** Specifies whether a single player quest DUN has been loaded. */
+	BOOL L5setloadflag;
+	/** Specifies whether to generate a horizontal room at position 1 in the Cathedral. */
+	int HR1;
+	/** Specifies whether to generate a horizontal room at position 2 in the Cathedral. */
+	int HR2;
+	/** Specifies whether to generate a horizontal room at position 3 in the Cathedral. */
+	int HR3;
+	/** Specifies whether to generate a vertical room at position 1 in the Cathedral. */
+	BOOL VR1;
+	/** Specifies whether to generate a vertical room at position 2 in the Cathedral. */
+	BOOL VR2;
+	/** Specifies whether to generate a vertical room at position 3 in the Cathedral. */
+	BOOL VR3;
+	/** Contains the contents of the single player quest DUN file. */
+	BYTE *L5pSetPiece;
 
 	// drlg_l4.h
 	int diabquad1x;
