@@ -7,6 +7,7 @@
 
 #include "defs.h"
 #include "enums.h"
+#include "structs.h"
 #include "types.h"
 
 struct Universe {
@@ -42,6 +43,18 @@ struct Universe {
 	BOOL VR3;
 	/** Contains the contents of the single player quest DUN file. */
 	BYTE *L5pSetPiece;
+
+	// drlg_l2.cpp
+#ifndef SPAWN
+	int nSx1;
+	int nSy1;
+	int nSx2;
+	int nSy2;
+	int nRoomCnt;
+	BYTE predungeon[DMAXX][DMAXY];
+	ROOMNODE RoomList[81];
+	HALLNODE *pHallList;
+#endif  // SPAWN
 
 	// drlg_l4.h
 	int diabquad1x;

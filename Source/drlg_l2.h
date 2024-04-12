@@ -13,8 +13,8 @@
 #include "Source/universe/universe.h"
 
 void LoadL2Dungeon(Universe& universe, const char *sFileName, int vx, int vy);
-void LoadPreL2Dungeon(const char *sFileName, int vx, int vy);
-std::optional<uint32_t> CreateL2Dungeon(DWORD rseed, int entry, DungeonMode mode);
+void LoadPreL2Dungeon(Universe& universe, const char *sFileName, int vx, int vy);
+std::optional<uint32_t> CreateL2Dungeon(Universe& universe, DWORD rseed, int entry, DungeonMode mode);
 void DRLG_PreLoadL2SP();
 void DRLG_UnloadL2SP();
 #endif /* __DRLG_L2_H__ */

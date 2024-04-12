@@ -17,6 +17,7 @@
 
 #ifndef SPAWN
 
+// TODO: Mark these as OpenCL __global
 BYTE *lpSetPiece1;
 BYTE *lpSetPiece2;
 BYTE *lpSetPiece3;

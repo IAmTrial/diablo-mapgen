@@ -170,7 +170,7 @@ void LoadSetMap(Universe& universe)
 		InitSKingTriggers();
 		break;
 	case SL_BONECHAMB:
-		LoadPreL2Dungeon("Levels\\L2Data\\Bonecha2.DUN", 69, 39);
+		LoadPreL2Dungeon(universe, "Levels\\L2Data\\Bonecha2.DUN", 69, 39);
 		LoadL2Dungeon(universe, "Levels\\L2Data\\Bonecha1.DUN", 69, 39);
 		DRLG_ListTrans(sizeof(SkelChamTrans1) / 4, &SkelChamTrans1[0]);
 		DRLG_AreaTrans(sizeof(SkelChamTrans2) / 4, &SkelChamTrans2[0]);
