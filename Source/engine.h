@@ -7,6 +7,7 @@
 #include "structs.h"
 #include "types.h"
 #include "Source/gendung.h"
+#include "Source/monster.h"
 #include "Source/objects.h"
 
 #define assert_fail(exp) ((void)(exp))
@@ -118,7 +119,5 @@ BYTE *LoadFileInMem(std::string pszName, DWORD *pdwFileLen);
 void LoadLvlGFX();
 
 void SetMapObjects(BYTE *pMap, int startx, int starty);
-
-void SetMapMonsters(BYTE *pMap, int startx, int starty);
 
 #endif

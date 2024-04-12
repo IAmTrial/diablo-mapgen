@@ -10,12 +10,13 @@
 
 #include <optional>
 
+#include "structs.h"
+#include "types.h"
 #include "Source/drlg_l1.h"
 #include "Source/engine.h"
 #include "Source/lighting.h"
 #include "Source/quests.h"
-#include "structs.h"
-#include "types.h"
+#include "Source/universe/universe.h"
 
 /** This will be true if a lava pool has been generated for the level */
 
@@ -2766,7 +2767,7 @@ std::optional<uint32_t> CreateL3Dungeon(DWORD rseed, int entry, DungeonMode mode
 	return levelSeed;
 }
 
-void LoadL3Dungeon(const char *sFileName, int vx, int vy)
+void LoadL3Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
@@ -2808,7 +2809,7 @@ void LoadL3Dungeon(const char *sFileName, int vx, int vy)
 	DRLG_Init_Globals();
 	ViewX = 31;
 	ViewY = 83;
-	SetMapMonsters(pLevelMap, 0, 0);
+	SetMapMonsters(universe, pLevelMap, 0, 0);
 	SetMapObjects(pLevelMap, 0, 0);
 
 	for (j = 0; j < MAXDUNY; j++) {

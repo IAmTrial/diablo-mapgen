@@ -558,14 +558,14 @@ BOOL MonstPlace(int xp, int yp)
 }
 
 #ifdef HELLFIRE
-void monster_some_crypt()
+void monster_some_crypt(Universe& universe)
 {
 	MonsterStruct *mon;
 	int hp;
 
-	if (currlevel == 24 && UberDiabloMonsterIndex >= 0 && UberDiabloMonsterIndex < nummonsters) {
-		mon = &monster[UberDiabloMonsterIndex];
-		PlayEffect(UberDiabloMonsterIndex, 2);
+	if (currlevel == 24 && universe.UberDiabloMonsterIndex >= 0 && universe.UberDiabloMonsterIndex < nummonsters) {
+		mon = &monster[universe.UberDiabloMonsterIndex];
+		PlayEffect(universe.UberDiabloMonsterIndex, 2);
 		quests[Q_NAKRUL]._qlog = FALSE;
 		mon->mArmorClass -= 50;
 		hp = mon->_mmaxhp / 2;
@@ -599,7 +599,7 @@ void PlaceMonster(int i, int mtype, int x, int y)
 }
 
 #ifndef SPAWN
-void PlaceUniqueMonst(int uniqindex, int miniontype, int bosspacksize)
+void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bosspacksize)
 {
 	int xp, yp, x, y, i;
 	int uniqtype;
@@ -708,13 +708,13 @@ void PlaceUniqueMonst(int uniqindex, int miniontype, int bosspacksize)
 
 #ifdef HELLFIRE
 	if (uniqindex == UMT_NAKRUL) {
-		if (UberRow == 0 || UberCol == 0) {
-			UberDiabloMonsterIndex = -1;
+		if (universe.UberRow == 0 || universe.UberCol == 0) {
+			universe.UberDiabloMonsterIndex = -1;
 			return;
 		}
-		xp = UberRow - 2;
-		yp = UberCol;
-		UberDiabloMonsterIndex = nummonsters;
+		xp = universe.UberRow - 2;
+		yp = universe.UberCol;
+		universe.UberDiabloMonsterIndex = nummonsters;
 	}
 #endif
 	PlaceMonster(nummonsters, uniqtype, xp, yp);
@@ -831,7 +831,7 @@ void PlaceUniqueMonst(int uniqindex, int miniontype, int bosspacksize)
 	}
 }
 
-static void PlaceUniques()
+static void PlaceUniques(Universe& universe)
 {
 	int u, mt;
 	BOOL done;
@@ -857,18 +857,18 @@ static void PlaceUniques()
 		if (u == UMT_WARLORD && quests[Q_WARLORD]._qactive == QUEST_NOTAVAIL)
 			done = FALSE;
 		if (done)
-			PlaceUniqueMonst(u, mt, 8);
+			PlaceUniqueMonst(universe, u, mt, 8);
 	}
 }
 
-void PlaceQuestMonsters()
+void PlaceQuestMonsters(Universe& universe)
 {
 	int skeltype;
 	BYTE *setp;
 
 	if (!setlevel) {
 		if (QuestStatus(Q_BUTCHER)) {
-			PlaceUniqueMonst(UMT_BUTCHER, 0, 0);
+			PlaceUniqueMonst(universe, UMT_BUTCHER, 0, 0);
 		}
 
 		if (currlevel == quests[Q_SKELKING]._qlevel && gbMaxPlayers != 1) {
@@ -880,32 +880,32 @@ void PlaceQuestMonsters()
 				}
 			}
 
-			PlaceUniqueMonst(UMT_SKELKING, skeltype, 30);
+			PlaceUniqueMonst(universe, UMT_SKELKING, skeltype, 30);
 		}
 
 		if (QuestStatus(Q_LTBANNER)) {
 			setp = LoadFileInMem("Levels\\L1Data\\Banner1.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc_x, 2 * setpc_y);
+			SetMapMonsters(universe, setp, 2 * setpc_x, 2 * setpc_y);
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_BLOOD)) {
 			setp = LoadFileInMem("Levels\\L2Data\\Blood2.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc_x, 2 * setpc_y);
+			SetMapMonsters(universe, setp, 2 * setpc_x, 2 * setpc_y);
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_BLIND)) {
 			setp = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc_x, 2 * setpc_y);
+			SetMapMonsters(universe, setp, 2 * setpc_x, 2 * setpc_y);
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_ANVIL)) {
 			setp = LoadFileInMem("Levels\\L3Data\\Anvil.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc_x + 2, 2 * setpc_y + 2);
+			SetMapMonsters(universe, setp, 2 * setpc_x + 2, 2 * setpc_y + 2);
 			mem_free_dbg(setp);
 		}
 		if (QuestStatus(Q_WARLORD)) {
 			setp = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc_x, 2 * setpc_y);
+			SetMapMonsters(universe, setp, 2 * setpc_x, 2 * setpc_y);
 			mem_free_dbg(setp);
 			AddMonsterType(UniqMonst[UMT_WARLORD].mtype, PLACE_SCATTER);
 		}
@@ -919,17 +919,17 @@ void PlaceQuestMonsters()
 		if (currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
 			AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, PLACE_UNIQUE);
 			AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, PLACE_UNIQUE);
-			PlaceUniqueMonst(UMT_LAZURUS, 0, 0);
-			PlaceUniqueMonst(UMT_RED_VEX, 0, 0);
-			PlaceUniqueMonst(UMT_BLACKJADE, 0, 0);
+			PlaceUniqueMonst(universe, UMT_LAZURUS, 0, 0);
+			PlaceUniqueMonst(universe, UMT_RED_VEX, 0, 0);
+			PlaceUniqueMonst(universe, UMT_BLACKJADE, 0, 0);
 			setp = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
-			SetMapMonsters(setp, 2 * setpc_x, 2 * setpc_y);
+			SetMapMonsters(universe, setp, 2 * setpc_x, 2 * setpc_y);
 			mem_free_dbg(setp);
 		}
 #ifdef HELLFIRE
 
 		if (currlevel == 24) {
-			UberDiabloMonsterIndex = -1;
+			universe.UberDiabloMonsterIndex = -1;
 			int i1;
 			for (i1 = 0; i1 < nummtypes; i1++) {
 				if (Monsters[i1].mtype == UniqMonst[UMT_NAKRUL].mtype)
@@ -939,17 +939,17 @@ void PlaceQuestMonsters()
 			if (i1 < nummtypes) {
 				for (int i2 = 0; i2 < nummonsters; i2++) {
 					if (monster[i2]._uniqtype != 0 || monster[i2]._mMTidx == i1) {
-						UberDiabloMonsterIndex = i2;
+						universe.UberDiabloMonsterIndex = i2;
 						break;
 					}
 				}
 			}
-			if (UberDiabloMonsterIndex == -1)
-				PlaceUniqueMonst(UMT_NAKRUL, 0, 0);
+			if (universe.UberDiabloMonsterIndex == -1)
+				PlaceUniqueMonst(universe, UMT_NAKRUL, 0, 0);
 		}
 #endif
 	} else if (setlvlnum == SL_SKELKING) {
-		PlaceUniqueMonst(UMT_SKELKING, 0, 0);
+		PlaceUniqueMonst(universe, UMT_SKELKING, 0, 0);
 	}
 }
 #endif
@@ -1032,16 +1032,16 @@ void LoadDiabMonsts(Universe& universe)
 	BYTE *lpSetPiece;
 
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * universe.diabquad1x, 2 * universe.diabquad1y);
+	SetMapMonsters(universe, lpSetPiece, 2 * universe.diabquad1x, 2 * universe.diabquad1y);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab2a.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * universe.diabquad2x, 2 * universe.diabquad2y);
+	SetMapMonsters(universe, lpSetPiece, 2 * universe.diabquad2x, 2 * universe.diabquad2y);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab3a.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * universe.diabquad3x, 2 * universe.diabquad3y);
+	SetMapMonsters(universe, lpSetPiece, 2 * universe.diabquad3x, 2 * universe.diabquad3y);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab4a.DUN", NULL);
-	SetMapMonsters(lpSetPiece, 2 * universe.diabquad4x, 2 * universe.diabquad4y);
+	SetMapMonsters(universe, lpSetPiece, 2 * universe.diabquad4x, 2 * universe.diabquad4y);
 	mem_free_dbg(lpSetPiece);
 }
 #endif
@@ -1076,11 +1076,11 @@ void InitMonsters(Universe& universe)
 		}
 	}
 #ifndef SPAWN
-	PlaceQuestMonsters();
+	PlaceQuestMonsters(universe);
 #endif
 	if (!setlevel) {
 #ifndef SPAWN
-		PlaceUniques();
+		PlaceUniques(universe);
 #endif
 		na = 0;
 		for (s = 16; s < 96; s++)
@@ -1123,7 +1123,7 @@ void InitMonsters(Universe& universe)
 }
 
 #ifndef SPAWN
-void SetMapMonsters(BYTE *pMap, int startx, int starty)
+void SetMapMonsters(Universe& universe, BYTE *pMap, int startx, int starty)
 {
 	WORD rw, rh;
 	WORD *lm;
@@ -1140,9 +1140,9 @@ void SetMapMonsters(BYTE *pMap, int startx, int starty)
 		AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, PLACE_UNIQUE);
 		AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, PLACE_UNIQUE);
 		AddMonsterType(UniqMonst[UMT_BLACKJADE].mtype, PLACE_UNIQUE);
-		PlaceUniqueMonst(UMT_LAZURUS, 0, 0);
-		PlaceUniqueMonst(UMT_RED_VEX, 0, 0);
-		PlaceUniqueMonst(UMT_BLACKJADE, 0, 0);
+		PlaceUniqueMonst(universe, UMT_LAZURUS, 0, 0);
+		PlaceUniqueMonst(universe, UMT_RED_VEX, 0, 0);
+		PlaceUniqueMonst(universe, UMT_BLACKJADE, 0, 0);
 	}
 	lm = (WORD *)pMap;
 	rw = *lm++;

@@ -15,6 +15,7 @@
 #include "Source/quests.h"
 #include "Source/objects.h"
 #include "Source/trigs.h"
+#include "Source/universe/universe.h"
 
 // BUGFIX: constant data should be const
 const BYTE SkelKingTrans1[] = {
@@ -150,7 +151,7 @@ void DRLG_SetMapTrans(const char *sFileName)
 /**
  * @brief Load a quest map, the given map is specified via the global setlvlnum
  */
-void LoadSetMap()
+void LoadSetMap(Universe& universe)
 {
 	switch (setlvlnum) {
 	case SL_SKELKING:
@@ -159,7 +160,7 @@ void LoadSetMap()
 			quests[Q_SKELKING]._qvar1 = 1;
 		}
 		LoadPreL1Dungeon("Levels\\L1Data\\SklKng1.DUN", 83, 45);
-		LoadL1Dungeon("Levels\\L1Data\\SklKng2.DUN", 83, 45);
+		LoadL1Dungeon(universe, "Levels\\L1Data\\SklKng2.DUN", 83, 45);
 		DRLG_AreaTrans(sizeof(SkelKingTrans1) / 4, &SkelKingTrans1[0]);
 		DRLG_ListTrans(sizeof(SkelKingTrans2) / 4, &SkelKingTrans2[0]);
 		DRLG_AreaTrans(sizeof(SkelKingTrans3) / 4, &SkelKingTrans3[0]);
@@ -170,7 +171,7 @@ void LoadSetMap()
 		break;
 	case SL_BONECHAMB:
 		LoadPreL2Dungeon("Levels\\L2Data\\Bonecha2.DUN", 69, 39);
-		LoadL2Dungeon("Levels\\L2Data\\Bonecha1.DUN", 69, 39);
+		LoadL2Dungeon(universe, "Levels\\L2Data\\Bonecha1.DUN", 69, 39);
 		DRLG_ListTrans(sizeof(SkelChamTrans1) / 4, &SkelChamTrans1[0]);
 		DRLG_AreaTrans(sizeof(SkelChamTrans2) / 4, &SkelChamTrans2[0]);
 		DRLG_ListTrans(sizeof(SkelChamTrans3) / 4, &SkelChamTrans3[0]);
@@ -180,7 +181,7 @@ void LoadSetMap()
 		break;
 	case SL_MAZE:
 		LoadPreL1Dungeon("Levels\\L1Data\\Lv1MazeA.DUN", 20, 50);
-		LoadL1Dungeon("Levels\\L1Data\\Lv1MazeB.DUN", 20, 50);
+		LoadL1Dungeon(universe, "Levels\\L1Data\\Lv1MazeB.DUN", 20, 50);
 		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
 		DRLG_SetMapTrans("Levels\\L1Data\\Lv1MazeA.DUN");
 		break;
@@ -188,7 +189,7 @@ void LoadSetMap()
 		if (quests[Q_PWATER]._qactive == QUEST_INIT)
 			quests[Q_PWATER]._qactive = QUEST_ACTIVE;
 		LoadPreL3Dungeon("Levels\\L3Data\\Foulwatr.DUN", 19, 50);
-		LoadL3Dungeon("Levels\\L3Data\\Foulwatr.DUN", 20, 50);
+		LoadL3Dungeon(universe, "Levels\\L3Data\\Foulwatr.DUN", 20, 50);
 		InitPWaterTriggers();
 		break;
 	case SL_VILEBETRAYER:
@@ -198,7 +199,7 @@ void LoadSetMap()
 			quests[Q_BETRAYER]._qvar2 = 3;
 		}
 		LoadPreL1Dungeon("Levels\\L1Data\\Vile1.DUN", 35, 36);
-		LoadL1Dungeon("Levels\\L1Data\\Vile2.DUN", 35, 36);
+		LoadL1Dungeon(universe, "Levels\\L1Data\\Vile2.DUN", 35, 36);
 		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
 		AddVileObjs();
 		DRLG_SetMapTrans("Levels\\L1Data\\Vile1.DUN");

@@ -14,6 +14,7 @@
 #include "Source/engine.h"
 #include "Source/lighting.h"
 #include "Source/quests.h"
+#include "Source/universe/universe.h"
 
 /** Represents a tile ID map of twice the size, repeating each tile of the original map in blocks of 4. */
 BYTE L5dungeon[80][80];
@@ -26,16 +27,6 @@ int HR1;
 int HR2;
 /** Specifies whether to generate a horizontal room at position 3 in the Cathedral. */
 int HR3;
-#ifdef HELLFIRE
-int UberRow;
-int UberCol;
-int dword_577368;
-int IsUberRoomOpened;
-int UberLeverRow;
-int UberLeverCol;
-int IsUberLeverActivated;
-int UberDiabloMonsterIndex;
-#endif
 /** Specifies whether to generate a vertical room at position 1 in the Cathedral. */
 BOOL VR1;
 /** Specifies whether to generate a vertical room at position 2 in the Cathedral. */
@@ -1280,7 +1271,7 @@ static void DRLG_InitL1Vals()
 }
 
 #ifndef SPAWN
-void LoadL1Dungeon(const char *sFileName, int vx, int vy)
+void LoadL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
@@ -1323,7 +1314,7 @@ void LoadL1Dungeon(const char *sFileName, int vx, int vy)
 	ViewY = vy;
 	DRLG_L1Pass3();
 	DRLG_Init_Globals();
-	SetMapMonsters(pLevelMap, 0, 0);
+	SetMapMonsters(universe, pLevelMap, 0, 0);
 	SetMapObjects(pLevelMap, 0, 0);
 	mem_free_dbg(pLevelMap);
 }
@@ -2131,7 +2122,7 @@ static void DRLG_L5SetRoom(int rx1, int ry1)
 	}
 }
 
-static void L5FillChambers()
+static void L5FillChambers(Universe& universe)
 {
 	int c;
 
@@ -2201,13 +2192,13 @@ static void L5FillChambers()
 
 			switch (c) {
 			case 0:
-				drlg_l1_set_crypt_room(16, 2);
+				drlg_l1_set_crypt_room(universe, 16, 2);
 				break;
 			case 1:
-				drlg_l1_set_crypt_room(16, 16);
+				drlg_l1_set_crypt_room(universe, 16, 16);
 				break;
 			case 2:
-				drlg_l1_set_crypt_room(16, 30);
+				drlg_l1_set_crypt_room(universe, 16, 30);
 				break;
 			}
 		} else {
@@ -2229,13 +2220,13 @@ static void L5FillChambers()
 
 			switch (c) {
 			case 0:
-				drlg_l1_set_crypt_room(2, 16);
+				drlg_l1_set_crypt_room(universe, 2, 16);
 				break;
 			case 1:
-				drlg_l1_set_crypt_room(16, 16);
+				drlg_l1_set_crypt_room(universe, 16, 16);
 				break;
 			case 2:
-				drlg_l1_set_crypt_room(30, 16);
+				drlg_l1_set_crypt_room(universe, 30, 16);
 				break;
 			}
 		}
@@ -2362,22 +2353,22 @@ static void L5FillChambers()
 }
 
 #ifdef HELLFIRE
-void drlg_l1_set_crypt_room(int rx1, int ry1)
+void drlg_l1_set_crypt_room(Universe& universe, int rx1, int ry1)
 {
 	int rw, rh, i, j, sp;
 
 	rw = UberRoomPattern[0];
 	rh = UberRoomPattern[1];
 
-	UberRow = 2 * rx1 + 6;
-	UberCol = 2 * ry1 + 8;
+	universe.UberRow = 2 * rx1 + 6;
+	universe.UberCol = 2 * ry1 + 8;
 	setpc_x = rx1;
 	setpc_y = ry1;
 	setpc_w = rw;
 	setpc_h = rh;
-	IsUberRoomOpened = 0;
-	dword_577368 = 0;
-	IsUberLeverActivated = 0;
+	universe.IsUberRoomOpened = 0;
+	universe.dword_577368 = 0;
+	universe.IsUberLeverActivated = 0;
 
 	sp = 2;
 
@@ -2599,7 +2590,7 @@ static void DRLG_L5CornerFix()
 	}
 }
 
-static std::optional<uint32_t> DRLG_L5(int entry, DungeonMode mode)
+static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMode mode)
 {
 	int i, j;
 	LONG minarea;
@@ -2640,7 +2631,7 @@ static std::optional<uint32_t> DRLG_L5(int entry, DungeonMode mode)
 
 		L5makeDungeon();
 		L5makeDmt();
-		L5FillChambers();
+		L5FillChambers(universe);
 		L5tileFix();
 		L5AddWall();
 		L5ClearFlags();
@@ -2857,7 +2848,7 @@ static std::optional<uint32_t> DRLG_L5(int entry, DungeonMode mode)
 	return levelSeed;
 }
 
-std::optional<uint32_t> CreateL5Dungeon(DWORD rseed, int entry, DungeonMode mode)
+std::optional<uint32_t> CreateL5Dungeon(Universe& universe, DWORD rseed, int entry, DungeonMode mode)
 {
 #ifdef HELLFIRE
 	int i, j;
@@ -2871,20 +2862,20 @@ std::optional<uint32_t> CreateL5Dungeon(DWORD rseed, int entry, DungeonMode mode
 	dmaxy = 96;
 
 #ifdef HELLFIRE
-	UberRow = 0;
-	UberCol = 0;
-	IsUberRoomOpened = 0;
-	dword_577368 = 0;
-	UberLeverRow = 0;
-	UberLeverCol = 0;
-	IsUberLeverActivated = 0;
-	UberDiabloMonsterIndex = 0;
+	universe.UberRow = 0;
+	universe.UberCol = 0;
+	universe.IsUberRoomOpened = 0;
+	universe.dword_577368 = 0;
+	universe.UberLeverRow = 0;
+	universe.UberLeverCol = 0;
+	universe.IsUberLeverActivated = 0;
+	universe.UberDiabloMonsterIndex = 0;
 #endif
 
 	DRLG_InitTrans();
 	DRLG_InitSetPC();
 	DRLG_LoadL1SP();
-	std::optional<uint32_t> levelSeed = DRLG_L5(entry, mode);
+	std::optional<uint32_t> levelSeed = DRLG_L5(universe, entry, mode);
 	if (mode == DungeonMode::BreakOnFailure || mode == DungeonMode::BreakOnSuccess) {
 		DRLG_FreeL1SP();
 		return levelSeed;
@@ -2904,8 +2895,8 @@ std::optional<uint32_t> CreateL5Dungeon(DWORD rseed, int entry, DungeonMode mode
 	for (j = dminy; j < dmaxy; j++) {
 		for (i = dminx; i < dmaxx; i++) {
 			if (dPiece[i][j] == 290) {
-				UberRow = i;
-				UberCol = j;
+				universe.UberRow = i;
+				universe.UberCol = j;
 			}
 			if (dPiece[i][j] == 317) {
 				CornerStone.x = i;

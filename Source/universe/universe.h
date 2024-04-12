@@ -8,6 +8,18 @@
 #include "types.h"
 
 struct Universe {
+	// drlg_l1.h
+#ifdef HELLFIRE
+	int UberRow;
+	int UberCol;
+	int dword_577368;
+	int IsUberRoomOpened;
+	int UberLeverRow;
+	int UberLeverCol;
+	int IsUberLeverActivated;
+	int UberDiabloMonsterIndex;
+#endif
+
 	// drlg_l4.h
 	int diabquad1x;
 	int diabquad1y;
@@ -17,6 +29,7 @@ struct Universe {
 	int diabquad3y;
 	int diabquad4x;
 	int diabquad4y;
+
 	// drlg_l4.cpp
 #ifndef SPAWN
 	BOOL hallok[20];

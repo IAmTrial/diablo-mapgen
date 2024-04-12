@@ -24,11 +24,11 @@ void InitMonsterGFX(int monst);
 void InitMonster(int i, int rd, int mtype, int x, int y);
 void ClrAllMonsters();
 #ifdef HELLFIRE
-void monster_some_crypt();
+void monster_some_crypt(Universe& universe);
 #endif
 void PlaceGroup(int mtype, int num, int leaderf, int leader);
 void InitMonsters(Universe& universe);
-void SetMapMonsters(BYTE *pMap, int startx, int starty);
+void SetMapMonsters(Universe& universe, BYTE *pMap, int startx, int starty);
 void DeleteMonster(int i);
 int AddMonster(int x, int y, int dir, int mtype, BOOL InMap);
 #ifdef HELLFIRE

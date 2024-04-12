@@ -786,39 +786,39 @@ void AddCryptStoryBook(int s)
 	AddObject(OBJ_STORYCANDLE, xp + 2, yp + 1);
 }
 
-void AddNakrulGate()
+void AddNakrulGate(Universe& universe)
 {
 	AddNakrulLeaver();
 	switch (random_(0, 6)) {
 	case 0:
-		AddNakrulBook(6, UberRow + 3, UberCol);
-		AddNakrulBook(7, UberRow + 2, UberCol - 3);
-		AddNakrulBook(8, UberRow + 2, UberCol + 2);
+		AddNakrulBook(6, universe.UberRow + 3, universe.UberCol);
+		AddNakrulBook(7, universe.UberRow + 2, universe.UberCol - 3);
+		AddNakrulBook(8, universe.UberRow + 2, universe.UberCol + 2);
 		break;
 	case 1:
-		AddNakrulBook(6, UberRow + 3, UberCol);
-		AddNakrulBook(8, UberRow + 2, UberCol - 3);
-		AddNakrulBook(7, UberRow + 2, UberCol + 2);
+		AddNakrulBook(6, universe.UberRow + 3, universe.UberCol);
+		AddNakrulBook(8, universe.UberRow + 2, universe.UberCol - 3);
+		AddNakrulBook(7, universe.UberRow + 2, universe.UberCol + 2);
 		break;
 	case 2:
-		AddNakrulBook(7, UberRow + 3, UberCol);
-		AddNakrulBook(6, UberRow + 2, UberCol - 3);
-		AddNakrulBook(8, UberRow + 2, UberCol + 2);
+		AddNakrulBook(7, universe.UberRow + 3, universe.UberCol);
+		AddNakrulBook(6, universe.UberRow + 2, universe.UberCol - 3);
+		AddNakrulBook(8, universe.UberRow + 2, universe.UberCol + 2);
 		break;
 	case 3:
-		AddNakrulBook(7, UberRow + 3, UberCol);
-		AddNakrulBook(8, UberRow + 2, UberCol - 3);
-		AddNakrulBook(6, UberRow + 2, UberCol + 2);
+		AddNakrulBook(7, universe.UberRow + 3, universe.UberCol);
+		AddNakrulBook(8, universe.UberRow + 2, universe.UberCol - 3);
+		AddNakrulBook(6, universe.UberRow + 2, universe.UberCol + 2);
 		break;
 	case 4:
-		AddNakrulBook(8, UberRow + 3, UberCol);
-		AddNakrulBook(7, UberRow + 2, UberCol - 3);
-		AddNakrulBook(6, UberRow + 2, UberCol + 2);
+		AddNakrulBook(8, universe.UberRow + 3, universe.UberCol);
+		AddNakrulBook(7, universe.UberRow + 2, universe.UberCol - 3);
+		AddNakrulBook(6, universe.UberRow + 2, universe.UberCol + 2);
 		break;
 	case 5:
-		AddNakrulBook(8, UberRow + 3, UberCol);
-		AddNakrulBook(6, UberRow + 2, UberCol - 3);
-		AddNakrulBook(7, UberRow + 2, UberCol + 2);
+		AddNakrulBook(8, universe.UberRow + 3, universe.UberCol);
+		AddNakrulBook(6, universe.UberRow + 2, universe.UberCol - 3);
+		AddNakrulBook(7, universe.UberRow + 2, universe.UberCol + 2);
 		break;
 	}
 }
@@ -988,7 +988,7 @@ void InitObjects(Universe& universe)
 			AddCryptStoryBook(5);
 		}
 		if (currlevel == 24) {
-			AddNakrulGate();
+			AddNakrulGate(universe);
 		}
 #else
 		if (currlevel == 4)

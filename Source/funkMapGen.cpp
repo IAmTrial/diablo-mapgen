@@ -165,7 +165,7 @@ std::optional<uint32_t> CreateDungeon(Universe& universe, DungeonMode mode)
 	uint32_t lseed = glSeedTbl[currlevel];
 	std::optional<uint32_t> levelSeed = std::nullopt;
 	if (leveltype == DTYPE_CATHEDRAL)
-		levelSeed = CreateL5Dungeon(lseed, 0, mode);
+		levelSeed = CreateL5Dungeon(universe, lseed, 0, mode);
 	if (leveltype == DTYPE_CATACOMBS)
 		levelSeed = CreateL2Dungeon(lseed, 0, mode);
 	if (leveltype == DTYPE_CAVES)

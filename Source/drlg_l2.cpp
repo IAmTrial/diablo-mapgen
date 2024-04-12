@@ -16,6 +16,7 @@
 #include "Source/drlg_l1.h"
 #include "Source/engine.h"
 #include "Source/quests.h"
+#include "Source/universe/universe.h"
 
 int nSx1;
 int nSy1;
@@ -3422,7 +3423,7 @@ static void DRLG_InitL2Vals()
 	}
 }
 
-void LoadL2Dungeon(const char *sFileName, int vx, int vy)
+void LoadL2Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh, pc;
 	BYTE *pLevelMap, *lm;
@@ -3468,7 +3469,7 @@ void LoadL2Dungeon(const char *sFileName, int vx, int vy)
 
 	ViewX = vx;
 	ViewY = vy;
-	SetMapMonsters(pLevelMap, 0, 0);
+	SetMapMonsters(universe, pLevelMap, 0, 0);
 	SetMapObjects(pLevelMap, 0, 0);
 	mem_free_dbg(pLevelMap);
 }
