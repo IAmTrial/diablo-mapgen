@@ -106,7 +106,7 @@ bool ScannerStairs::levelMatches(std::optional<uint32_t> levelSeed)
 	}
 
 	if (currlevel >= 6)
-		std::cout << sgGameInitInfo.dwSeed << std::endl;
+		std::cout << universe.sgGameInitInfo.dwSeed << std::endl;
 
 	return true;
 }

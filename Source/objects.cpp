@@ -257,7 +257,7 @@ static DIABOOL WallTrapLocOkK(int xp, int yp)
 		return FALSE;
 }
 
-void InitRndLocObj(int min, int max, int objtype)
+void InitRndLocObj(Universe& universe, int min, int max, int objtype)
 {
 	int i, xp, yp, numobjs;
 
@@ -276,14 +276,14 @@ void InitRndLocObj(int min, int max, int objtype)
 			    && RndLocOk(xp - 1, yp + 1)
 			    && RndLocOk(xp, yp + 1)
 			    && RndLocOk(xp + 1, yp + 1)) {
-				AddObject(objtype, xp, yp);
+				AddObject(universe, objtype, xp, yp);
 				break;
 			}
 		}
 	}
 }
 
-void InitRndLocBigObj(int min, int max, int objtype)
+void InitRndLocBigObj(Universe& universe, int min, int max, int objtype)
 {
 	int i, xp, yp, numobjs;
 
@@ -304,14 +304,14 @@ void InitRndLocBigObj(int min, int max, int objtype)
 			    && RndLocOk(xp - 1, yp + 1)
 			    && RndLocOk(xp, yp + 1)
 			    && RndLocOk(xp + 1, yp + 1)) {
-				AddObject(objtype, xp, yp);
+				AddObject(universe, objtype, xp, yp);
 				break;
 			}
 		}
 	}
 }
 
-void InitRndLocObj5x5(int min, int max, int objtype)
+void InitRndLocObj5x5(Universe& universe, int min, int max, int objtype)
 {
 	DIABOOL exit;
 	int xp, yp, numobjs, i, cnt, m, n;
@@ -336,7 +336,7 @@ void InitRndLocObj5x5(int min, int max, int objtype)
 					return;
 			}
 		}
-		AddObject(objtype, xp, yp);
+		AddObject(universe, objtype, xp, yp);
 	}
 }
 
@@ -377,42 +377,42 @@ void ClrAllObjects()
 	leverid = 1;
 }
 
-void AddTortures()
+void AddTortures(Universe& universe)
 {
 	int ox, oy;
 
 	for (oy = 0; oy < MAXDUNY; oy++) {
 		for (ox = 0; ox < MAXDUNX; ox++) {
 			if (dPiece[ox][oy] == 367) {
-				AddObject(OBJ_TORTURE1, ox, oy + 1);
-				AddObject(OBJ_TORTURE3, ox + 2, oy - 1);
-				AddObject(OBJ_TORTURE2, ox, oy + 3);
-				AddObject(OBJ_TORTURE4, ox + 4, oy - 1);
-				AddObject(OBJ_TORTURE5, ox, oy + 5);
-				AddObject(OBJ_TNUDEM1, ox + 1, oy + 3);
-				AddObject(OBJ_TNUDEM2, ox + 4, oy + 5);
-				AddObject(OBJ_TNUDEM3, ox + 2, oy);
-				AddObject(OBJ_TNUDEM4, ox + 3, oy + 2);
-				AddObject(OBJ_TNUDEW1, ox + 2, oy + 4);
-				AddObject(OBJ_TNUDEW2, ox + 2, oy + 1);
-				AddObject(OBJ_TNUDEW3, ox + 4, oy + 2);
+				AddObject(universe, OBJ_TORTURE1, ox, oy + 1);
+				AddObject(universe, OBJ_TORTURE3, ox + 2, oy - 1);
+				AddObject(universe, OBJ_TORTURE2, ox, oy + 3);
+				AddObject(universe, OBJ_TORTURE4, ox + 4, oy - 1);
+				AddObject(universe, OBJ_TORTURE5, ox, oy + 5);
+				AddObject(universe, OBJ_TNUDEM1, ox + 1, oy + 3);
+				AddObject(universe, OBJ_TNUDEM2, ox + 4, oy + 5);
+				AddObject(universe, OBJ_TNUDEM3, ox + 2, oy);
+				AddObject(universe, OBJ_TNUDEM4, ox + 3, oy + 2);
+				AddObject(universe, OBJ_TNUDEW1, ox + 2, oy + 4);
+				AddObject(universe, OBJ_TNUDEW2, ox + 2, oy + 1);
+				AddObject(universe, OBJ_TNUDEW3, ox + 4, oy + 2);
 			}
 		}
 	}
 }
-void AddCandles()
+void AddCandles(Universe& universe)
 {
 	int tx, ty;
 
 	tx = quests[Q_PWATER]._qtx;
 	ty = quests[Q_PWATER]._qty;
-	AddObject(OBJ_STORYCANDLE, tx - 2, ty + 1);
-	AddObject(OBJ_STORYCANDLE, tx + 3, ty + 1);
-	AddObject(OBJ_STORYCANDLE, tx - 1, ty + 2);
-	AddObject(OBJ_STORYCANDLE, tx + 2, ty + 2);
+	AddObject(universe, OBJ_STORYCANDLE, tx - 2, ty + 1);
+	AddObject(universe, OBJ_STORYCANDLE, tx + 3, ty + 1);
+	AddObject(universe, OBJ_STORYCANDLE, tx - 1, ty + 2);
+	AddObject(universe, OBJ_STORYCANDLE, tx + 2, ty + 2);
 }
 
-void AddBookLever(int lx1, int ly1, int lx2, int ly2, int x1, int y1, int x2, int y2, int msg)
+void AddBookLever(Universe& universe, int lx1, int ly1, int lx2, int ly2, int x1, int y1, int x2, int y2, int msg)
 {
 	DIABOOL exit;
 	int xp, yp, ob, cnt, m, n;
@@ -437,13 +437,13 @@ void AddBookLever(int lx1, int ly1, int lx2, int ly2, int x1, int y1, int x2, in
 	}
 
 	if (QuestStatus(Q_BLIND))
-		AddObject(OBJ_BLINDBOOK, xp, yp);
+		AddObject(universe, OBJ_BLINDBOOK, xp, yp);
 	if (QuestStatus(Q_WARLORD))
-		AddObject(OBJ_STEELTOME, xp, yp);
+		AddObject(universe, OBJ_STEELTOME, xp, yp);
 	if (QuestStatus(Q_BLOOD)) {
 		xp = 2 * setpc_x + 25;
 		yp = 2 * setpc_y + 40;
-		AddObject(OBJ_BLOODBOOK, xp, yp);
+		AddObject(universe, OBJ_BLOODBOOK, xp, yp);
 	}
 	ob = dObject[xp][yp] - 1;
 	SetObjMapRange(ob, x1, y1, x2, y2, leverid);
@@ -452,7 +452,7 @@ void AddBookLever(int lx1, int ly1, int lx2, int ly2, int x1, int y1, int x2, in
 	object[ob]._oVar6 = object[ob]._oAnimFrame + 1;
 }
 
-void InitRndBarrels()
+void InitRndBarrels(Universe& universe)
 {
 	int numobjs; // number of groups of barrels to generate
 	int xp, yp;
@@ -471,7 +471,7 @@ void InitRndBarrels()
 			yp = random_(143, 80) + 16;
 		} while (!RndLocOk(xp, yp));
 		o = (random_(143, 4) != 0) ? OBJ_BARREL : OBJ_BARRELEX;
-		AddObject(o, xp, yp);
+		AddObject(universe, o, xp, yp);
 		found = TRUE;
 		p = 0;
 		c = 1;
@@ -491,7 +491,7 @@ void InitRndBarrels()
 			}
 			if (found) {
 				o = (random_(143, 5) != 0) ? OBJ_BARREL : OBJ_BARRELEX;
-				AddObject(o, xp, yp);
+				AddObject(universe, o, xp, yp);
 				c++;
 			}
 			p = c >> 1;
@@ -499,7 +499,7 @@ void InitRndBarrels()
 	}
 }
 
-void AddL1Objs(int x1, int y1, int x2, int y2)
+void AddL1Objs(Universe& universe, int x1, int y1, int x2, int y2)
 {
 	int i, j, pn;
 
@@ -507,11 +507,11 @@ void AddL1Objs(int x1, int y1, int x2, int y2)
 		for (i = x1; i < x2; i++) {
 			pn = dPiece[i][j];
 			if (pn == 270)
-				AddObject(OBJ_L1LIGHT, i, j);
+				AddObject(universe, OBJ_L1LIGHT, i, j);
 			if (pn == 44 || pn == 51 || pn == 214)
-				AddObject(OBJ_L1LDOOR, i, j);
+				AddObject(universe, OBJ_L1LDOOR, i, j);
 			if (pn == 46 || pn == 56)
-				AddObject(OBJ_L1RDOOR, i, j);
+				AddObject(universe, OBJ_L1RDOOR, i, j);
 		}
 	}
 }
@@ -525,15 +525,15 @@ void add_crypt_objs(int x1, int y1, int x2, int y2)
 		for (i = x1; i < x2; i++) {
 			pn = dPiece[i][j];
 			if (pn == 77)
-				AddObject(OBJ_L1LDOOR, i, j);
+				AddObject(universe, OBJ_L1LDOOR, i, j);
 			if (pn == 80)
-				AddObject(OBJ_L1RDOOR, i, j);
+				AddObject(universe, OBJ_L1RDOOR, i, j);
 		}
 	}
 }
 
 #endif
-void AddL2Objs(int x1, int y1, int x2, int y2)
+void AddL2Objs(Universe& universe, int x1, int y1, int x2, int y2)
 {
 	int i, j, pn;
 
@@ -541,14 +541,14 @@ void AddL2Objs(int x1, int y1, int x2, int y2)
 		for (i = x1; i < x2; i++) {
 			pn = dPiece[i][j];
 			if (pn == 13 || pn == 541)
-				AddObject(OBJ_L2LDOOR, i, j);
+				AddObject(universe, OBJ_L2LDOOR, i, j);
 			if (pn == 17 || pn == 542)
-				AddObject(OBJ_L2RDOOR, i, j);
+				AddObject(universe, OBJ_L2RDOOR, i, j);
 		}
 	}
 }
 
-void AddL3Objs(int x1, int y1, int x2, int y2)
+void AddL3Objs(Universe& universe, int x1, int y1, int x2, int y2)
 {
 	int i, j, pn;
 
@@ -556,9 +556,9 @@ void AddL3Objs(int x1, int y1, int x2, int y2)
 		for (i = x1; i < x2; i++) {
 			pn = dPiece[i][j];
 			if (pn == 531)
-				AddObject(OBJ_L3LDOOR, i, j);
+				AddObject(universe, OBJ_L3LDOOR, i, j);
 			if (pn == 534)
-				AddObject(OBJ_L3RDOOR, i, j);
+				AddObject(universe, OBJ_L3RDOOR, i, j);
 		}
 	}
 }
@@ -570,7 +570,7 @@ DIABOOL TorchLocOK(int xp, int yp)
 	return TRUE;
 }
 
-void AddL2Torches()
+void AddL2Torches(Universe& universe)
 {
 	int i, j, pn;
 
@@ -581,21 +581,21 @@ void AddL2Torches()
 
 			pn = dPiece[i][j];
 			if (pn == 1 && random_(145, 3) == 0)
-				AddObject(OBJ_TORCHL2, i, j);
+				AddObject(universe, OBJ_TORCHL2, i, j);
 
 			if (pn == 5 && random_(145, 3) == 0)
-				AddObject(OBJ_TORCHR2, i, j);
+				AddObject(universe, OBJ_TORCHR2, i, j);
 
 			if (pn == 37 && random_(145, 10) == 0 && dObject[i - 1][j] == 0)
-				AddObject(OBJ_TORCHL, i - 1, j);
+				AddObject(universe, OBJ_TORCHL, i - 1, j);
 
 			if (pn == 41 && random_(145, 10) == 0 && dObject[i][j - 1] == 0)
-				AddObject(OBJ_TORCHR, i, j - 1);
+				AddObject(universe, OBJ_TORCHR, i, j - 1);
 		}
 	}
 }
 
-void AddObjTraps()
+void AddObjTraps(Universe& universe)
 {
 	char oi_trap, oi;
 	int i, j;
@@ -621,13 +621,13 @@ void AddObjTraps()
 
 			if (random_(144, 2) == 0) {
 				xp = i - 1;
-				while (!nSolidTable[GetdPiece(xp, j)])
+				while (!nSolidTable[GetdPiece(universe, xp, j)])
 					xp--;
 
 				if (!WallTrapLocOkK(xp, j) || i - xp <= 1)
 					continue;
 
-				AddObject(OBJ_TRAPL, xp, j);
+				AddObject(universe, OBJ_TRAPL, xp, j);
 				oi_trap = dObject[xp][j] - 1;
 				object[oi_trap]._oVar1 = i;
 				object[oi_trap]._oVar2 = j;
@@ -640,7 +640,7 @@ void AddObjTraps()
 				if (!WallTrapLocOkK(i, yp) || j - yp <= 1)
 					continue;
 
-				AddObject(OBJ_TRAPR, i, yp);
+				AddObject(universe, OBJ_TRAPR, i, yp);
 				oi_trap = dObject[i][yp] - 1;
 				object[oi_trap]._oVar1 = i;
 				object[oi_trap]._oVar2 = j;
@@ -677,7 +677,7 @@ void AddChestTraps()
 	}
 }
 
-void LoadMapObjects(BYTE *pMap, int startx, int starty, int x1, int y1, int w, int h, int leveridx)
+void LoadMapObjects(Universe& universe, BYTE *pMap, int startx, int starty, int x1, int y1, int w, int h, int leveridx)
 {
 	int rw, rh, i, j, oi, type;
 	BYTE *lm;
@@ -699,7 +699,7 @@ void LoadMapObjects(BYTE *pMap, int startx, int starty, int x1, int y1, int w, i
 		for (i = 0; i < rw; i++) {
 			if (*lm) {
 				type = *lm;
-				AddObject(ObjTypeConv[type], startx + 16 + i, starty + 16 + j);
+				AddObject(universe, ObjTypeConv[type], startx + 16 + i, starty + 16 + j);
 				oi = ObjIndex(startx + 16 + i, starty + 16 + j);
 				SetObjMapRange(oi, x1, y1, x1 + w, y1 + h, leveridx);
 			}
@@ -709,7 +709,7 @@ void LoadMapObjects(BYTE *pMap, int startx, int starty, int x1, int y1, int w, i
 	InitObjFlag = FALSE;
 }
 
-void LoadMapObjs(BYTE *pMap, int startx, int starty)
+void LoadMapObjs(Universe& universe, BYTE *pMap, int startx, int starty)
 {
 	int rw, rh;
 	int i, j;
@@ -730,7 +730,7 @@ void LoadMapObjs(BYTE *pMap, int startx, int starty)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm) {
-				AddObject(ObjTypeConv[*lm], startx + 16 + i, starty + 16 + j);
+				AddObject(universe, ObjTypeConv[*lm], startx + 16 + i, starty + 16 + j);
 			}
 			lm += 2;
 		}
@@ -743,13 +743,13 @@ void AddDiabObjs(Universe& universe)
 	BYTE *lpSetPiece;
 
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab1.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * universe.diabquad1x, 2 * universe.diabquad1y, universe.diabquad2x, universe.diabquad2y, 11, 12, 1);
+	LoadMapObjects(universe, lpSetPiece, 2 * universe.diabquad1x, 2 * universe.diabquad1y, universe.diabquad2x, universe.diabquad2y, 11, 12, 1);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab2a.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * universe.diabquad2x, 2 * universe.diabquad2y, universe.diabquad3x, universe.diabquad3y, 11, 11, 2);
+	LoadMapObjects(universe, lpSetPiece, 2 * universe.diabquad2x, 2 * universe.diabquad2y, universe.diabquad3x, universe.diabquad3y, 11, 11, 2);
 	mem_free_dbg(lpSetPiece);
 	lpSetPiece = LoadFileInMem("Levels\\L4Data\\diab3a.DUN", NULL);
-	LoadMapObjects(lpSetPiece, 2 * universe.diabquad3x, 2 * universe.diabquad3y, universe.diabquad4x, universe.diabquad4y, 9, 9, 3);
+	LoadMapObjects(universe, lpSetPiece, 2 * universe.diabquad3x, 2 * universe.diabquad3y, universe.diabquad4x, universe.diabquad4y, 9, 9, 3);
 	mem_free_dbg(lpSetPiece);
 }
 
@@ -778,12 +778,12 @@ void AddCryptStoryBook(int s)
 		}
 	}
 	AddCryptBook(OBJ_STORYBOOK, s, xp, yp);
-	AddObject(OBJ_STORYCANDLE, xp - 2, yp + 1);
-	AddObject(OBJ_STORYCANDLE, xp - 2, yp);
-	AddObject(OBJ_STORYCANDLE, xp - 1, yp - 1);
-	AddObject(OBJ_STORYCANDLE, xp + 1, yp - 1);
-	AddObject(OBJ_STORYCANDLE, xp + 2, yp);
-	AddObject(OBJ_STORYCANDLE, xp + 2, yp + 1);
+	AddObject(universe, OBJ_STORYCANDLE, xp - 2, yp + 1);
+	AddObject(universe, OBJ_STORYCANDLE, xp - 2, yp);
+	AddObject(universe, OBJ_STORYCANDLE, xp - 1, yp - 1);
+	AddObject(universe, OBJ_STORYCANDLE, xp + 1, yp - 1);
+	AddObject(universe, OBJ_STORYCANDLE, xp + 2, yp);
+	AddObject(universe, OBJ_STORYCANDLE, xp + 2, yp + 1);
 }
 
 void AddNakrulGate(Universe& universe)
@@ -829,7 +829,7 @@ void AddNakrulBook(int a1, int a2, int a3)
 }
 #endif
 
-void AddStoryBooks()
+void AddStoryBooks(Universe& universe)
 {
 	int xp, yp, xx, yy;
 	int cnt;
@@ -853,16 +853,16 @@ void AddStoryBooks()
 				return;
 		}
 	}
-	AddObject(OBJ_STORYBOOK, xp, yp);
-	AddObject(OBJ_STORYCANDLE, xp - 2, yp + 1);
-	AddObject(OBJ_STORYCANDLE, xp - 2, yp);
-	AddObject(OBJ_STORYCANDLE, xp - 1, yp - 1);
-	AddObject(OBJ_STORYCANDLE, xp + 1, yp - 1);
-	AddObject(OBJ_STORYCANDLE, xp + 2, yp);
-	AddObject(OBJ_STORYCANDLE, xp + 2, yp + 1);
+	AddObject(universe, OBJ_STORYBOOK, xp, yp);
+	AddObject(universe, OBJ_STORYCANDLE, xp - 2, yp + 1);
+	AddObject(universe, OBJ_STORYCANDLE, xp - 2, yp);
+	AddObject(universe, OBJ_STORYCANDLE, xp - 1, yp - 1);
+	AddObject(universe, OBJ_STORYCANDLE, xp + 1, yp - 1);
+	AddObject(universe, OBJ_STORYCANDLE, xp + 2, yp);
+	AddObject(universe, OBJ_STORYCANDLE, xp + 2, yp + 1);
 }
 
-void AddHookedBodies(int freq)
+void AddHookedBodies(Universe& universe, int freq)
 {
 	int i, j, ii, jj;
 
@@ -870,33 +870,33 @@ void AddHookedBodies(int freq)
 		jj = 16 + j * 2;
 		for (i = 0; i < DMAXX; i++) {
 			ii = 16 + i * 2;
-			if (GetDungeon(i, j) != 1 && GetDungeon(i, j) != 2)
+			if (GetDungeon(universe, i, j) != 1 && GetDungeon(universe, i, j) != 2)
 				continue;
 			if (random_(0, freq) != 0)
 				continue;
 			if (!SkipThemeRoom(i, j))
 				continue;
-			if (GetDungeon(i, j) == 1 && GetDungeon(i + 1, j) == 6) {
+			if (GetDungeon(universe, i, j) == 1 && GetDungeon(universe, i + 1, j) == 6) {
 				switch (random_(0, 3)) {
 				case 0:
-					AddObject(OBJ_TORTURE1, ii + 1, jj);
+					AddObject(universe, OBJ_TORTURE1, ii + 1, jj);
 					break;
 				case 1:
-					AddObject(OBJ_TORTURE2, ii + 1, jj);
+					AddObject(universe, OBJ_TORTURE2, ii + 1, jj);
 					break;
 				case 2:
-					AddObject(OBJ_TORTURE5, ii + 1, jj);
+					AddObject(universe, OBJ_TORTURE5, ii + 1, jj);
 					break;
 				}
 				continue;
 			}
-			if (GetDungeon(i, j) == 2 && GetDungeon(i, j + 1) == 6) {
+			if (GetDungeon(universe, i, j) == 2 && GetDungeon(universe, i, j + 1) == 6) {
 				switch (random_(0, 2)) {
 				case 0:
-					AddObject(OBJ_TORTURE3, ii, jj);
+					AddObject(universe, OBJ_TORTURE3, ii, jj);
 					break;
 				case 1:
-					AddObject(OBJ_TORTURE4, ii, jj);
+					AddObject(universe, OBJ_TORTURE4, ii, jj);
 					break;
 				}
 			}
@@ -904,21 +904,21 @@ void AddHookedBodies(int freq)
 	}
 }
 
-void AddL4Goodies()
+void AddL4Goodies(Universe& universe)
 {
-	AddHookedBodies(6);
-	InitRndLocObj(2, 6, OBJ_TNUDEM1);
-	InitRndLocObj(2, 6, OBJ_TNUDEM2);
-	InitRndLocObj(2, 6, OBJ_TNUDEM3);
-	InitRndLocObj(2, 6, OBJ_TNUDEM4);
-	InitRndLocObj(2, 6, OBJ_TNUDEW1);
-	InitRndLocObj(2, 6, OBJ_TNUDEW2);
-	InitRndLocObj(2, 6, OBJ_TNUDEW3);
-	InitRndLocObj(2, 6, OBJ_DECAP);
-	InitRndLocObj(1, 3, OBJ_CAULDRON);
+	AddHookedBodies(universe, 6);
+	InitRndLocObj(universe, 2, 6, OBJ_TNUDEM1);
+	InitRndLocObj(universe, 2, 6, OBJ_TNUDEM2);
+	InitRndLocObj(universe, 2, 6, OBJ_TNUDEM3);
+	InitRndLocObj(universe, 2, 6, OBJ_TNUDEM4);
+	InitRndLocObj(universe, 2, 6, OBJ_TNUDEW1);
+	InitRndLocObj(universe, 2, 6, OBJ_TNUDEW2);
+	InitRndLocObj(universe, 2, 6, OBJ_TNUDEW3);
+	InitRndLocObj(universe, 2, 6, OBJ_DECAP);
+	InitRndLocObj(universe, 1, 3, OBJ_CAULDRON);
 }
 
-void AddLazStand()
+void AddLazStand(Universe& universe)
 {
 	int xp, yp, xx, yy;
 	int cnt;
@@ -939,21 +939,21 @@ void AddLazStand()
 		if (!found) {
 			cnt++;
 			if (cnt > 10000) {
-				InitRndLocObj(1, 1, OBJ_LAZSTAND);
+				InitRndLocObj(universe, 1, 1, OBJ_LAZSTAND);
 				return;
 			}
 		}
 	}
-	AddObject(OBJ_LAZSTAND, xp, yp);
-	AddObject(OBJ_TNUDEM2, xp, yp + 2);
-	AddObject(OBJ_STORYCANDLE, xp + 1, yp + 2);
-	AddObject(OBJ_TNUDEM3, xp + 2, yp + 2);
-	AddObject(OBJ_TNUDEW1, xp, yp - 2);
-	AddObject(OBJ_STORYCANDLE, xp + 1, yp - 2);
-	AddObject(OBJ_TNUDEW2, xp + 2, yp - 2);
-	AddObject(OBJ_STORYCANDLE, xp - 1, yp - 1);
-	AddObject(OBJ_TNUDEW3, xp - 1, yp);
-	AddObject(OBJ_STORYCANDLE, xp - 1, yp + 1);
+	AddObject(universe, OBJ_LAZSTAND, xp, yp);
+	AddObject(universe, OBJ_TNUDEM2, xp, yp + 2);
+	AddObject(universe, OBJ_STORYCANDLE, xp + 1, yp + 2);
+	AddObject(universe, OBJ_TNUDEM3, xp + 2, yp + 2);
+	AddObject(universe, OBJ_TNUDEW1, xp, yp - 2);
+	AddObject(universe, OBJ_STORYCANDLE, xp + 1, yp - 2);
+	AddObject(universe, OBJ_TNUDEW2, xp + 2, yp - 2);
+	AddObject(universe, OBJ_STORYCANDLE, xp - 1, yp - 1);
+	AddObject(universe, OBJ_TNUDEW3, xp - 1, yp);
+	AddObject(universe, OBJ_STORYCANDLE, xp - 1, yp + 1);
 }
 
 void InitObjects(Universe& universe)
@@ -970,10 +970,10 @@ void InitObjects(Universe& universe)
 	} else {
 		InitObjFlag = TRUE;
 		GetRndSeed();
-		if (currlevel == 9 && gbMaxPlayers == 1)
-			AddSlainHero();
+		if (currlevel == 9 && universe.gbMaxPlayers == 1)
+			AddSlainHero(universe);
 		if (currlevel == quests[Q_MUSHROOM]._qlevel && quests[Q_MUSHROOM]._qactive == QUEST_INIT)
-			AddMushPatch();
+			AddMushPatch(universe);
 
 #ifdef HELLFIRE
 		if (currlevel == 4 || currlevel == 8 || currlevel == 12)
@@ -992,117 +992,117 @@ void InitObjects(Universe& universe)
 		}
 #else
 		if (currlevel == 4)
-			AddStoryBooks();
+			AddStoryBooks(universe);
 		if (currlevel == 8)
-			AddStoryBooks();
+			AddStoryBooks(universe);
 		if (currlevel == 12)
-			AddStoryBooks();
+			AddStoryBooks(universe);
 #endif
 		if (leveltype == DTYPE_CATHEDRAL) {
 			if (QuestStatus(Q_BUTCHER))
-				AddTortures();
+				AddTortures(universe);
 			if (QuestStatus(Q_PWATER))
-				AddCandles();
+				AddCandles(universe);
 			if (QuestStatus(Q_LTBANNER))
-				AddObject(OBJ_SIGNCHEST, 2 * setpc_x + 26, 2 * setpc_y + 19);
-			InitRndLocBigObj(10, 15, OBJ_SARC);
+				AddObject(universe, OBJ_SIGNCHEST, 2 * setpc_x + 26, 2 * setpc_y + 19);
+			InitRndLocBigObj(universe, 10, 15, OBJ_SARC);
 #ifdef HELLFIRE
 			if (currlevel >= 21)
 				add_crypt_objs(0, 0, MAXDUNX, MAXDUNY);
 			else
 #endif
-				AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
-			InitRndBarrels();
+				AddL1Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
+			InitRndBarrels(universe);
 		}
 		if (leveltype == DTYPE_CATACOMBS) {
 			if (QuestStatus(Q_ROCK))
-				InitRndLocObj5x5(1, 1, OBJ_STAND);
+				InitRndLocObj5x5(universe, 1, 1, OBJ_STAND);
 			if (QuestStatus(Q_SCHAMB))
-				InitRndLocObj5x5(1, 1, OBJ_BOOK2R);
-			AddL2Objs(0, 0, MAXDUNX, MAXDUNY);
-			AddL2Torches();
+				InitRndLocObj5x5(universe, 1, 1, OBJ_BOOK2R);
+			AddL2Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
+			AddL2Torches(universe);
 			if (QuestStatus(Q_BLIND)) {
-				if (plr[myplr]._pClass == PC_WARRIOR) {
+				if (universe.plr[myplr]._pClass == PC_WARRIOR) {
 					sp_id = TEXT_BLINDING;
-				} else if (plr[myplr]._pClass == PC_ROGUE) {
+				} else if (universe.plr[myplr]._pClass == PC_ROGUE) {
 					sp_id = TEXT_RBLINDING;
-				} else if (plr[myplr]._pClass == PC_SORCERER) {
+				} else if (universe.plr[myplr]._pClass == PC_SORCERER) {
 					sp_id = TEXT_MBLINDING;
 #ifdef HELLFIRE
-				} else if (plr[myplr]._pClass == PC_MONK) {
+				} else if (universe.plr[myplr]._pClass == PC_MONK) {
 					sp_id = TEXT_HBLINDING;
-				} else if (plr[myplr]._pClass == PC_BARD) {
+				} else if (universe.plr[myplr]._pClass == PC_BARD) {
 					sp_id = TEXT_BBLINDING;
-				} else if (plr[myplr]._pClass == PC_BARBARIAN) {
+				} else if (universe.plr[myplr]._pClass == PC_BARBARIAN) {
 					sp_id = TEXT_BLINDING;
 #endif
 				}
 				quests[Q_BLIND]._qmsg = sp_id;
-				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc_x, setpc_y, setpc_w + setpc_x + 1, setpc_h + setpc_y + 1, sp_id);
+				AddBookLever(universe, 0, 0, MAXDUNX, MAXDUNY, setpc_x, setpc_y, setpc_w + setpc_x + 1, setpc_h + setpc_y + 1, sp_id);
 				mem = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
 				// BUGFIX: should not invoke LoadMapObjs for Blind2.DUN, as Blind2.DUN is missing an objects layer.
-				LoadMapObjs(mem, 2 * setpc_x, 2 * setpc_y);
+				LoadMapObjs(universe, mem, 2 * setpc_x, 2 * setpc_y);
 				mem_free_dbg(mem);
 			}
 			if (QuestStatus(Q_BLOOD)) {
-				if (plr[myplr]._pClass == PC_WARRIOR) {
+				if (universe.plr[myplr]._pClass == PC_WARRIOR) {
 					sp_id = TEXT_BLOODY;
-				} else if (plr[myplr]._pClass == PC_ROGUE) {
+				} else if (universe.plr[myplr]._pClass == PC_ROGUE) {
 					sp_id = TEXT_RBLOODY;
-				} else if (plr[myplr]._pClass == PC_SORCERER) {
+				} else if (universe.plr[myplr]._pClass == PC_SORCERER) {
 					sp_id = TEXT_MBLOODY;
 #ifdef HELLFIRE
-				} else if (plr[myplr]._pClass == PC_MONK) {
+				} else if (universe.plr[myplr]._pClass == PC_MONK) {
 					sp_id = TEXT_HBLOODY;
-				} else if (plr[myplr]._pClass == PC_BARD) {
+				} else if (universe.plr[myplr]._pClass == PC_BARD) {
 					sp_id = TEXT_BBLOODY;
-				} else if (plr[myplr]._pClass == PC_BARBARIAN) {
+				} else if (universe.plr[myplr]._pClass == PC_BARBARIAN) {
 					sp_id = TEXT_BLOODY;
 #endif
 				}
 				quests[Q_BLOOD]._qmsg = sp_id;
-				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc_x, setpc_y + 3, setpc_x + 2, setpc_y + 7, sp_id);
-				AddObject(OBJ_PEDISTAL, 2 * setpc_x + 25, 2 * setpc_y + 32);
+				AddBookLever(universe, 0, 0, MAXDUNX, MAXDUNY, setpc_x, setpc_y + 3, setpc_x + 2, setpc_y + 7, sp_id);
+				AddObject(universe, OBJ_PEDISTAL, 2 * setpc_x + 25, 2 * setpc_y + 32);
 			}
-			InitRndBarrels();
+			InitRndBarrels(universe);
 		}
 		if (leveltype == DTYPE_CAVES) {
-			AddL3Objs(0, 0, MAXDUNX, MAXDUNY);
-			InitRndBarrels();
+			AddL3Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
+			InitRndBarrels(universe);
 		}
 		if (leveltype == DTYPE_HELL) {
 			if (QuestStatus(Q_WARLORD)) {
-				if (plr[myplr]._pClass == PC_WARRIOR) {
+				if (universe.plr[myplr]._pClass == PC_WARRIOR) {
 					sp_id = TEXT_BLOODWAR;
-				} else if (plr[myplr]._pClass == PC_ROGUE) {
+				} else if (universe.plr[myplr]._pClass == PC_ROGUE) {
 					sp_id = TEXT_RBLOODWAR;
-				} else if (plr[myplr]._pClass == PC_SORCERER) {
+				} else if (universe.plr[myplr]._pClass == PC_SORCERER) {
 					sp_id = TEXT_MBLOODWAR;
 #ifdef HELLFIRE
-				} else if (plr[myplr]._pClass == PC_MONK) {
+				} else if (universe.plr[myplr]._pClass == PC_MONK) {
 					sp_id = TEXT_HBLOODWAR;
-				} else if (plr[myplr]._pClass == PC_BARD) {
+				} else if (universe.plr[myplr]._pClass == PC_BARD) {
 					sp_id = TEXT_BBLOODWAR;
-				} else if (plr[myplr]._pClass == PC_BARBARIAN) {
+				} else if (universe.plr[myplr]._pClass == PC_BARBARIAN) {
 					sp_id = TEXT_BLOODWAR;
 #endif
 				}
 				quests[Q_WARLORD]._qmsg = sp_id;
-				AddBookLever(0, 0, MAXDUNX, MAXDUNY, setpc_x, setpc_y, setpc_x + setpc_w, setpc_y + setpc_h, sp_id);
+				AddBookLever(universe, 0, 0, MAXDUNX, MAXDUNY, setpc_x, setpc_y, setpc_x + setpc_w, setpc_y + setpc_h, sp_id);
 				mem = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
-				LoadMapObjs(mem, 2 * setpc_x, 2 * setpc_y);
+				LoadMapObjs(universe, mem, 2 * setpc_x, 2 * setpc_y);
 				mem_free_dbg(mem);
 			}
-			if (QuestStatus(Q_BETRAYER) && gbMaxPlayers == 1)
-				AddLazStand();
-			InitRndBarrels();
-			AddL4Goodies();
+			if (QuestStatus(Q_BETRAYER) && universe.gbMaxPlayers == 1)
+				AddLazStand(universe);
+			InitRndBarrels(universe);
+			AddL4Goodies(universe);
 		}
-		InitRndLocObj(5, 10, OBJ_CHEST1);
-		InitRndLocObj(3, 6, OBJ_CHEST2);
-		InitRndLocObj(1, 5, OBJ_CHEST3);
+		InitRndLocObj(universe, 5, 10, OBJ_CHEST1);
+		InitRndLocObj(universe, 3, 6, OBJ_CHEST2);
+		InitRndLocObj(universe, 1, 5, OBJ_CHEST3);
 		if (leveltype != DTYPE_HELL)
-			AddObjTraps();
+			AddObjTraps(universe);
 		if (leveltype > DTYPE_CATHEDRAL)
 			AddChestTraps();
 		InitObjFlag = FALSE;
@@ -1110,7 +1110,7 @@ void InitObjects(Universe& universe)
 }
 
 #ifndef SPAWN
-void SetMapObjects(BYTE *pMap, int startx, int starty)
+void SetMapObjects(Universe& universe, BYTE *pMap, int startx, int starty)
 {
 	int rw, rh;
 	int i, j;
@@ -1163,7 +1163,7 @@ void SetMapObjects(BYTE *pMap, int startx, int starty)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm)
-				AddObject(ObjTypeConv[*lm], startx + 16 + i, starty + 16 + j);
+				AddObject(universe, ObjTypeConv[*lm], startx + 16 + i, starty + 16 + j);
 			lm += 2;
 		}
 	}
@@ -1307,13 +1307,13 @@ void AddL3Door(int i, int x, int y, int ot)
 	object[i]._oVar4 = 0;
 }
 
-void AddSarc(int i)
+void AddSarc(Universe& universe, int i)
 {
 	dObject[object[i]._ox][object[i]._oy - 1] = -(i + 1);
 	object[i]._oVar1 = random_(153, 10);
 	object[i]._oRndSeed = GetRndSeed();
 	if (object[i]._oVar1 >= 8)
-		object[i]._oVar2 = PreSpawnSkeleton();
+		object[i]._oVar2 = PreSpawnSkeleton(universe);
 }
 
 void AddFlameTrap(int i)
@@ -1363,7 +1363,7 @@ void AddObjLight(int i, int r)
 	}
 }
 
-void AddBarrel(int i, int t)
+void AddBarrel(Universe& universe, int i, int t)
 {
 	object[i]._oVar1 = 0;
 	object[i]._oRndSeed = GetRndSeed();
@@ -1371,10 +1371,10 @@ void AddBarrel(int i, int t)
 	object[i]._oVar3 = random_(149, 3);
 
 	if (object[i]._oVar2 >= 8)
-		object[i]._oVar4 = PreSpawnSkeleton();
+		object[i]._oVar4 = PreSpawnSkeleton(universe);
 }
 
-void AddShrine(int i)
+void AddShrine(Universe& universe, int i)
 {
 	int val;
 	DIABOOL slist[NUM_SHRINETYPE];
@@ -1396,10 +1396,10 @@ void AddShrine(int i)
 		} else {
 			slist[j] = 1;
 		}
-		if (gbMaxPlayers != 1 && shrineavail[j] == 1) {
+		if (universe.gbMaxPlayers != 1 && shrineavail[j] == 1) {
 			slist[j] = 0;
 		}
-		if (gbMaxPlayers == 1 && shrineavail[j] == 2) {
+		if (universe.gbMaxPlayers == 1 && shrineavail[j] == 2) {
 			slist[j] = 0;
 		}
 	}
@@ -1514,9 +1514,9 @@ void AddPedistal(int i)
 	object[i]._oVar4 = setpc_y + setpc_h;
 }
 
-void AddStoryBook(int i)
+void AddStoryBook(Universe& universe, int i)
 {
-	SetRndSeed(glSeedTbl[16]);
+	SetRndSeed(universe.glSeedTbl[16]);
 
 	object[i]._oVar1 = random_(0, 3);
 	if (currlevel == 4)
@@ -1580,7 +1580,7 @@ void GetRndObjLoc(int randarea, int &xx, int &yy)
 	}
 }
 
-void AddMushPatch()
+void AddMushPatch(Universe& universe)
 {
 	int i;
 	int y, x;
@@ -1591,16 +1591,16 @@ void AddMushPatch()
 		dObject[x + 1][y + 1] = -1 - i;
 		dObject[x + 2][y + 1] = -1 - i;
 		dObject[x + 1][y + 2] = -1 - i;
-		AddObject(OBJ_MUSHPATCH, x + 2, y + 2);
+		AddObject(universe, OBJ_MUSHPATCH, x + 2, y + 2);
 	}
 }
 
-void AddSlainHero()
+void AddSlainHero(Universe& universe)
 {
 	int x, y;
 
 	GetRndObjLoc(5, x, y);
-	AddObject(OBJ_SLAINHERO, x + 2, y + 2);
+	AddObject(universe, OBJ_SLAINHERO, x + 2, y + 2);
 }
 
 #ifdef HELLFIRE
@@ -1628,47 +1628,47 @@ void AddCryptObject(int i, int a2)
 		object[i]._oVar8 = a2;
 		switch (a2) {
 		case 6:
-			if (plr[myplr]._pClass == PC_WARRIOR) {
+			if (universe.plr[myplr]._pClass == PC_WARRIOR) {
 				object[i]._oVar2 = 323;
-			} else if (plr[myplr]._pClass == PC_ROGUE) {
+			} else if (universe.plr[myplr]._pClass == PC_ROGUE) {
 				object[i]._oVar2 = 332;
-			} else if (plr[myplr]._pClass == PC_SORCERER) {
+			} else if (universe.plr[myplr]._pClass == PC_SORCERER) {
 				object[i]._oVar2 = 329;
-			} else if (plr[myplr]._pClass == PC_MONK) {
+			} else if (universe.plr[myplr]._pClass == PC_MONK) {
 				object[i]._oVar2 = 326;
-			} else if (plr[myplr]._pClass == PC_BARD) {
+			} else if (universe.plr[myplr]._pClass == PC_BARD) {
 				object[i]._oVar2 = 335;
-			} else if (plr[myplr]._pClass == PC_BARBARIAN) {
+			} else if (universe.plr[myplr]._pClass == PC_BARBARIAN) {
 				object[i]._oVar2 = 323;
 			}
 			break;
 		case 7:
-			if (plr[myplr]._pClass == PC_WARRIOR) {
+			if (universe.plr[myplr]._pClass == PC_WARRIOR) {
 				object[i]._oVar2 = 324;
-			} else if (plr[myplr]._pClass == PC_ROGUE) {
+			} else if (universe.plr[myplr]._pClass == PC_ROGUE) {
 				object[i]._oVar2 = 333;
-			} else if (plr[myplr]._pClass == PC_SORCERER) {
+			} else if (universe.plr[myplr]._pClass == PC_SORCERER) {
 				object[i]._oVar2 = 330;
-			} else if (plr[myplr]._pClass == PC_MONK) {
+			} else if (universe.plr[myplr]._pClass == PC_MONK) {
 				object[i]._oVar2 = 327;
-			} else if (plr[myplr]._pClass == PC_BARD) {
+			} else if (universe.plr[myplr]._pClass == PC_BARD) {
 				object[i]._oVar2 = 336;
-			} else if (plr[myplr]._pClass == PC_BARBARIAN) {
+			} else if (universe.plr[myplr]._pClass == PC_BARBARIAN) {
 				object[i]._oVar2 = 324;
 			}
 			break;
 		case 8:
-			if (plr[myplr]._pClass == PC_WARRIOR) {
+			if (universe.plr[myplr]._pClass == PC_WARRIOR) {
 				object[i]._oVar2 = 325;
-			} else if (plr[myplr]._pClass == PC_ROGUE) {
+			} else if (universe.plr[myplr]._pClass == PC_ROGUE) {
 				object[i]._oVar2 = 334;
-			} else if (plr[myplr]._pClass == PC_SORCERER) {
+			} else if (universe.plr[myplr]._pClass == PC_SORCERER) {
 				object[i]._oVar2 = 331;
-			} else if (plr[myplr]._pClass == PC_MONK) {
+			} else if (universe.plr[myplr]._pClass == PC_MONK) {
 				object[i]._oVar2 = 328;
-			} else if (plr[myplr]._pClass == PC_BARD) {
+			} else if (universe.plr[myplr]._pClass == PC_BARD) {
 				object[i]._oVar2 = 337;
-			} else if (plr[myplr]._pClass == PC_BARBARIAN) {
+			} else if (universe.plr[myplr]._pClass == PC_BARBARIAN) {
 				object[i]._oVar2 = 325;
 			}
 			break;
@@ -1691,7 +1691,7 @@ void AddCryptObject(int i, int a2)
 }
 #endif
 
-void AddObject(int ot, int ox, int oy)
+void AddObject(Universe& universe, int ot, int ox, int oy)
 {
 	int oi;
 
@@ -1746,7 +1746,7 @@ void AddObject(int ot, int ox, int oy)
 		AddChest(oi, ot);
 		break;
 	case OBJ_SARC:
-		AddSarc(oi);
+		AddSarc(universe, oi);
 		break;
 	case OBJ_FLAMEHOLE:
 		AddFlameTrap(oi);
@@ -1763,11 +1763,11 @@ void AddObject(int ot, int ox, int oy)
 		break;
 	case OBJ_BARREL:
 	case OBJ_BARRELEX:
-		AddBarrel(oi, ot);
+		AddBarrel(universe, oi, ot);
 		break;
 	case OBJ_SHRINEL:
 	case OBJ_SHRINER:
-		AddShrine(oi);
+		AddShrine(universe, oi);
 		break;
 	case OBJ_BOOKCASEL:
 	case OBJ_BOOKCASER:
@@ -1810,7 +1810,7 @@ void AddObject(int ot, int ox, int oy)
 		AddMagicCircle(oi);
 		break;
 	case OBJ_STORYBOOK:
-		AddStoryBook(oi);
+		AddStoryBook(universe, oi);
 		break;
 	case OBJ_BCROSS:
 	case OBJ_TBCROSS:
@@ -2080,25 +2080,25 @@ void DoorSet(int oi, int dx, int dy)
 #endif
 }
 
-void RedoPlayerVision()
+void RedoPlayerVision(Universe& universe)
 {
 	int p;
 
 	for (p = 0; p < MAX_PLRS; p++) {
-		if (plr[p].plractive && currlevel == plr[p].plrlevel) {
-			ChangeVisionXY(plr[p]._pvid, plr[p]._px, plr[p]._py);
+		if (universe.plr[p].plractive && currlevel == universe.plr[p].plrlevel) {
+			ChangeVisionXY(universe.plr[p]._pvid, universe.plr[p]._px, universe.plr[p]._py);
 		}
 	}
 }
 
-void ObjChangeMap(int x1, int y1, int x2, int y2)
+void ObjChangeMap(Universe& universe, int x1, int y1, int x2, int y2)
 {
 	int i, j;
 
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
 			ObjSetMini(i, j, pdungeon[i][j]);
-			SetDungeon(i, j, pdungeon[i][j]);
+			SetDungeon(universe, i, j, pdungeon[i][j]);
 		}
 	}
 #ifdef HELLFIRE
@@ -2107,22 +2107,22 @@ void ObjChangeMap(int x1, int y1, int x2, int y2)
 	if (leveltype == DTYPE_CATHEDRAL) {
 #endif
 		ObjL1Special(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
-		AddL1Objs(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
+		AddL1Objs(universe, 2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
 	}
 	if (leveltype == DTYPE_CATACOMBS) {
 		ObjL2Special(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
-		AddL2Objs(2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
+		AddL2Objs(universe, 2 * x1 + 16, 2 * y1 + 16, 2 * x2 + 17, 2 * y2 + 17);
 	}
 }
 
-void ObjChangeMapResync(int x1, int y1, int x2, int y2)
+void ObjChangeMapResync(Universe& universe, int x1, int y1, int x2, int y2)
 {
 	int i, j;
 
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
 			ObjSetMini(i, j, pdungeon[i][j]);
-			SetDungeon(i, j, pdungeon[i][j]);
+			SetDungeon(universe, i, j, pdungeon[i][j]);
 		}
 	}
 #ifdef HELLFIRE
@@ -2137,7 +2137,7 @@ void ObjChangeMapResync(int x1, int y1, int x2, int y2)
 	}
 }
 
-int FindValidShrine(int i)
+int FindValidShrine(Universe& universe, int i)
 {
 	int rv;
 	DIABOOL done;
@@ -2149,13 +2149,13 @@ int FindValidShrine(int i)
 			done = TRUE;
 		}
 		if (done) {
-			if (gbMaxPlayers != 1) {
+			if (universe.gbMaxPlayers != 1) {
 				if (shrineavail[rv] == 1) {
 					done = FALSE;
 					continue;
 				}
 			}
-			if (gbMaxPlayers == 1) {
+			if (universe.gbMaxPlayers == 1) {
 				if (shrineavail[rv] == 2) {
 					done = FALSE;
 					continue;
@@ -2167,7 +2167,7 @@ int FindValidShrine(int i)
 	return rv;
 }
 
-void GetObjectStr(int i, char infostr[50])
+void GetObjectStr(Universe& universe, int i, char infostr[50])
 {
 	char tempstr[50];
 	switch (object[i]._otype) {
@@ -2309,7 +2309,7 @@ void GetObjectStr(int i, char infostr[50])
 		strcpy(infostr, "Slain Hero");
 		break;
 	}
-	if (plr[myplr]._pClass == PC_ROGUE) {
+	if (universe.plr[myplr]._pClass == PC_ROGUE) {
 		if (object[i]._oTrapFlag) {
 			sprintf(tempstr, "Trapped %s", infostr);
 			strcpy(infostr, tempstr);

@@ -49,7 +49,7 @@ Scanner *scanner;
 
 void InitEngine(Universe& universe)
 {
-	gnDifficulty = DIFF_NORMAL;
+	universe.gnDifficulty = DIFF_NORMAL;
 	leveltype = DTYPE_NONE;
 
 	DRLG_PreLoadL2SP();
@@ -81,13 +81,13 @@ void ShutDownEngine()
 	delete scanner;
 }
 
-void InitiateLevel(int level)
+void InitiateLevel(Universe& universe, int level)
 {
 	POI = { -1, -1 };
 	currlevel = level;
 
-	oobread = false;
-	oobwrite = false;
+	universe.oobread = false;
+	universe.oobwrite = false;
 
 	if (level > 12)
 		leveltype = DTYPE_HELL;
@@ -144,10 +144,10 @@ void FindStairCordinates()
 
 void CreateDungeonContent(Universe& universe)
 {
-	InitDungeonMonsters();
+	InitDungeonMonsters(universe);
 
 	InitThemes();
-	SetRndSeed(glSeedTbl[currlevel]);
+	SetRndSeed(universe.glSeedTbl[currlevel]);
 	HoldThemeRooms();
 	GetRndSeed();
 
@@ -156,13 +156,13 @@ void CreateDungeonContent(Universe& universe)
 
 	InitObjects(universe);
 
-	InitItems();
-	CreateThemeRooms();
+	InitItems(universe);
+	CreateThemeRooms(universe);
 }
 
 std::optional<uint32_t> CreateDungeon(Universe& universe, DungeonMode mode)
 {
-	uint32_t lseed = glSeedTbl[currlevel];
+	uint32_t lseed = universe.glSeedTbl[currlevel];
 	std::optional<uint32_t> levelSeed = std::nullopt;
 	if (leveltype == DTYPE_CATHEDRAL)
 		levelSeed = CreateL5Dungeon(universe, lseed, 0, mode);
@@ -189,26 +189,26 @@ std::optional<uint32_t> CreateDungeon(Universe& universe, DungeonMode mode)
 		FindStairCordinates();
 	}
 
-	if (Config.verbose && oobwrite)
-		std::cerr << "Game Seed: " << sgGameInitInfo.dwSeed << " OOB write detected" << std::endl;
+	if (Config.verbose && universe.oobwrite)
+		std::cerr << "Game Seed: " << universe.sgGameInitInfo.dwSeed << " OOB write detected" << std::endl;
 
 	return levelSeed;
 }
 
 /**
  * @brief GET MAIN SEED, GET ALL MAP SEEDS
- * @return nothing, but updates RNG seeds list glSeedTbl[i]
+ * @return nothing, but updates RNG seeds list universe.glSeedTbl[i]
  */
-void SetGameSeed(uint32_t seed)
+void SetGameSeed(Universe& universe, uint32_t seed)
 {
-	sgGameInitInfo.dwSeed = seed;
-	SetRndSeed(sgGameInitInfo.dwSeed);
+	universe.sgGameInitInfo.dwSeed = seed;
+	SetRndSeed(universe.sgGameInitInfo.dwSeed);
 
 	for (int i = 0; i < NUMLEVELS; i++) {
-		glSeedTbl[i] = GetRndSeed();
+		universe.glSeedTbl[i] = GetRndSeed();
 	}
 
-	InitQuests();
+	InitQuests(universe);
 	memset(UniqueItemFlag, 0, sizeof(UniqueItemFlag));
 }
 
@@ -387,11 +387,11 @@ void ParseArguments(int argc, char **argv)
 
 }
 
-void InitDungeonMonsters()
+void InitDungeonMonsters(Universe& universe)
 {
-	InitLevelMonsters();
-	SetRndSeed(glSeedTbl[currlevel]);
-	GetLevelMTypes();
+	InitLevelMonsters(universe);
+	SetRndSeed(universe.glSeedTbl[currlevel]);
+	GetLevelMTypes(universe);
 }
 
 int main(int argc, char **argv)
@@ -411,7 +411,7 @@ int main(int argc, char **argv)
 		}
 		printProgress(seedIndex, seed);
 
-		SetGameSeed(seed);
+		SetGameSeed(universe, seed);
 		if (scanner->skipSeed())
 			continue;
 
@@ -419,7 +419,7 @@ int main(int argc, char **argv)
 			if (scanner->skipLevel(level))
 				continue;
 
-			InitiateLevel(level);
+			InitiateLevel(universe, level);
 			std::optional<uint32_t> levelSeed = CreateDungeon(universe, scanner->getDungeonMode());
 			if (!scanner->levelMatches(levelSeed))
 				continue;
@@ -427,7 +427,7 @@ int main(int argc, char **argv)
 			if (Config.asciiLevels)
 				printAsciiLevel();
 			if (Config.exportLevels)
-				ExportDun(seed);
+				ExportDun(universe, seed);
 		}
 	}
 

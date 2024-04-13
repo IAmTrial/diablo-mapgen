@@ -13,16 +13,16 @@ bool ScannerQuest::skipSeed()
 {
 	if (quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
 		if (Config.verbose)
-			std::cerr << "Game Seed: " << sgGameInitInfo.dwSeed << " thrown out: Sign Quest" << std::endl;
+			std::cerr << "Game Seed: " << universe.sgGameInitInfo.dwSeed << " thrown out: Sign Quest" << std::endl;
 		return true;
 	}
 	if (quests[Q_WARLORD]._qactive != QUEST_NOTAVAIL) {
 		if (Config.verbose)
-			std::cerr << "Game Seed: " << sgGameInitInfo.dwSeed << " thrown out: Warlord" << std::endl;
+			std::cerr << "Game Seed: " << universe.sgGameInitInfo.dwSeed << " thrown out: Warlord" << std::endl;
 		return true;
 	}
 
-	std::cout << sgGameInitInfo.dwSeed << std::endl;
+	std::cout << universe.sgGameInitInfo.dwSeed << std::endl;
 
 	return true;
 }

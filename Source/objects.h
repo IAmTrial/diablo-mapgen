@@ -19,28 +19,28 @@ extern BOOL InitObjFlag;
 
 void InitObjectGFX();
 void FreeObjectGFX();
-void AddL1Objs(int x1, int y1, int x2, int y2);
-void AddL2Objs(int x1, int y1, int x2, int y2);
+void AddL1Objs(Universe& universe, int x1, int y1, int x2, int y2);
+void AddL2Objs(Universe& universe, int x1, int y1, int x2, int y2);
 void InitObjects(Universe& universe);
-void SetMapObjects(BYTE *pMap, int startx, int starty);
+void SetMapObjects(Universe& universe, BYTE *pMap, int startx, int starty);
 void SetObjMapRange(int i, int x1, int y1, int x2, int y2, int v);
 void SetBookMsg(int i, int msg);
 void GetRndObjLoc(int randarea, int &xx, int &yy);
-void AddMushPatch();
-void AddSlainHero();
+void AddMushPatch(Universe& universe);
+void AddSlainHero(Universe& universe);
 #ifdef HELLFIRE
 void AddCryptBook(int ot, int v2, int ox, int oy);
 void AddCryptObject(int a1, int a2);
 void AddNakrulBook(int a1, int a2, int a3);
 #endif
-void AddObject(int ot, int ox, int oy);
+void AddObject(Universe& universe, int ot, int ox, int oy);
 void Obj_Trap(int i);
 void ProcessObjects();
 void ObjSetMicro(int dx, int dy, int pn);
-void RedoPlayerVision();
+void RedoPlayerVision(Universe& universe);
 void MonstCheckDoors(int m);
-void ObjChangeMap(int x1, int y1, int x2, int y2);
-void ObjChangeMapResync(int x1, int y1, int x2, int y2);
+void ObjChangeMap(Universe& universe, int x1, int y1, int x2, int y2);
+void ObjChangeMapResync(Universe& universe, int x1, int y1, int x2, int y2);
 void TryDisarm(int pnum, int i);
 int ItemMiscIdIdx(int imiscid);
 void OperateObject(int pnum, int i, BOOL TeleFlag);
@@ -48,7 +48,7 @@ void SyncOpObject(int pnum, int cmd, int i);
 void BreakObject(int pnum, int oi);
 void SyncBreakObj(int pnum, int oi);
 void SyncObjectAnim(int o);
-void GetObjectStr(int i, char infostr[50]);
+void GetObjectStr(Universe& universe, int i, char infostr[50]);
 #ifdef HELLFIRE
 void OperateNakrulLever();
 void SyncNakrulRoom();

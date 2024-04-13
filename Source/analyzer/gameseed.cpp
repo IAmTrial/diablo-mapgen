@@ -22,7 +22,7 @@ bool ScannerGameSeed::skipLevel(int level)
 	if (level != 9)
 		return true;
 
-	InitDungeonMonsters();
+	InitDungeonMonsters(universe);
 
 	bool hasLavaLoards = false;
 	for (int i = 0; i < nummtypes && !hasLavaLoards; i++)
@@ -37,7 +37,7 @@ bool ScannerGameSeed::levelMatches(std::optional<uint32_t> levelSeed)
 		return false;
 
 	if (levelSeed == *Config.target) {
-		std::cout << sgGameInitInfo.dwSeed << std::endl;
+		std::cout << universe.sgGameInitInfo.dwSeed << std::endl;
 		return true;
 	}
 

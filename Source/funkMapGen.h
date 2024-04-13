@@ -69,4 +69,4 @@ extern Point POI;
 
 extern char Path[MAX_PATH_LENGTH];
 
-void InitDungeonMonsters();
+void InitDungeonMonsters(Universe& universe);

@@ -20,7 +20,7 @@ bool ScannerWarp::levelMatches(std::optional<uint32_t> levelSeed)
 	if (POI == Point { -1, -1 })
 		return false;
 
-	std::cout << sgGameInitInfo.dwSeed << std::endl;
+	std::cout << universe.sgGameInitInfo.dwSeed << std::endl;
 
 	return true;
 }

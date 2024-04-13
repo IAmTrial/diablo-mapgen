@@ -10,7 +10,7 @@
 #include "Source/objects.h"
 #include "Source/universe/universe.h"
 
-void CreateItemsFromObject(int oid)
+void CreateItemsFromObject(Universe& universe, int oid)
 {
 	switch (object[oid]._otype) {
 	case OBJ_CHEST1:
@@ -22,60 +22,60 @@ void CreateItemsFromObject(int oid)
 		SetRndSeed(object[oid]._oRndSeed);
 		if (setlevel) {
 			for (int j = 0; j < object[oid]._oVar1; j++) {
-				CreateRndItem(object[oid]._ox, object[oid]._oy, TRUE, TRUE, FALSE);
+				CreateRndItem(universe, object[oid]._ox, object[oid]._oy, TRUE, TRUE, FALSE);
 			}
 		} else {
 			for (int j = 0; j < object[oid]._oVar1; j++) {
 				if (object[oid]._oVar2 != 0)
-					CreateRndItem(object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
+					CreateRndItem(universe, object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
 				else
-					CreateRndUseful(0, object[oid]._ox, object[oid]._oy, TRUE);
+					CreateRndUseful(universe, 0, object[oid]._ox, object[oid]._oy, TRUE);
 			}
 		}
 		break;
 	case OBJ_SARC:
 		SetRndSeed(object[oid]._oRndSeed);
 		if (object[oid]._oVar1 <= 2)
-			CreateRndItem(object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
+			CreateRndItem(universe, object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
 		break;
 	case OBJ_DECAP:
 		SetRndSeed(object[oid]._oRndSeed);
-		CreateRndItem(object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
+		CreateRndItem(universe, object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
 		break;
 	case OBJ_BARREL:
 		SetRndSeed(object[oid]._oRndSeed);
 		if (object[oid]._oVar2 <= 1) {
 			if (object[oid]._oVar3 == 0)
-				CreateRndUseful(0, object[oid]._ox, object[oid]._oy, TRUE);
+				CreateRndUseful(universe, 0, object[oid]._ox, object[oid]._oy, TRUE);
 			else
-				CreateRndItem(object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
+				CreateRndItem(universe, object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
 		}
 		break;
 	case OBJ_SKELBOOK:
 	case OBJ_BOOKSTAND:
 		SetRndSeed(object[oid]._oRndSeed);
 		if (random_(161, 5) != 0)
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_SCROLL, TRUE, FALSE);
+			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_SCROLL, TRUE, FALSE);
 		else
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_BOOK, TRUE, FALSE);
+			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_BOOK, TRUE, FALSE);
 		break;
 	case OBJ_BOOKCASEL:
 	case OBJ_BOOKCASER:
 		SetRndSeed(object[oid]._oRndSeed);
-		CreateTypeItem(object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_BOOK, TRUE, FALSE);
+		CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_BOOK, TRUE, FALSE);
 		break;
 	case OBJ_ARMORSTAND:
 	case OBJ_WARARMOR: {
 		SetRndSeed(object[oid]._oRndSeed);
 		BOOL uniqueRnd = random_(0, 2);
 		if (currlevel <= 5) {
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, TRUE, ITYPE_LARMOR, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, TRUE, ITYPE_LARMOR, IMISC_NONE, TRUE, FALSE);
 		} else if (currlevel >= 6 && currlevel <= 9) {
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, TRUE, FALSE);
 		} else if (currlevel >= 10 && currlevel <= 12) {
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, FALSE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, FALSE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
 		} else if (currlevel >= 13 && currlevel <= 16) {
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, TRUE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, TRUE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
 		}
 	} break;
 	case OBJ_WARWEAP:
@@ -99,14 +99,14 @@ void CreateItemsFromObject(int oid)
 		}
 
 		if (leveltype > 1)
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, TRUE, weaponType, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, TRUE, weaponType, IMISC_NONE, TRUE, FALSE);
 		else
-			CreateTypeItem(object[oid]._ox, object[oid]._oy, FALSE, weaponType, IMISC_NONE, TRUE, FALSE);
+			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, FALSE, weaponType, IMISC_NONE, TRUE, FALSE);
 	} break;
 	}
 }
 
-void DropAllItems()
+void DropAllItems(Universe& universe)
 {
 	MonsterItems = numitems;
 	for (int i = 0; i < nummonsters; i++) {
@@ -114,13 +114,13 @@ void DropAllItems()
 		if (monster[mid].MType->mtype == MT_GOLEM)
 			continue;
 		SetRndSeed(monster[mid]._mRndSeed);
-		SpawnItem(mid, monster[mid]._mx, monster[mid]._my, TRUE);
+		SpawnItem(universe, mid, monster[mid]._mx, monster[mid]._my, TRUE);
 	}
 
 	ObjectItems = numitems;
 	for (int i = 0; i < nobjects; i++) {
 		int oid = objectactive[i];
-		CreateItemsFromObject(oid);
+		CreateItemsFromObject(universe, oid);
 	}
 }
 
@@ -131,9 +131,9 @@ bool ScannerPuzzler::skipLevel(int level)
 	return level != 9;
 }
 
-void LocatePuzzler()
+void LocatePuzzler(Universe& universe)
 {
-	DropAllItems();
+	DropAllItems(universe);
 
 	POI = { -1, -1 };
 	for (int i = 0; i < numitems; i++) {
@@ -147,7 +147,7 @@ void LocatePuzzler()
 
 bool ScannerPuzzler::levelMatches(std::optional<uint32_t> levelSeed)
 {
-	LocatePuzzler();
+	LocatePuzzler(universe);
 	if (POI == Point { -1, -1 })
 		return false;
 
@@ -161,7 +161,7 @@ bool ScannerPuzzler::levelMatches(std::optional<uint32_t> levelSeed)
 		for (int i = 0; i < nobjects; i++) {
 			int oid = objectactive[i];
 			char objstr[50];
-			GetObjectStr(oid, objstr);
+			GetObjectStr(universe, oid, objstr);
 			std::cerr << "Object " << i << ": " << objstr << " (" << object[oid]._oRndSeed << ")" << std::endl;
 		}
 		std::cerr << std::endl;
@@ -176,7 +176,7 @@ bool ScannerPuzzler::levelMatches(std::optional<uint32_t> levelSeed)
 		}
 	}
 
-	std::cout << sgGameInitInfo.dwSeed << std::endl;
+	std::cout << universe.sgGameInitInfo.dwSeed << std::endl;
 
 	return true;
 }

@@ -18,19 +18,19 @@ extern MonsterStruct monster[MAXMONSTERS];
 extern CMonster Monsters[MAX_LVLMTYPES];
 extern int nummtypes;
 
-void InitLevelMonsters();
-void GetLevelMTypes();
+void InitLevelMonsters(Universe& universe);
+void GetLevelMTypes(Universe& universe);
 void InitMonsterGFX(int monst);
-void InitMonster(int i, int rd, int mtype, int x, int y);
-void ClrAllMonsters();
+void InitMonster(Universe& universe, int i, int rd, int mtype, int x, int y);
+void ClrAllMonsters(Universe& universe);
 #ifdef HELLFIRE
 void monster_some_crypt(Universe& universe);
 #endif
-void PlaceGroup(int mtype, int num, int leaderf, int leader);
+void PlaceGroup(Universe& universe, int mtype, int num, int leaderf, int leader);
 void InitMonsters(Universe& universe);
 void SetMapMonsters(Universe& universe, BYTE *pMap, int startx, int starty);
-void DeleteMonster(int i);
-int AddMonster(int x, int y, int dir, int mtype, BOOL InMap);
+void DeleteMonster(Universe& universe, int i);
+int AddMonster(Universe& universe, int x, int y, int dir, int mtype, BOOL InMap);
 #ifdef HELLFIRE
 void AddDoppelganger(int i);
 #endif
@@ -127,7 +127,7 @@ BOOL IsSkel(int mt);
 BOOL IsGoat(int mt);
 int M_SpawnSkel(int x, int y, int dir);
 BOOL SpawnSkeleton(int ii, int x, int y);
-int PreSpawnSkeleton();
+int PreSpawnSkeleton(Universe& universe);
 void TalktoMonster(int i);
 void SpawnGolum(int i, int x, int y, int mi);
 BOOL CanTalkToMonst(int m);

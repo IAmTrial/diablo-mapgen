@@ -14,6 +14,6 @@
 
 std::optional<uint32_t> CreateL3Dungeon(Universe& universe, DWORD rseed, int entry, DungeonMode mode);
 void LoadL3Dungeon(Universe& universe, const char *sFileName, int vx, int vy);
-void LoadPreL3Dungeon(const char *sFileName, int vx, int vy);
+void LoadPreL3Dungeon(Universe& universe, const char *sFileName, int vx, int vy);
 
 #endif /* __DRLG_L3_H__ */

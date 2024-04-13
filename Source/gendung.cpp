@@ -10,6 +10,7 @@
 #include "types.h"
 #include "Source/engine.h"
 #include "Source/lighting.h"
+#include "Source/universe/universe.h"
 
 /** Contains the tile IDs of the map. */
 BYTE dungeon[DMAXX][DMAXY];
@@ -266,7 +267,7 @@ static void SortTiles(int frames)
 	}
 }
 
-void MakeSpeedCels()
+void MakeSpeedCels(Universe& universe)
 {
 	int i, j, x, y, mt, t, z;
 	int total_frames, blocks, total_size, frameidx, blk_cnt, nDataSize;
@@ -454,7 +455,7 @@ void MakeSpeedCels()
 	total_size = 0;
 	total_frames = 0;
 
-	if (light4flag) {
+	if (universe.light4flag) {
 		while (total_size < 0x100000) {
 			total_size += level_frame_sizes[total_frames] << 1;
 			total_frames++;
@@ -472,7 +473,7 @@ void MakeSpeedCels()
 
 	frameidx = 0;
 
-	if (light4flag)
+	if (universe.light4flag)
 		blk_cnt = 3;
 	else
 		blk_cnt = 15;
@@ -627,7 +628,7 @@ void SetSpeedCels()
 	}
 }
 
-void SetDungeonMicros()
+void SetDungeonMicros(Universe& universe)
 {
 	int i, x, y, lv, blocks;
 	WORD *pPiece;
@@ -660,10 +661,10 @@ void SetDungeonMicros()
 		}
 	}
 
-	MakeSpeedCels();
+	MakeSpeedCels(universe);
 	SetSpeedCels();
 
-	if (zoomflag) {
+	if (universe.zoomflag) {
 		ViewDX = SCREEN_WIDTH;
 		ViewDY = VIEWPORT_HEIGHT;
 		ViewBX = SCREEN_WIDTH / TILE_WIDTH;
@@ -791,7 +792,7 @@ void Make_SetPC(int x, int y, int w, int h)
 	}
 }
 
-BOOL DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, int *width, int *height)
+BOOL DRLG_WillThemeRoomFit(Universe& universe, int floor, int x, int y, int minSize, int maxSize, int *width, int *height)
 {
 	int ii, xx, yy;
 	int xSmallest, ySmallest;
@@ -818,7 +819,7 @@ BOOL DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, in
 	for (ii = 0; ii < maxSize; ii++) {
 		if (xFlag) {
 			for (xx = x; xx < x + maxSize; xx++) {
-				if (GetDungeon(xx, y + ii) != floor) {
+				if (GetDungeon(universe, xx, y + ii) != floor) {
 					if (xx >= minSize) { // BUGFIX: This is comparing absolute to relative, should be `xx - x >= minSize`
 						break;
 					}
@@ -834,7 +835,7 @@ BOOL DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, in
 		}
 		if (yFlag) {
 			for (yy = y; yy < y + maxSize; yy++) {
-				if (GetDungeon(x + ii, yy) != floor) {
+				if (GetDungeon(universe, x + ii, yy) != floor) {
 					if (yy >= minSize) { // BUGFIX: This is comparing absolute to relative, should be `yy - y >= minSize`
 						break;
 					}
@@ -876,7 +877,7 @@ BOOL DRLG_WillThemeRoomFit(int floor, int x, int y, int minSize, int maxSize, in
 	return TRUE;
 }
 
-void DRLG_CreateThemeRoom(int themeIndex)
+void DRLG_CreateThemeRoom(Universe& universe, int themeIndex)
 {
 	int xx, yy;
 
@@ -889,16 +890,16 @@ void DRLG_CreateThemeRoom(int themeIndex)
 				    || yy == themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1
 				        && xx >= themeLoc[themeIndex].x
 				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width) {
-					SetDungeon(xx, yy, 2);
+					SetDungeon(universe, xx, yy, 2);
 				} else if (xx == themeLoc[themeIndex].x
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height
 				    || xx == themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height) {
-					SetDungeon(xx, yy, 1);
+					SetDungeon(universe, xx, yy, 1);
 				} else {
-					SetDungeon(xx, yy, 3);
+					SetDungeon(universe, xx, yy, 3);
 				}
 			}
 			if (leveltype == DTYPE_CAVES) {
@@ -908,16 +909,16 @@ void DRLG_CreateThemeRoom(int themeIndex)
 				    || yy == themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1
 				        && xx >= themeLoc[themeIndex].x
 				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width) {
-					SetDungeon(xx, yy, 134);
+					SetDungeon(universe, xx, yy, 134);
 				} else if (xx == themeLoc[themeIndex].x
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height
 				    || xx == themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height) {
-					SetDungeon(xx, yy, 137);
+					SetDungeon(universe, xx, yy, 137);
 				} else {
-					SetDungeon(xx, yy, 7);
+					SetDungeon(universe, xx, yy, 7);
 				}
 			}
 			if (leveltype == DTYPE_HELL) {
@@ -927,80 +928,80 @@ void DRLG_CreateThemeRoom(int themeIndex)
 				    || yy == themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1
 				        && xx >= themeLoc[themeIndex].x
 				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width) {
-					SetDungeon(xx, yy, 2);
+					SetDungeon(universe, xx, yy, 2);
 				} else if (xx == themeLoc[themeIndex].x
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height
 				    || xx == themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1
 				        && yy >= themeLoc[themeIndex].y
 				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height) {
-					SetDungeon(xx, yy, 1);
+					SetDungeon(universe, xx, yy, 1);
 				} else {
-					SetDungeon(xx, yy, 6);
+					SetDungeon(universe, xx, yy, 6);
 				}
 			}
 		}
 	}
 
 	if (leveltype == DTYPE_CATACOMBS) {
-		SetDungeon(themeLoc[themeIndex].x, themeLoc[themeIndex].y, 8);
-		SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y, 7);
-		SetDungeon(themeLoc[themeIndex].x, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 9);
-		SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 6);
+		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y, 8);
+		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y, 7);
+		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 9);
+		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 6);
 	}
 	if (leveltype == DTYPE_CAVES) {
-		SetDungeon(themeLoc[themeIndex].x, themeLoc[themeIndex].y, 150);
-		SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y, 151);
-		SetDungeon(themeLoc[themeIndex].x, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 152);
-		SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 138);
+		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y, 150);
+		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y, 151);
+		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 152);
+		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 138);
 	}
 	if (leveltype == DTYPE_HELL) {
-		SetDungeon(themeLoc[themeIndex].x, themeLoc[themeIndex].y, 9);
-		SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y, 16);
-		SetDungeon(themeLoc[themeIndex].x, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 15);
-		SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 12);
+		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y, 9);
+		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y, 16);
+		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 15);
+		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 12);
 	}
 
 	if (leveltype == DTYPE_CATACOMBS) {
 		switch (random_(0, 2)) {
 		case 0:
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 4);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 4);
 			break;
 		case 1:
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 5);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 5);
 			break;
 		}
 	}
 	if (leveltype == DTYPE_CAVES) {
 		switch (random_(0, 2)) {
 		case 0:
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 147);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 147);
 			break;
 		case 1:
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 146);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 146);
 			break;
 		}
 	}
 	if (leveltype == DTYPE_HELL) {
 		switch (random_(0, 2)) {
 		case 0:
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2 - 1, 53);
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 6);
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2 + 1, 52);
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width - 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2 - 1, 54);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2 - 1, 53);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 6);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2 + 1, 52);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2 - 1, 54);
 			break;
 		case 1:
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2 - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 57);
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 6);
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2 + 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 56);
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 2, 59);
-			SetDungeon(themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2 - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 2, 58);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2 - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 57);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 6);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2 + 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 56);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 2, 59);
+			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2 - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 2, 58);
 			break;
 		}
 	}
 }
 
-void DRLG_PlaceThemeRooms(int minSize, int maxSize, int floor, int freq, int rndSize)
+void DRLG_PlaceThemeRooms(Universe& universe, int minSize, int maxSize, int floor, int freq, int rndSize)
 {
 	int i, j;
 	int themeW, themeH;
@@ -1010,7 +1011,7 @@ void DRLG_PlaceThemeRooms(int minSize, int maxSize, int floor, int freq, int rnd
 	memset(themeLoc, 0, sizeof(*themeLoc));
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == floor && !random_(0, freq) && DRLG_WillThemeRoomFit(floor, i, j, minSize, maxSize, &themeW, &themeH)) {
+			if (dungeon[i][j] == floor && !random_(0, freq) && DRLG_WillThemeRoomFit(universe, floor, i, j, minSize, maxSize, &themeW, &themeH)) {
 				if (rndSize) {
 					min = minSize - 2;
 					max = maxSize - 2;
@@ -1034,7 +1035,7 @@ void DRLG_PlaceThemeRooms(int minSize, int maxSize, int floor, int freq, int rnd
 				else
 					DRLG_MRectTrans(i + 1, j + 1, i + themeW, j + themeH);
 				themeLoc[themeCount].ttval = TransVal - 1;
-				DRLG_CreateThemeRoom(themeCount);
+				DRLG_CreateThemeRoom(universe, themeCount);
 				themeCount++;
 			}
 		}
@@ -1073,9 +1074,9 @@ BOOL SkipThemeRoom(int x, int y)
 	return TRUE;
 }
 
-void InitLevels()
+void InitLevels(Universe& universe)
 {
-	if (!leveldebug) {
+	if (!universe.leveldebug) {
 		currlevel = 0;
 		leveltype = DTYPE_TOWN;
 		setlevel = FALSE;

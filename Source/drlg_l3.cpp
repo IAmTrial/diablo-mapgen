@@ -843,7 +843,7 @@ const BYTE byte_48A9C8[] = {
 };
 #endif
 
-static void InitL3Dungeon()
+static void InitL3Dungeon(Universe& universe)
 {
 	int i, j;
 
@@ -851,13 +851,13 @@ static void InitL3Dungeon()
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			SetDungeon(i, j, 0);
+			SetDungeon(universe, i, j, 0);
 			dflags[i][j] = 0;
 		}
 	}
 }
 
-static BOOL DRLG_L3FillRoom(int x1, int y1, int x2, int y2)
+static BOOL DRLG_L3FillRoom(Universe& universe, int x1, int y1, int x2, int y2)
 {
 	int i, j, v;
 
@@ -868,7 +868,7 @@ static BOOL DRLG_L3FillRoom(int x1, int y1, int x2, int y2)
 	v = 0;
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
-			v += GetDungeon(i, j);
+			v += GetDungeon(universe, i, j);
 		}
 	}
 
@@ -878,30 +878,30 @@ static BOOL DRLG_L3FillRoom(int x1, int y1, int x2, int y2)
 
 	for (j = y1 + 1; j < y2; j++) {
 		for (i = x1 + 1; i < x2; i++) {
-			SetDungeon(i, j, 1);
+			SetDungeon(universe, i, j, 1);
 		}
 	}
 	for (j = y1; j <= y2; j++) {
 		if (random_(0, 2) != 0) {
-			SetDungeon(x1, j, 1);
+			SetDungeon(universe, x1, j, 1);
 		}
 		if (random_(0, 2) != 0) {
-			SetDungeon(x2, j, 1);
+			SetDungeon(universe, x2, j, 1);
 		}
 	}
 	for (i = x1; i <= x2; i++) {
 		if (random_(0, 2) != 0) {
-			SetDungeon(i, y1, 1);
+			SetDungeon(universe, i, y1, 1);
 		}
 		if (random_(0, 2) != 0) {
-			SetDungeon(i, y2, 1);
+			SetDungeon(universe, i, y2, 1);
 		}
 	}
 
 	return TRUE;
 }
 
-static void DRLG_L3CreateBlock(int x, int y, int obs, int dir)
+static void DRLG_L3CreateBlock(Universe& universe, int x, int y, int obs, int dir)
 {
 	int blksizex, blksizey, x1, y1, x2, y2;
 	int contflag;
@@ -966,19 +966,19 @@ static void DRLG_L3CreateBlock(int x, int y, int obs, int dir)
 		y2 = y1 + blksizey;
 	}
 
-	if (DRLG_L3FillRoom(x1, y1, x2, y2) == TRUE) {
+	if (DRLG_L3FillRoom(universe, x1, y1, x2, y2) == TRUE) {
 		contflag = random_(0, 4);
 		if (contflag != 0 && dir != 2) {
-			DRLG_L3CreateBlock(x1, y1, blksizey, 0);
+			DRLG_L3CreateBlock(universe, x1, y1, blksizey, 0);
 		}
 		if (contflag != 0 && dir != 3) {
-			DRLG_L3CreateBlock(x2, y1, blksizex, 1);
+			DRLG_L3CreateBlock(universe, x2, y1, blksizex, 1);
 		}
 		if (contflag != 0 && dir != 0) {
-			DRLG_L3CreateBlock(x1, y2, blksizey, 2);
+			DRLG_L3CreateBlock(universe, x1, y2, blksizey, 2);
 		}
 		if (contflag != 0 && dir != 1) {
-			DRLG_L3CreateBlock(x1, y1, blksizex, 3);
+			DRLG_L3CreateBlock(universe, x1, y1, blksizex, 3);
 		}
 	}
 }
@@ -1117,19 +1117,19 @@ static void DRLG_L3FillStraights()
 	}
 }
 
-static void DRLG_L3Edges()
+static void DRLG_L3Edges(Universe& universe)
 {
 	int i, j;
 
 	for (j = 0; j < DMAXY; j++) {
-		SetDungeon(DMAXX - 1, j, 0);
+		SetDungeon(universe, DMAXX - 1, j, 0);
 	}
 	for (i = 0; i < DMAXX; i++) {
-		SetDungeon(i, DMAXY - 1, 0);
+		SetDungeon(universe, i, DMAXY - 1, 0);
 	}
 }
 
-static int DRLG_L3GetFloorArea()
+static int DRLG_L3GetFloorArea(Universe& universe)
 {
 	int i, j, gfa;
 
@@ -1137,20 +1137,20 @@ static int DRLG_L3GetFloorArea()
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			gfa += GetDungeon(i, j);
+			gfa += GetDungeon(universe, i, j);
 		}
 	}
 
 	return gfa;
 }
 
-static void DRLG_L3MakeMegas()
+static void DRLG_L3MakeMegas(Universe& universe)
 {
 	int i, j, v, rv;
 
 	for (j = 0; j < DMAXY - 1; j++) {
 		for (i = 0; i < DMAXX - 1; i++) {
-			v = GetDungeon(i + 1, j + 1) + 2 * GetDungeon(i, j + 1) + 4 * GetDungeon(i + 1, j) + 8 * GetDungeon(i, j);
+			v = GetDungeon(universe, i + 1, j + 1) + 2 * GetDungeon(universe, i, j + 1) + 4 * GetDungeon(universe, i + 1, j) + 8 * GetDungeon(universe, i, j);
 			if (v == 6) {
 				rv = random_(0, 2);
 				if (rv == 0) {
@@ -1167,16 +1167,16 @@ static void DRLG_L3MakeMegas()
 					v = 14;
 				}
 			}
-			SetDungeon(i, j, L3ConvTbl[v]);
+			SetDungeon(universe, i, j, L3ConvTbl[v]);
 		}
-		SetDungeon(DMAXX - 1, j, 8);
+		SetDungeon(universe, DMAXX - 1, j, 8);
 	}
 	for (i = 0; i < DMAXX; i++) {
-		SetDungeon(i, DMAXY - 1, 8);
+		SetDungeon(universe, i, DMAXY - 1, 8);
 	}
 }
 
-static void DRLG_L3River()
+static void DRLG_L3River(Universe& universe)
 {
 	int rx, ry, px, py, dir, pdir, nodir, nodir2, dircheck;
 	int river[3][100];
@@ -1197,13 +1197,13 @@ static void DRLG_L3River()
 			rx = 0;
 			ry = 0;
 			i = 0;
-			// BUGFIX: Replace with `(ry >= DMAXY || GetDungeon(rx, ry) < 25 || GetDungeon(rx, ry) > 28) && i < 100`
-			while ((GetDungeon(rx, ry) < 25 || GetDungeon(rx, ry) > 28) && i < 100) {
+			// BUGFIX: Replace with `(ry >= DMAXY || GetDungeon(universe, rx, ry) < 25 || GetDungeon(universe, rx, ry) > 28) && i < 100`
+			while ((GetDungeon(universe, rx, ry) < 25 || GetDungeon(universe, rx, ry) > 28) && i < 100) {
 				rx = random_(0, DMAXX);
 				ry = random_(0, DMAXY);
 				i++;
 				// BUGFIX: Move `ry < DMAXY` check before dungeon checks
-				while ((GetDungeon(rx, ry) < 25 || GetDungeon(rx, ry) > 28) && ry < DMAXY) {
+				while ((GetDungeon(universe, rx, ry) < 25 || GetDungeon(universe, rx, ry) > 28) && ry < DMAXY) {
 					rx++;
 					if (rx >= DMAXX) {
 						rx = 0;
@@ -1215,7 +1215,7 @@ static void DRLG_L3River()
 			if (i >= 100) {
 				return;
 			}
-			switch (GetDungeon(rx, ry)) {
+			switch (GetDungeon(universe, rx, ry)) {
 			case 25:
 				dir = 3;
 				nodir = 2;
@@ -1267,7 +1267,7 @@ static void DRLG_L3River()
 				if (dir == 3 && rx > 0) {
 					rx--;
 				}
-				if (GetDungeon(rx, ry) == 7) {
+				if (GetDungeon(universe, rx, ry) == 7) {
 					dircheck = 0;
 					if (dir < 2) {
 						river[2][riveramt] = (BYTE)random_(0, 2) + 17;
@@ -1325,7 +1325,7 @@ static void DRLG_L3River()
 				}
 			}
 			// BUGFIX: Check `ry >= 2`
-			if (dir == 0 && GetDungeon(rx, ry - 1) == 10 && GetDungeon(rx, ry - 2) == 8) {
+			if (dir == 0 && GetDungeon(universe, rx, ry - 1) == 10 && GetDungeon(universe, rx, ry - 2) == 8) {
 				river[0][riveramt] = rx;
 				river[1][riveramt] = ry - 1;
 				river[2][riveramt] = 24;
@@ -1338,7 +1338,7 @@ static void DRLG_L3River()
 				bail = TRUE;
 			}
 			// BUGFIX: Check `ry + 2 < DMAXY`
-			if (dir == 1 && GetDungeon(rx, ry + 1) == 2 && GetDungeon(rx, ry + 2) == 8) {
+			if (dir == 1 && GetDungeon(universe, rx, ry + 1) == 2 && GetDungeon(universe, rx, ry + 2) == 8) {
 				river[0][riveramt] = rx;
 				river[1][riveramt] = ry + 1;
 				river[2][riveramt] = 42;
@@ -1351,7 +1351,7 @@ static void DRLG_L3River()
 				bail = TRUE;
 			}
 			// BUGFIX: Check `rx + 2 < DMAXX`
-			if (dir == 2 && GetDungeon(rx + 1, ry) == 4 && GetDungeon(rx + 2, ry) == 8) {
+			if (dir == 2 && GetDungeon(universe, rx + 1, ry) == 4 && GetDungeon(universe, rx + 2, ry) == 8) {
 				river[0][riveramt] = rx + 1;
 				river[1][riveramt] = ry;
 				river[2][riveramt] = 43;
@@ -1364,7 +1364,7 @@ static void DRLG_L3River()
 				bail = TRUE;
 			}
 			// BUGFIX: Check `rx >= 2`
-			if (dir == 3 && GetDungeon(rx - 1, ry) == 9 && GetDungeon(rx - 2, ry) == 8) {
+			if (dir == 3 && GetDungeon(universe, rx - 1, ry) == 9 && GetDungeon(universe, rx - 2, ry) == 8) {
 				river[0][riveramt] = rx - 1;
 				river[1][riveramt] = ry;
 				river[2][riveramt] = 23;
@@ -1387,13 +1387,13 @@ static void DRLG_L3River()
 				lpcnt++;
 				bridge = random_(0, riveramt);
 				if ((river[2][bridge] == 15 || river[2][bridge] == 16)
-				    && GetDungeon(river[0][bridge], river[1][bridge] - 1) == 7
-				    && GetDungeon(river[0][bridge], river[1][bridge] + 1) == 7) {
+				    && GetDungeon(universe, river[0][bridge], river[1][bridge] - 1) == 7
+				    && GetDungeon(universe, river[0][bridge], river[1][bridge] + 1) == 7) {
 					found = 1;
 				}
 				if ((river[2][bridge] == 17 || river[2][bridge] == 18)
-				    && GetDungeon(river[0][bridge] - 1, river[1][bridge]) == 7
-				    && GetDungeon(river[0][bridge] + 1, river[1][bridge]) == 7) {
+				    && GetDungeon(universe, river[0][bridge] - 1, river[1][bridge]) == 7
+				    && GetDungeon(universe, river[0][bridge] + 1, river[1][bridge]) == 7) {
 					found = 2;
 				}
 				for (i = 0; i < riveramt && found != 0; i++) {
@@ -1417,7 +1417,7 @@ static void DRLG_L3River()
 				}
 				rivercnt++;
 				for (bridge = 0; bridge <= riveramt; bridge++) {
-					SetDungeon(river[0][bridge], river[1][bridge], river[2][bridge]);
+					SetDungeon(universe, river[0][bridge], river[1][bridge], river[2][bridge]);
 				}
 			} else {
 				bail = FALSE;
@@ -1426,9 +1426,9 @@ static void DRLG_L3River()
 	}
 }
 
-static BOOL DRLG_L3Spawn(int x, int y, int *totarea);
+static BOOL DRLG_L3Spawn(Universe& universe, int x, int y, int *totarea);
 
-static BOOL DRLG_L3SpawnEdge(int x, int y, int *totarea)
+static BOOL DRLG_L3SpawnEdge(Universe& universe, int x, int y, int *totarea)
 {
 	BYTE i;
 	const static BYTE spawntable[15] = { 0x00, 0x0A, 0x43, 0x05, 0x2c, 0x06, 0x09, 0x00, 0x00, 0x1c, 0x83, 0x06, 0x09, 0x0A, 0x05 };
@@ -1439,46 +1439,46 @@ static BOOL DRLG_L3SpawnEdge(int x, int y, int *totarea)
 	if (x < 0 || y < 0 || x >= DMAXX || y >= DMAXY) {
 		return TRUE;
 	}
-	if (GetDungeon(x, y) & 0x80) {
+	if (GetDungeon(universe, x, y) & 0x80) {
 		return FALSE;
 	}
-	if (GetDungeon(x, y) > 15) {
+	if (GetDungeon(universe, x, y) > 15) {
 		return TRUE;
 	}
 
-	i = GetDungeon(x, y);
-	SetDungeon(x, y, GetDungeon(x, y) | 0x80);
+	i = GetDungeon(universe, x, y);
+	SetDungeon(universe, x, y, GetDungeon(universe, x, y) | 0x80);
 	*totarea += 1;
 
-	if (spawntable[i] & 8 && DRLG_L3SpawnEdge(x, y - 1, totarea) == TRUE) {
+	if (spawntable[i] & 8 && DRLG_L3SpawnEdge(universe, x, y - 1, totarea) == TRUE) {
 		return TRUE;
 	}
-	if (spawntable[i] & 4 && DRLG_L3SpawnEdge(x, y + 1, totarea) == TRUE) {
+	if (spawntable[i] & 4 && DRLG_L3SpawnEdge(universe, x, y + 1, totarea) == TRUE) {
 		return TRUE;
 	}
-	if (spawntable[i] & 2 && DRLG_L3SpawnEdge(x + 1, y, totarea) == TRUE) {
+	if (spawntable[i] & 2 && DRLG_L3SpawnEdge(universe, x + 1, y, totarea) == TRUE) {
 		return TRUE;
 	}
-	if (spawntable[i] & 1 && DRLG_L3SpawnEdge(x - 1, y, totarea) == TRUE) {
+	if (spawntable[i] & 1 && DRLG_L3SpawnEdge(universe, x - 1, y, totarea) == TRUE) {
 		return TRUE;
 	}
-	if (spawntable[i] & 0x80 && DRLG_L3Spawn(x, y - 1, totarea) == TRUE) {
+	if (spawntable[i] & 0x80 && DRLG_L3Spawn(universe, x, y - 1, totarea) == TRUE) {
 		return TRUE;
 	}
-	if (spawntable[i] & 0x40 && DRLG_L3Spawn(x, y + 1, totarea) == TRUE) {
+	if (spawntable[i] & 0x40 && DRLG_L3Spawn(universe, x, y + 1, totarea) == TRUE) {
 		return TRUE;
 	}
-	if (spawntable[i] & 0x20 && DRLG_L3Spawn(x + 1, y, totarea) == TRUE) {
+	if (spawntable[i] & 0x20 && DRLG_L3Spawn(universe, x + 1, y, totarea) == TRUE) {
 		return TRUE;
 	}
-	if (spawntable[i] & 0x10 && DRLG_L3Spawn(x - 1, y, totarea) == TRUE) {
+	if (spawntable[i] & 0x10 && DRLG_L3Spawn(universe, x - 1, y, totarea) == TRUE) {
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-static BOOL DRLG_L3Spawn(int x, int y, int *totarea)
+static BOOL DRLG_L3Spawn(Universe& universe, int x, int y, int *totarea)
 {
 	BYTE i;
 	const static BYTE spawntable[15] = { 0x00, 0x0A, 0x03, 0x05, 0x0C, 0x06, 0x09, 0x00, 0x00, 0x0C, 0x03, 0x06, 0x09, 0x0A, 0x05 };
@@ -1489,41 +1489,41 @@ static BOOL DRLG_L3Spawn(int x, int y, int *totarea)
 	if (x < 0 || y < 0 || x >= DMAXX || y >= DMAXY) {
 		return TRUE;
 	}
-	if (GetDungeon(x, y) & 0x80) {
+	if (GetDungeon(universe, x, y) & 0x80) {
 		return FALSE;
 	}
-	if (GetDungeon(x, y) > 15) {
+	if (GetDungeon(universe, x, y) > 15) {
 		return TRUE;
 	}
 
-	i = GetDungeon(x, y);
-	SetDungeon(x, y, GetDungeon(x, y) | 0x80);
+	i = GetDungeon(universe, x, y);
+	SetDungeon(universe, x, y, GetDungeon(universe, x, y) | 0x80);
 	*totarea += 1;
 
 	if (i != 8) {
-		if (spawntable[i] & 8 && DRLG_L3SpawnEdge(x, y - 1, totarea) == TRUE) {
+		if (spawntable[i] & 8 && DRLG_L3SpawnEdge(universe, x, y - 1, totarea) == TRUE) {
 			return TRUE;
 		}
-		if (spawntable[i] & 4 && DRLG_L3SpawnEdge(x, y + 1, totarea) == TRUE) {
+		if (spawntable[i] & 4 && DRLG_L3SpawnEdge(universe, x, y + 1, totarea) == TRUE) {
 			return TRUE;
 		}
-		if (spawntable[i] & 2 && DRLG_L3SpawnEdge(x + 1, y, totarea) == TRUE) {
+		if (spawntable[i] & 2 && DRLG_L3SpawnEdge(universe, x + 1, y, totarea) == TRUE) {
 			return TRUE;
 		}
-		if (spawntable[i] & 1 && DRLG_L3SpawnEdge(x - 1, y, totarea) == TRUE) {
+		if (spawntable[i] & 1 && DRLG_L3SpawnEdge(universe, x - 1, y, totarea) == TRUE) {
 			return TRUE;
 		}
 	} else {
-		if (DRLG_L3Spawn(x + 1, y, totarea) == TRUE) {
+		if (DRLG_L3Spawn(universe, x + 1, y, totarea) == TRUE) {
 			return TRUE;
 		}
-		if (DRLG_L3Spawn(x - 1, y, totarea) == TRUE) {
+		if (DRLG_L3Spawn(universe, x - 1, y, totarea) == TRUE) {
 			return TRUE;
 		}
-		if (DRLG_L3Spawn(x, y + 1, totarea) == TRUE) {
+		if (DRLG_L3Spawn(universe, x, y + 1, totarea) == TRUE) {
 			return TRUE;
 		}
-		if (DRLG_L3Spawn(x, y - 1, totarea) == TRUE) {
+		if (DRLG_L3Spawn(universe, x, y - 1, totarea) == TRUE) {
 			return TRUE;
 		}
 	}
@@ -1545,28 +1545,28 @@ static void DRLG_L3Pool(Universe& universe)
 
 	for (duny = 0; duny < DMAXY; duny++) {
 		for (dunx = 0; dunx < DMAXY; dunx++) {
-			if (GetDungeon(dunx, duny) != 8) {
+			if (GetDungeon(universe, dunx, duny) != 8) {
 				continue;
 			}
-			SetDungeon(dunx, duny, GetDungeon(dunx, duny) | 0x80);
+			SetDungeon(universe, dunx, duny, GetDungeon(universe, dunx, duny) | 0x80);
 			totarea = 1;
 			if (dunx + 1 < DMAXX) {
-				found = DRLG_L3Spawn(dunx + 1, duny, &totarea);
+				found = DRLG_L3Spawn(universe, dunx + 1, duny, &totarea);
 			} else {
 				found = TRUE;
 			}
 			if (dunx - 1 > 0 && !found) {
-				found = DRLG_L3Spawn(dunx - 1, duny, &totarea);
+				found = DRLG_L3Spawn(universe, dunx - 1, duny, &totarea);
 			} else {
 				found = TRUE;
 			}
 			if (duny + 1 < DMAXY && !found) {
-				found = DRLG_L3Spawn(dunx, duny + 1, &totarea);
+				found = DRLG_L3Spawn(universe, dunx, duny + 1, &totarea);
 			} else {
 				found = TRUE;
 			}
 			if (duny - 1 > 0 && !found) {
-				found = DRLG_L3Spawn(dunx, duny - 1, &totarea);
+				found = DRLG_L3Spawn(universe, dunx, duny - 1, &totarea);
 			} else {
 				found = TRUE;
 			}
@@ -1574,13 +1574,13 @@ static void DRLG_L3Pool(Universe& universe)
 			for (j = duny - totarea; j < duny + totarea; j++) {
 				for (i = dunx - totarea; i < dunx + totarea; i++) {
 					// BUGFIX: In the following swap the order to first do the
-					// index checks and only then access GetDungeon(i, j)
-					if (GetDungeon(i, j) & 0x80 && j >= 0 && j < DMAXY && i >= 0 && i < DMAXX) {
-						SetDungeon(i, j, GetDungeon(i, j) & ~0x80);
+					// index checks and only then access GetDungeon(universe, i, j)
+					if (GetDungeon(universe, i, j) & 0x80 && j >= 0 && j < DMAXY && i >= 0 && i < DMAXX) {
+						SetDungeon(universe, i, j, GetDungeon(universe, i, j) & ~0x80);
 						if (totarea > 4 && poolchance < 25 && !found) {
-							k = poolsub[GetDungeon(i, j)];
+							k = poolsub[GetDungeon(universe, i, j)];
 							if (k != 0 && k <= 37) {
-								SetDungeon(i, j, k);
+								SetDungeon(universe, i, j, k);
 							}
 							universe.lavapool = TRUE;
 						}
@@ -1591,29 +1591,29 @@ static void DRLG_L3Pool(Universe& universe)
 	}
 }
 
-static void DRLG_L3PoolFix()
+static void DRLG_L3PoolFix(Universe& universe)
 {
 	int dunx, duny;
 
 	for (duny = 0; duny < DMAXY; duny++) {     // BUGFIX: Change '0' to '1' and 'DMAXY' to 'DMAXY - 1'
 		for (dunx = 0; dunx < DMAXX; dunx++) { // BUGFIX: Change '0' to '1' and 'DMAXX' to 'DMAXX - 1'
-			if (GetDungeon(dunx, duny) == 8) {
-				if (GetDungeon(dunx - 1, duny - 1) >= 25 && GetDungeon(dunx - 1, duny - 1) <= 41
-				    && GetDungeon(dunx - 1, duny) >= 25 && GetDungeon(dunx - 1, duny) <= 41
-				    && GetDungeon(dunx - 1, duny + 1) >= 25 && GetDungeon(dunx - 1, duny + 1) <= 41
-				    && GetDungeon(dunx, duny - 1) >= 25 && GetDungeon(dunx, duny - 1) <= 41
-				    && GetDungeon(dunx, duny + 1) >= 25 && GetDungeon(dunx, duny + 1) <= 41
-				    && GetDungeon(dunx + 1, duny - 1) >= 25 && GetDungeon(dunx + 1, duny - 1) <= 41
-				    && GetDungeon(dunx + 1, duny) >= 25 && GetDungeon(dunx + 1, duny) <= 41
-				    && GetDungeon(dunx + 1, duny + 1) >= 25 && GetDungeon(dunx + 1, duny + 1) <= 41) {
-					SetDungeon(dunx, duny, 33);
+			if (GetDungeon(universe, dunx, duny) == 8) {
+				if (GetDungeon(universe, dunx - 1, duny - 1) >= 25 && GetDungeon(universe, dunx - 1, duny - 1) <= 41
+				    && GetDungeon(universe, dunx - 1, duny) >= 25 && GetDungeon(universe, dunx - 1, duny) <= 41
+				    && GetDungeon(universe, dunx - 1, duny + 1) >= 25 && GetDungeon(universe, dunx - 1, duny + 1) <= 41
+				    && GetDungeon(universe, dunx, duny - 1) >= 25 && GetDungeon(universe, dunx, duny - 1) <= 41
+				    && GetDungeon(universe, dunx, duny + 1) >= 25 && GetDungeon(universe, dunx, duny + 1) <= 41
+				    && GetDungeon(universe, dunx + 1, duny - 1) >= 25 && GetDungeon(universe, dunx + 1, duny - 1) <= 41
+				    && GetDungeon(universe, dunx + 1, duny) >= 25 && GetDungeon(universe, dunx + 1, duny) <= 41
+				    && GetDungeon(universe, dunx + 1, duny + 1) >= 25 && GetDungeon(universe, dunx + 1, duny + 1) <= 41) {
+					SetDungeon(universe, dunx, duny, 33);
 				}
 			}
 		}
 	}
 }
 
-static BOOL DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int ldir)
+static BOOL DRLG_L3PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmin, int tmax, int cx, int cy, BOOL setview, int ldir)
 {
 	int sx, sy, sw, sh, xx, yy, i, ii, numt, trys;
 	BOOL found;
@@ -1648,7 +1648,7 @@ static BOOL DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 			ii = 2;
 			for (yy = 0; yy < sh && found == TRUE; yy++) {
 				for (xx = 0; xx < sw && found == TRUE; xx++) {
-					if (miniset[ii] != 0 && GetDungeon(xx + sx, yy + sy) != miniset[ii]) {
+					if (miniset[ii] != 0 && GetDungeon(universe, xx + sx, yy + sy) != miniset[ii]) {
 						found = FALSE;
 					}
 					if (dflags[xx + sx][yy + sy] != 0) {
@@ -1675,7 +1675,7 @@ static BOOL DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 		for (yy = 0; yy < sh; yy++) {
 			for (xx = 0; xx < sw; xx++) {
 				if (miniset[ii] != 0) {
-					SetDungeon(xx + sx, yy + sy, miniset[ii]);
+					SetDungeon(universe, xx + sx, yy + sy, miniset[ii]);
 				}
 				ii++;
 			}
@@ -1694,7 +1694,7 @@ static BOOL DRLG_L3PlaceMiniSet(const BYTE *miniset, int tmin, int tmax, int cx,
 	return FALSE;
 }
 
-static void DRLG_L3PlaceRndSet(const BYTE *miniset, int rndper)
+static void DRLG_L3PlaceRndSet(Universe& universe, const BYTE *miniset, int rndper)
 {
 	int sx, sy, sw, sh, xx, yy, ii, kk;
 	BOOL found;
@@ -1708,7 +1708,7 @@ static void DRLG_L3PlaceRndSet(const BYTE *miniset, int rndper)
 			ii = 2;
 			for (yy = 0; yy < sh && found == TRUE; yy++) {
 				for (xx = 0; xx < sw && found == TRUE; xx++) {
-					if (miniset[ii] != 0 && GetDungeon(xx + sx, yy + sy) != miniset[ii]) {
+					if (miniset[ii] != 0 && GetDungeon(universe, xx + sx, yy + sy) != miniset[ii]) {
 						found = FALSE;
 					}
 					if (dflags[xx + sx][yy + sy] != 0) {
@@ -1722,16 +1722,16 @@ static void DRLG_L3PlaceRndSet(const BYTE *miniset, int rndper)
 			if (miniset[kk] >= 84 && miniset[kk] <= 100 && found == TRUE) {
 				// BUGFIX: accesses to dungeon can go out of bounds
 				// BUGFIX: Comparisons vs 100 should use same tile as comparisons vs 84.
-				if (GetDungeon(sx - 1, sy) >= 84 && GetDungeon(sx - 1, sy) <= 100) {
+				if (GetDungeon(universe, sx - 1, sy) >= 84 && GetDungeon(universe, sx - 1, sy) <= 100) {
 					found = FALSE;
 				}
-				if (GetDungeon(sx + 1, sy) >= 84 && GetDungeon(sx - 1, sy) <= 100) {
+				if (GetDungeon(universe, sx + 1, sy) >= 84 && GetDungeon(universe, sx - 1, sy) <= 100) {
 					found = FALSE;
 				}
-				if (GetDungeon(sx, sy + 1) >= 84 && GetDungeon(sx - 1, sy) <= 100) {
+				if (GetDungeon(universe, sx, sy + 1) >= 84 && GetDungeon(universe, sx - 1, sy) <= 100) {
 					found = FALSE;
 				}
-				if (GetDungeon(sx, sy - 1) >= 84 && GetDungeon(sx - 1, sy) <= 100) {
+				if (GetDungeon(universe, sx, sy - 1) >= 84 && GetDungeon(universe, sx - 1, sy) <= 100) {
 					found = FALSE;
 				}
 			}
@@ -1739,7 +1739,7 @@ static void DRLG_L3PlaceRndSet(const BYTE *miniset, int rndper)
 				for (yy = 0; yy < sh; yy++) {
 					for (xx = 0; xx < sw; xx++) {
 						if (miniset[kk] != 0) {
-							SetDungeon(xx + sx, yy + sy, miniset[kk]);
+							SetDungeon(universe, xx + sx, yy + sy, miniset[kk]);
 						}
 						kk++;
 					}
@@ -1766,7 +1766,7 @@ BOOLEAN drlg_l3_hive_rnd_piece(const BYTE *miniset, int rndper)
 			ii = 2;
 			for (yy = 0; yy < sh && found == TRUE; yy++) {
 				for (xx = 0; xx < sw && found == TRUE; xx++) {
-					if (miniset[ii] != 0 && GetDungeon(xx + sx, yy + sy) != miniset[ii]) {
+					if (miniset[ii] != 0 && GetDungeon(universe, xx + sx, yy + sy) != miniset[ii]) {
 						found = FALSE;
 					}
 					if (dflags[xx + sx][yy + sy] != 0) {
@@ -1779,16 +1779,16 @@ BOOLEAN drlg_l3_hive_rnd_piece(const BYTE *miniset, int rndper)
 			if (miniset[kk] >= 84 && miniset[kk] <= 100 && found == TRUE) {
 				// BUGFIX: accesses to dungeon can go out of bounds
 				// BUGFIX: Comparisons vs 100 should use same tile as comparisons vs 84.
-				if (GetDungeon(sx - 1, sy) >= 84 && GetDungeon(sx - 1, sy) <= 100) {
+				if (GetDungeon(universe, sx - 1, sy) >= 84 && GetDungeon(universe, sx - 1, sy) <= 100) {
 					found = FALSE;
 				}
-				if (GetDungeon(sx + 1, sy) >= 84 && GetDungeon(sx - 1, sy) <= 100) {
+				if (GetDungeon(universe, sx + 1, sy) >= 84 && GetDungeon(universe, sx - 1, sy) <= 100) {
 					found = FALSE;
 				}
-				if (GetDungeon(sx, sy + 1) >= 84 && GetDungeon(sx - 1, sy) <= 100) {
+				if (GetDungeon(universe, sx, sy + 1) >= 84 && GetDungeon(universe, sx - 1, sy) <= 100) {
 					found = FALSE;
 				}
-				if (GetDungeon(sx, sy - 1) >= 84 && GetDungeon(sx - 1, sy) <= 100) {
+				if (GetDungeon(universe, sx, sy - 1) >= 84 && GetDungeon(universe, sx - 1, sy) <= 100) {
 					found = FALSE;
 				}
 			}
@@ -1797,7 +1797,7 @@ BOOLEAN drlg_l3_hive_rnd_piece(const BYTE *miniset, int rndper)
 				for (yy = 0; yy < sh; yy++) {
 					for (xx = 0; xx < sw; xx++) {
 						if (miniset[kk] != 0) {
-							SetDungeon(xx + sx, yy + sy, miniset[kk]);
+							SetDungeon(universe, xx + sx, yy + sy, miniset[kk]);
 						}
 						kk++;
 					}
@@ -1810,26 +1810,26 @@ BOOLEAN drlg_l3_hive_rnd_piece(const BYTE *miniset, int rndper)
 }
 #endif
 
-static BOOL WoodVertU(int i, int y)
+static BOOL WoodVertU(Universe& universe, int i, int y)
 {
-	if ((GetDungeon(i + 1, y) > 152 || GetDungeon(i + 1, y) < 130)
-	    && (GetDungeon(i - 1, y) > 152 || GetDungeon(i - 1, y) < 130)) {
-		if (GetDungeon(i, y) == 7) {
+	if ((GetDungeon(universe, i + 1, y) > 152 || GetDungeon(universe, i + 1, y) < 130)
+	    && (GetDungeon(universe, i - 1, y) > 152 || GetDungeon(universe, i - 1, y) < 130)) {
+		if (GetDungeon(universe, i, y) == 7) {
 			return TRUE;
 		}
-		if (GetDungeon(i, y) == 10) {
+		if (GetDungeon(universe, i, y) == 10) {
 			return TRUE;
 		}
-		if (GetDungeon(i, y) == 126) {
+		if (GetDungeon(universe, i, y) == 126) {
 			return TRUE;
 		}
-		if (GetDungeon(i, y) == 129) {
+		if (GetDungeon(universe, i, y) == 129) {
 			return TRUE;
 		}
-		if (GetDungeon(i, y) == 134) {
+		if (GetDungeon(universe, i, y) == 134) {
 			return TRUE;
 		}
-		if (GetDungeon(i, y) == 136) {
+		if (GetDungeon(universe, i, y) == 136) {
 			return TRUE;
 		}
 	}
@@ -1858,26 +1858,26 @@ static BOOL WoodVertD(int i, int y)
 	return FALSE;
 }
 
-static BOOL WoodHorizL(int x, int j)
+static BOOL WoodHorizL(Universe& universe, int x, int j)
 {
-	if ((GetDungeon(x, j + 1) > 152 || GetDungeon(x, j + 1) < 130)
-	    && (GetDungeon(x, j - 1) > 152 || GetDungeon(x, j - 1) < 130)) {
-		if (GetDungeon(x, j) == 7) {
+	if ((GetDungeon(universe, x, j + 1) > 152 || GetDungeon(universe, x, j + 1) < 130)
+	    && (GetDungeon(universe, x, j - 1) > 152 || GetDungeon(universe, x, j - 1) < 130)) {
+		if (GetDungeon(universe, x, j) == 7) {
 			return TRUE;
 		}
-		if (GetDungeon(x, j) == 9) {
+		if (GetDungeon(universe, x, j) == 9) {
 			return TRUE;
 		}
-		if (GetDungeon(x, j) == 121) {
+		if (GetDungeon(universe, x, j) == 121) {
 			return TRUE;
 		}
-		if (GetDungeon(x, j) == 124) {
+		if (GetDungeon(universe, x, j) == 124) {
 			return TRUE;
 		}
-		if (GetDungeon(x, j) == 135) {
+		if (GetDungeon(universe, x, j) == 135) {
 			return TRUE;
 		}
-		if (GetDungeon(x, j) == 137) {
+		if (GetDungeon(universe, x, j) == 137) {
 			return TRUE;
 		}
 	}
@@ -1930,47 +1930,47 @@ void AddFenceDoors()
 	}
 }
 
-void FenceDoorFix()
+void FenceDoorFix(Universe& universe)
 {
 	int i, j;
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (GetDungeon(i, j) == 146) {
-				if (GetDungeon(i + 1, j) > 152 || GetDungeon(i + 1, j) < 130
-				    || GetDungeon(i - 1, j) > 152 || GetDungeon(i - 1, j) < 130) {
-					SetDungeon(i, j, 7);
+			if (GetDungeon(universe, i, j) == 146) {
+				if (GetDungeon(universe, i + 1, j) > 152 || GetDungeon(universe, i + 1, j) < 130
+				    || GetDungeon(universe, i - 1, j) > 152 || GetDungeon(universe, i - 1, j) < 130) {
+					SetDungeon(universe, i, j, 7);
 					continue;
 				}
 			}
-			if (GetDungeon(i, j) == 146) {
-				if (GetDungeon(i + 1, j) != 130 && GetDungeon(i - 1, j) != 130
-				    && GetDungeon(i + 1, j) != 132 && GetDungeon(i - 1, j) != 132
-				    && GetDungeon(i + 1, j) != 133 && GetDungeon(i - 1, j) != 133
-				    && GetDungeon(i + 1, j) != 134 && GetDungeon(i - 1, j) != 134
-				    && GetDungeon(i + 1, j) != 136 && GetDungeon(i - 1, j) != 136
-				    && GetDungeon(i + 1, j) != 138 && GetDungeon(i - 1, j) != 138
-				    && GetDungeon(i + 1, j) != 140 && GetDungeon(i - 1, j) != 140) {
-					SetDungeon(i, j, 7);
+			if (GetDungeon(universe, i, j) == 146) {
+				if (GetDungeon(universe, i + 1, j) != 130 && GetDungeon(universe, i - 1, j) != 130
+				    && GetDungeon(universe, i + 1, j) != 132 && GetDungeon(universe, i - 1, j) != 132
+				    && GetDungeon(universe, i + 1, j) != 133 && GetDungeon(universe, i - 1, j) != 133
+				    && GetDungeon(universe, i + 1, j) != 134 && GetDungeon(universe, i - 1, j) != 134
+				    && GetDungeon(universe, i + 1, j) != 136 && GetDungeon(universe, i - 1, j) != 136
+				    && GetDungeon(universe, i + 1, j) != 138 && GetDungeon(universe, i - 1, j) != 138
+				    && GetDungeon(universe, i + 1, j) != 140 && GetDungeon(universe, i - 1, j) != 140) {
+					SetDungeon(universe, i, j, 7);
 					continue;
 				}
 			}
-			if (GetDungeon(i, j) == 147) {
-				if (GetDungeon(i, j + 1) > 152 || GetDungeon(i, j + 1) < 130
-				    || GetDungeon(i, j - 1) > 152 || GetDungeon(i, j - 1) < 130) {
-					SetDungeon(i, j, 7);
+			if (GetDungeon(universe, i, j) == 147) {
+				if (GetDungeon(universe, i, j + 1) > 152 || GetDungeon(universe, i, j + 1) < 130
+				    || GetDungeon(universe, i, j - 1) > 152 || GetDungeon(universe, i, j - 1) < 130) {
+					SetDungeon(universe, i, j, 7);
 					continue;
 				}
 			}
-			if (GetDungeon(i, j) == 147) {
-				if (GetDungeon(i, j + 1) != 131 && GetDungeon(i, j - 1) != 131
-				    && GetDungeon(i, j + 1) != 132 && GetDungeon(i, j - 1) != 132
-				    && GetDungeon(i, j + 1) != 133 && GetDungeon(i, j - 1) != 133
-				    && GetDungeon(i, j + 1) != 135 && GetDungeon(i, j - 1) != 135
-				    && GetDungeon(i, j + 1) != 137 && GetDungeon(i, j - 1) != 137
-				    && GetDungeon(i, j + 1) != 138 && GetDungeon(i, j - 1) != 138
-				    && GetDungeon(i, j + 1) != 139 && GetDungeon(i, j - 1) != 139) {
-					SetDungeon(i, j, 7);
+			if (GetDungeon(universe, i, j) == 147) {
+				if (GetDungeon(universe, i, j + 1) != 131 && GetDungeon(universe, i, j - 1) != 131
+				    && GetDungeon(universe, i, j + 1) != 132 && GetDungeon(universe, i, j - 1) != 132
+				    && GetDungeon(universe, i, j + 1) != 133 && GetDungeon(universe, i, j - 1) != 133
+				    && GetDungeon(universe, i, j + 1) != 135 && GetDungeon(universe, i, j - 1) != 135
+				    && GetDungeon(universe, i, j + 1) != 137 && GetDungeon(universe, i, j - 1) != 137
+				    && GetDungeon(universe, i, j + 1) != 138 && GetDungeon(universe, i, j - 1) != 138
+				    && GetDungeon(universe, i, j + 1) != 139 && GetDungeon(universe, i, j - 1) != 139) {
+					SetDungeon(universe, i, j, 7);
 					continue;
 				}
 			}
@@ -1978,89 +1978,89 @@ void FenceDoorFix()
 	}
 }
 
-static void DRLG_L3Wood()
+static void DRLG_L3Wood(Universe& universe)
 {
 	int i, j, x, y, xx, yy, rt, rp, x1, y1, x2, y2;
 	BOOL skip;
 
 	for (j = 0; j < DMAXY - 1; j++) {     // BUGFIX: Change '0' to '1'
 		for (i = 0; i < DMAXX - 1; i++) { // BUGFIX: Change '0' to '1'
-			if (GetDungeon(i, j) == 10 && random_(0, 2) != 0) {
+			if (GetDungeon(universe, i, j) == 10 && random_(0, 2) != 0) {
 				x = i;
-				while (GetDungeon(x, j) == 10) {
+				while (GetDungeon(universe, x, j) == 10) {
 					x++;
 				}
 				x--;
 				if (x - i > 0) {
-					SetDungeon(i, j, 127);
+					SetDungeon(universe, i, j, 127);
 					for (xx = i + 1; xx < x; xx++) {
 						if (random_(0, 2) != 0) {
-							SetDungeon(xx, j, 126);
+							SetDungeon(universe, xx, j, 126);
 						} else {
-							SetDungeon(xx, j, 129);
+							SetDungeon(universe, xx, j, 129);
 						}
 					}
-					SetDungeon(x, j, 128);
+					SetDungeon(universe, x, j, 128);
 				}
 			}
-			if (GetDungeon(i, j) == 9 && random_(0, 2) != 0) {
+			if (GetDungeon(universe, i, j) == 9 && random_(0, 2) != 0) {
 				y = j;
-				while (GetDungeon(i, y) == 9) {
+				while (GetDungeon(universe, i, y) == 9) {
 					y++;
 				}
 				y--;
 				if (y - j > 0) {
-					SetDungeon(i, j, 123);
+					SetDungeon(universe, i, j, 123);
 					for (yy = j + 1; yy < y; yy++) {
 						if (random_(0, 2) != 0) {
-							SetDungeon(i, yy, 121);
+							SetDungeon(universe, i, yy, 121);
 						} else {
-							SetDungeon(i, yy, 124);
+							SetDungeon(universe, i, yy, 124);
 						}
 					}
-					SetDungeon(i, y, 122);
+					SetDungeon(universe, i, y, 122);
 				}
 			}
-			if (GetDungeon(i, j) == 11 && GetDungeon(i + 1, j) == 10 && GetDungeon(i, j + 1) == 9 && random_(0, 2) != 0) {
-				SetDungeon(i, j, 125);
+			if (GetDungeon(universe, i, j) == 11 && GetDungeon(universe, i + 1, j) == 10 && GetDungeon(universe, i, j + 1) == 9 && random_(0, 2) != 0) {
+				SetDungeon(universe, i, j, 125);
 				x = i + 1;
-				while (GetDungeon(x, j) == 10) {
+				while (GetDungeon(universe, x, j) == 10) {
 					x++;
 				}
 				x--;
 				for (xx = i + 1; xx < x; xx++) {
 					if (random_(0, 2) != 0) {
-						SetDungeon(xx, j, 126);
+						SetDungeon(universe, xx, j, 126);
 					} else {
-						SetDungeon(xx, j, 129);
+						SetDungeon(universe, xx, j, 129);
 					}
 				}
-				SetDungeon(x, j, 128);
+				SetDungeon(universe, x, j, 128);
 				y = j + 1;
-				while (GetDungeon(i, y) == 9) {
+				while (GetDungeon(universe, i, y) == 9) {
 					y++;
 				}
 				y--;
 				for (yy = j + 1; yy < y; yy++) {
 					if (random_(0, 2) != 0) {
-						SetDungeon(i, yy, 121);
+						SetDungeon(universe, i, yy, 121);
 					} else {
-						SetDungeon(i, yy, 124);
+						SetDungeon(universe, i, yy, 124);
 					}
 				}
-				SetDungeon(i, y, 122);
+				SetDungeon(universe, i, y, 122);
 			}
 		}
 	}
 
 	for (j = 0; j < DMAXY; j++) {     // BUGFIX: Change '0' to '1'
 		for (i = 0; i < DMAXX; i++) { // BUGFIX: Change '0' to '1'
-			if (GetDungeon(i, j) == 7 && random_(0, 1) == 0 && SkipThemeRoom(i, j)) {
+			if (GetDungeon(universe, i, j) == 7 && random_(0, 1) == 0 && SkipThemeRoom(i, j)) {
 				rt = random_(0, 2);
 				if (rt == 0) {
 					y1 = j;
 					// BUGFIX: Check `y1 >= 0` first
-					while (WoodVertU(i, y1)) {
+					while (WoodVertU(universe, i, y1)) {
 						y1--;
 					}
 					y1++;
@@ -2071,10 +2071,10 @@ static void DRLG_L3Wood()
 					}
 					y2--;
 					skip = TRUE;
-					if (GetDungeon(i, y1) == 7) {
+					if (GetDungeon(universe, i, y1) == 7) {
 						skip = FALSE;
 					}
-					if (GetDungeon(i, y2) == 7) {
+					if (GetDungeon(universe, i, y2) == 7) {
 						skip = FALSE;
 					}
 					if (y2 - y1 > 1 && skip) {
@@ -2083,30 +2083,30 @@ static void DRLG_L3Wood()
 							if (y == rp) {
 								continue;
 							}
-							if (GetDungeon(i, y) == 7) {
+							if (GetDungeon(universe, i, y) == 7) {
 								if (random_(0, 2) != 0) {
-									SetDungeon(i, y, 135);
+									SetDungeon(universe, i, y, 135);
 								} else {
-									SetDungeon(i, y, 137);
+									SetDungeon(universe, i, y, 137);
 								}
 							}
-							if (GetDungeon(i, y) == 10) {
-								SetDungeon(i, y, 131);
+							if (GetDungeon(universe, i, y) == 10) {
+								SetDungeon(universe, i, y, 131);
 							}
-							if (GetDungeon(i, y) == 126) {
-								SetDungeon(i, y, 133);
+							if (GetDungeon(universe, i, y) == 126) {
+								SetDungeon(universe, i, y, 133);
 							}
-							if (GetDungeon(i, y) == 129) {
-								SetDungeon(i, y, 133);
+							if (GetDungeon(universe, i, y) == 129) {
+								SetDungeon(universe, i, y, 133);
 							}
-							if (GetDungeon(i, y) == 2) {
-								SetDungeon(i, y, 139);
+							if (GetDungeon(universe, i, y) == 2) {
+								SetDungeon(universe, i, y, 139);
 							}
-							if (GetDungeon(i, y) == 134) {
-								SetDungeon(i, y, 138);
+							if (GetDungeon(universe, i, y) == 134) {
+								SetDungeon(universe, i, y, 138);
 							}
-							if (GetDungeon(i, y) == 136) {
-								SetDungeon(i, y, 138);
+							if (GetDungeon(universe, i, y) == 136) {
+								SetDungeon(universe, i, y, 138);
 							}
 						}
 					}
@@ -2114,7 +2114,7 @@ static void DRLG_L3Wood()
 				if (rt == 1) {
 					x1 = i;
 					// BUGFIX: Check `x1 >= 0` first (fixed)
-					while (WoodHorizL(x1, j)) {
+					while (WoodHorizL(universe, x1, j)) {
 						x1--;
 					}
 					x1++;
@@ -2125,10 +2125,10 @@ static void DRLG_L3Wood()
 					}
 					x2--;
 					skip = TRUE;
-					if (GetDungeon(x1, j) == 7) {
+					if (GetDungeon(universe, x1, j) == 7) {
 						skip = FALSE;
 					}
-					if (GetDungeon(x2, j) == 7) {
+					if (GetDungeon(universe, x2, j) == 7) {
 						skip = FALSE;
 					}
 					if (x2 - x1 > 1 && skip) {
@@ -2137,30 +2137,30 @@ static void DRLG_L3Wood()
 							if (x == rp) {
 								continue;
 							}
-							if (GetDungeon(x, j) == 7) {
+							if (GetDungeon(universe, x, j) == 7) {
 								if (random_(0, 2) != 0) {
-									SetDungeon(x, j, 134);
+									SetDungeon(universe, x, j, 134);
 								} else {
-									SetDungeon(x, j, 136);
+									SetDungeon(universe, x, j, 136);
 								}
 							}
-							if (GetDungeon(x, j) == 9) {
-								SetDungeon(x, j, 130);
+							if (GetDungeon(universe, x, j) == 9) {
+								SetDungeon(universe, x, j, 130);
 							}
-							if (GetDungeon(x, j) == 121) {
-								SetDungeon(x, j, 132);
+							if (GetDungeon(universe, x, j) == 121) {
+								SetDungeon(universe, x, j, 132);
 							}
-							if (GetDungeon(x, j) == 124) {
-								SetDungeon(x, j, 132);
+							if (GetDungeon(universe, x, j) == 124) {
+								SetDungeon(universe, x, j, 132);
 							}
-							if (GetDungeon(x, j) == 4) {
-								SetDungeon(x, j, 140);
+							if (GetDungeon(universe, x, j) == 4) {
+								SetDungeon(universe, x, j, 140);
 							}
-							if (GetDungeon(x, j) == 135) {
-								SetDungeon(x, j, 138);
+							if (GetDungeon(universe, x, j) == 135) {
+								SetDungeon(universe, x, j, 138);
 							}
-							if (GetDungeon(x, j) == 137) {
-								SetDungeon(x, j, 138);
+							if (GetDungeon(universe, x, j) == 137) {
+								SetDungeon(universe, x, j, 138);
 							}
 						}
 					}
@@ -2170,10 +2170,10 @@ static void DRLG_L3Wood()
 	}
 
 	AddFenceDoors();
-	FenceDoorFix();
+	FenceDoorFix(universe);
 }
 
-BOOL DRLG_L3Anvil()
+BOOL DRLG_L3Anvil(Universe& universe)
 {
 	int sx, sy, sw, sh, xx, yy, ii, trys;
 	BOOL found;
@@ -2191,7 +2191,7 @@ BOOL DRLG_L3Anvil()
 		ii = 2;
 		for (yy = 0; yy < sh && found == TRUE; yy++) {
 			for (xx = 0; xx < sw && found == TRUE; xx++) {
-				if (L3ANVIL[ii] != 0 && GetDungeon(xx + sx, yy + sy) != L3ANVIL[ii]) {
+				if (L3ANVIL[ii] != 0 && GetDungeon(universe, xx + sx, yy + sy) != L3ANVIL[ii]) {
 					found = FALSE;
 				}
 				if (dflags[xx + sx][yy + sy] != 0) {
@@ -2219,7 +2219,7 @@ BOOL DRLG_L3Anvil()
 	for (yy = 0; yy < sh; yy++) {
 		for (xx = 0; xx < sw; xx++) {
 			if (L3ANVIL[ii] != 0) {
-				SetDungeon(xx + sx, yy + sy, L3ANVIL[ii]);
+				SetDungeon(universe, xx + sx, yy + sy, L3ANVIL[ii]);
 			}
 			dflags[xx + sx][yy + sy] |= DLRG_PROTECTED;
 			ii++;
@@ -2302,7 +2302,7 @@ BOOL DRLG_L3Lockout(Universe& universe)
 	t = 0;
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (GetDungeon(i, j) != 0) {
+			if (GetDungeon(universe, i, j) != 0) {
 				universe.lockout[i][j] = TRUE;
 				fx = i;
 				fy = j;
@@ -2331,16 +2331,16 @@ static std::optional<uint32_t> DRLG_L3(Universe& universe, int entry, DungeonMod
 		do {
 			do {
 				levelSeed = GetRndState();
-				InitL3Dungeon();
+				InitL3Dungeon(universe);
 				x1 = random_(0, 20) + 10;
 				y1 = random_(0, 20) + 10;
 				x2 = x1 + 2;
 				y2 = y1 + 2;
-				DRLG_L3FillRoom(x1, y1, x2, y2);
-				DRLG_L3CreateBlock(x1, y1, 2, 0);
-				DRLG_L3CreateBlock(x2, y1, 2, 1);
-				DRLG_L3CreateBlock(x1, y2, 2, 2);
-				DRLG_L3CreateBlock(x1, y1, 2, 3);
+				DRLG_L3FillRoom(universe, x1, y1, x2, y2);
+				DRLG_L3CreateBlock(universe, x1, y1, 2, 0);
+				DRLG_L3CreateBlock(universe, x2, y1, 2, 1);
+				DRLG_L3CreateBlock(universe, x1, y2, 2, 2);
+				DRLG_L3CreateBlock(universe, x1, y1, 2, 3);
 				if (QuestStatus(Q_ANVIL)) {
 					x1 = random_(0, 10) + 10;
 					y1 = random_(0, 10) + 10;
@@ -2352,8 +2352,8 @@ static std::optional<uint32_t> DRLG_L3(Universe& universe, int entry, DungeonMod
 				DRLG_L3FillSingles();
 				DRLG_L3FillStraights();
 				DRLG_L3FillDiags();
-				DRLG_L3Edges();
-				if (DRLG_L3GetFloorArea() >= 600) {
+				DRLG_L3Edges(universe);
+				if (DRLG_L3GetFloorArea(universe) >= 600) {
 					found = DRLG_L3Lockout(universe);
 				} else {
 					found = FALSE;
@@ -2361,99 +2361,99 @@ static std::optional<uint32_t> DRLG_L3(Universe& universe, int entry, DungeonMod
 				if (mode == DungeonMode::BreakOnFailure && !found)
 					return std::nullopt;
 			} while (!found);
-			DRLG_L3MakeMegas();
+			DRLG_L3MakeMegas(universe);
 			if (entry == ENTRY_MAIN) {
 #ifdef HELLFIRE
 				if (currlevel < 17) {
 #endif
-					genok = DRLG_L3PlaceMiniSet(L3UP, 1, 1, -1, -1, TRUE, 0);
+					genok = DRLG_L3PlaceMiniSet(universe, L3UP, 1, 1, -1, -1, TRUE, 0);
 #ifdef HELLFIRE
 				} else {
 					if (currlevel != 17)
-						genok = DRLG_L3PlaceMiniSet(L6UP, 1, 1, -1, -1, TRUE, 0);
+						genok = DRLG_L3PlaceMiniSet(universe, L6UP, 1, 1, -1, -1, TRUE, 0);
 					else
-						genok = DRLG_L3PlaceMiniSet(L6HOLDWARP, 1, 1, -1, -1, TRUE, 6);
+						genok = DRLG_L3PlaceMiniSet(universe, L6HOLDWARP, 1, 1, -1, -1, TRUE, 6);
 				}
 #endif
 				if (!genok) {
 #ifdef HELLFIRE
 					if (currlevel < 17) {
 #endif
-						genok = DRLG_L3PlaceMiniSet(L3DOWN, 1, 1, -1, -1, FALSE, 1);
+						genok = DRLG_L3PlaceMiniSet(universe, L3DOWN, 1, 1, -1, -1, FALSE, 1);
 #ifdef HELLFIRE
 					} else {
 						if (currlevel != 20)
-							genok = DRLG_L3PlaceMiniSet(L6DOWN, 1, 1, -1, -1, FALSE, 1);
+							genok = DRLG_L3PlaceMiniSet(universe, L6DOWN, 1, 1, -1, -1, FALSE, 1);
 					}
 #endif
 					if (!genok && currlevel == 9) {
-						genok = DRLG_L3PlaceMiniSet(L3HOLDWARP, 1, 1, -1, -1, FALSE, 6);
+						genok = DRLG_L3PlaceMiniSet(universe, L3HOLDWARP, 1, 1, -1, -1, FALSE, 6);
 					}
 				}
 			} else if (entry == ENTRY_PREV) {
 #ifdef HELLFIRE
 				if (currlevel < 17) {
 #endif
-					genok = DRLG_L3PlaceMiniSet(L3UP, 1, 1, -1, -1, FALSE, 0);
+					genok = DRLG_L3PlaceMiniSet(universe, L3UP, 1, 1, -1, -1, FALSE, 0);
 #ifdef HELLFIRE
 				} else {
 					if (currlevel != 17)
-						genok = DRLG_L3PlaceMiniSet(L6UP, 1, 1, -1, -1, FALSE, 0);
+						genok = DRLG_L3PlaceMiniSet(universe, L6UP, 1, 1, -1, -1, FALSE, 0);
 					else
-						genok = DRLG_L3PlaceMiniSet(L6HOLDWARP, 1, 1, -1, -1, FALSE, 6);
+						genok = DRLG_L3PlaceMiniSet(universe, L6HOLDWARP, 1, 1, -1, -1, FALSE, 6);
 				}
 #endif
 				if (!genok) {
 #ifdef HELLFIRE
 					if (currlevel < 17) {
 #endif
-						genok = DRLG_L3PlaceMiniSet(L3DOWN, 1, 1, -1, -1, TRUE, 1);
+						genok = DRLG_L3PlaceMiniSet(universe, L3DOWN, 1, 1, -1, -1, TRUE, 1);
 						ViewX += 2;
 						ViewY -= 2;
 #ifdef HELLFIRE
 					} else {
 						if (currlevel != 20) {
-							genok = DRLG_L3PlaceMiniSet(L6DOWN, 1, 1, -1, -1, TRUE, 1);
+							genok = DRLG_L3PlaceMiniSet(universe, L6DOWN, 1, 1, -1, -1, TRUE, 1);
 							ViewX += 2;
 							ViewY -= 2;
 						}
 					}
 #endif
 					if (!genok && currlevel == 9) {
-						genok = DRLG_L3PlaceMiniSet(L3HOLDWARP, 1, 1, -1, -1, FALSE, 6);
+						genok = DRLG_L3PlaceMiniSet(universe, L3HOLDWARP, 1, 1, -1, -1, FALSE, 6);
 					}
 				}
 			} else {
 #ifdef HELLFIRE
 				if (currlevel < 17) {
 #endif
-					genok = DRLG_L3PlaceMiniSet(L3UP, 1, 1, -1, -1, FALSE, 0);
+					genok = DRLG_L3PlaceMiniSet(universe, L3UP, 1, 1, -1, -1, FALSE, 0);
 #ifdef HELLFIRE
 				} else {
 					if (currlevel != 17)
-						genok = DRLG_L3PlaceMiniSet(L6UP, 1, 1, -1, -1, FALSE, 0);
+						genok = DRLG_L3PlaceMiniSet(universe, L6UP, 1, 1, -1, -1, FALSE, 0);
 					else
-						genok = DRLG_L3PlaceMiniSet(L6HOLDWARP, 1, 1, -1, -1, TRUE, 6);
+						genok = DRLG_L3PlaceMiniSet(universe, L6HOLDWARP, 1, 1, -1, -1, TRUE, 6);
 				}
 #endif
 				if (!genok) {
 #ifdef HELLFIRE
 					if (currlevel < 17) {
 #endif
-						genok = DRLG_L3PlaceMiniSet(L3DOWN, 1, 1, -1, -1, FALSE, 1);
+						genok = DRLG_L3PlaceMiniSet(universe, L3DOWN, 1, 1, -1, -1, FALSE, 1);
 #ifdef HELLFIRE
 					} else {
 						if (currlevel != 20)
-							genok = DRLG_L3PlaceMiniSet(L6DOWN, 1, 1, -1, -1, FALSE, 1);
+							genok = DRLG_L3PlaceMiniSet(universe, L6DOWN, 1, 1, -1, -1, FALSE, 1);
 					}
 #endif
 					if (!genok && currlevel == 9) {
-						genok = DRLG_L3PlaceMiniSet(L3HOLDWARP, 1, 1, -1, -1, TRUE, 6);
+						genok = DRLG_L3PlaceMiniSet(universe, L3HOLDWARP, 1, 1, -1, -1, TRUE, 6);
 					}
 				}
 			}
 			if (!genok && QuestStatus(Q_ANVIL)) {
-				genok = DRLG_L3Anvil();
+				genok = DRLG_L3Anvil(universe);
 			}
 			if (mode == DungeonMode::BreakOnFailure && genok == TRUE)
 				return std::nullopt;
@@ -2482,7 +2482,7 @@ static std::optional<uint32_t> DRLG_L3(Universe& universe, int entry, DungeonMod
 #ifdef HELLFIRE
 	if (currlevel < 17)
 #endif
-		DRLG_L3PoolFix();
+		DRLG_L3PoolFix(universe);
 #ifdef HELLFIRE
 	if (currlevel < 17)
 #endif
@@ -2491,22 +2491,22 @@ static std::optional<uint32_t> DRLG_L3(Universe& universe, int entry, DungeonMod
 #ifdef HELLFIRE
 	if (currlevel < 17) {
 #endif
-		DRLG_L3PlaceRndSet(L3ISLE1, 70);
-		DRLG_L3PlaceRndSet(L3ISLE2, 70);
-		DRLG_L3PlaceRndSet(L3ISLE3, 30);
-		DRLG_L3PlaceRndSet(L3ISLE4, 30);
-		DRLG_L3PlaceRndSet(L3ISLE1, 100);
-		DRLG_L3PlaceRndSet(L3ISLE2, 100);
-		DRLG_L3PlaceRndSet(L3ISLE5, 90);
+		DRLG_L3PlaceRndSet(universe, L3ISLE1, 70);
+		DRLG_L3PlaceRndSet(universe, L3ISLE2, 70);
+		DRLG_L3PlaceRndSet(universe, L3ISLE3, 30);
+		DRLG_L3PlaceRndSet(universe, L3ISLE4, 30);
+		DRLG_L3PlaceRndSet(universe, L3ISLE1, 100);
+		DRLG_L3PlaceRndSet(universe, L3ISLE2, 100);
+		DRLG_L3PlaceRndSet(universe, L3ISLE5, 90);
 #ifdef HELLFIRE
 	} else {
-		DRLG_L3PlaceRndSet(L6ISLE1, 70);
-		DRLG_L3PlaceRndSet(L6ISLE2, 70);
-		DRLG_L3PlaceRndSet(L6ISLE3, 30);
-		DRLG_L3PlaceRndSet(L6ISLE4, 30);
-		DRLG_L3PlaceRndSet(L6ISLE1, 100);
-		DRLG_L3PlaceRndSet(L6ISLE2, 100);
-		DRLG_L3PlaceRndSet(L6ISLE5, 90);
+		DRLG_L3PlaceRndSet(universe, L6ISLE1, 70);
+		DRLG_L3PlaceRndSet(universe, L6ISLE2, 70);
+		DRLG_L3PlaceRndSet(universe, L6ISLE3, 30);
+		DRLG_L3PlaceRndSet(universe, L6ISLE4, 30);
+		DRLG_L3PlaceRndSet(universe, L6ISLE1, 100);
+		DRLG_L3PlaceRndSet(universe, L6ISLE2, 100);
+		DRLG_L3PlaceRndSet(universe, L6ISLE5, 90);
 	}
 #endif
 
@@ -2517,114 +2517,114 @@ static std::optional<uint32_t> DRLG_L3(Universe& universe, int entry, DungeonMod
 #ifdef HELLFIRE
 	if (currlevel < 17)
 #endif
-		DRLG_L3River();
+		DRLG_L3River(universe);
 
 	if (QuestStatus(Q_ANVIL)) {
-		SetDungeon(setpc_x + 7, setpc_y + 5, 7);
-		SetDungeon(setpc_x + 8, setpc_y + 5, 7);
-		SetDungeon(setpc_x + 9, setpc_y + 5, 7);
-		if (GetDungeon(setpc_x + 10, setpc_y + 5) == 17 || GetDungeon(setpc_x + 10, setpc_y + 5) == 18) {
-			SetDungeon(setpc_x + 10, setpc_y + 5, 45);
+		SetDungeon(universe, setpc_x + 7, setpc_y + 5, 7);
+		SetDungeon(universe, setpc_x + 8, setpc_y + 5, 7);
+		SetDungeon(universe, setpc_x + 9, setpc_y + 5, 7);
+		if (GetDungeon(universe, setpc_x + 10, setpc_y + 5) == 17 || GetDungeon(universe, setpc_x + 10, setpc_y + 5) == 18) {
+			SetDungeon(universe, setpc_x + 10, setpc_y + 5, 45);
 		}
 	}
 
 #ifdef HELLFIRE
 	if (currlevel < 17)
 #endif
-		DRLG_PlaceThemeRooms(5, 10, 7, 0, 0);
+		DRLG_PlaceThemeRooms(universe, 5, 10, 7, 0, 0);
 
 #ifdef HELLFIRE
 	if (currlevel < 17) {
 #endif
-		DRLG_L3Wood();
-		DRLG_L3PlaceRndSet(L3TITE1, 10);
-		DRLG_L3PlaceRndSet(L3TITE2, 10);
-		DRLG_L3PlaceRndSet(L3TITE3, 10);
-		DRLG_L3PlaceRndSet(L3TITE6, 20);
-		DRLG_L3PlaceRndSet(L3TITE7, 20);
-		DRLG_L3PlaceRndSet(L3TITE8, 20);
-		DRLG_L3PlaceRndSet(L3TITE9, 20);
-		DRLG_L3PlaceRndSet(L3TITE10, 20);
-		DRLG_L3PlaceRndSet(L3TITE11, 30);
-		DRLG_L3PlaceRndSet(L3TITE12, 20);
-		DRLG_L3PlaceRndSet(L3TITE13, 20);
-		DRLG_L3PlaceRndSet(L3CREV1, 30);
-		DRLG_L3PlaceRndSet(L3CREV2, 30);
-		DRLG_L3PlaceRndSet(L3CREV3, 30);
-		DRLG_L3PlaceRndSet(L3CREV4, 30);
-		DRLG_L3PlaceRndSet(L3CREV5, 30);
-		DRLG_L3PlaceRndSet(L3CREV6, 30);
-		DRLG_L3PlaceRndSet(L3CREV7, 30);
-		DRLG_L3PlaceRndSet(L3CREV8, 30);
-		DRLG_L3PlaceRndSet(L3CREV9, 30);
-		DRLG_L3PlaceRndSet(L3CREV10, 30);
-		DRLG_L3PlaceRndSet(L3CREV11, 30);
-		DRLG_L3PlaceRndSet(L3XTRA1, 25);
-		DRLG_L3PlaceRndSet(L3XTRA2, 25);
-		DRLG_L3PlaceRndSet(L3XTRA3, 25);
-		DRLG_L3PlaceRndSet(L3XTRA4, 25);
-		DRLG_L3PlaceRndSet(L3XTRA5, 25);
+		DRLG_L3Wood(universe);
+		DRLG_L3PlaceRndSet(universe, L3TITE1, 10);
+		DRLG_L3PlaceRndSet(universe, L3TITE2, 10);
+		DRLG_L3PlaceRndSet(universe, L3TITE3, 10);
+		DRLG_L3PlaceRndSet(universe, L3TITE6, 20);
+		DRLG_L3PlaceRndSet(universe, L3TITE7, 20);
+		DRLG_L3PlaceRndSet(universe, L3TITE8, 20);
+		DRLG_L3PlaceRndSet(universe, L3TITE9, 20);
+		DRLG_L3PlaceRndSet(universe, L3TITE10, 20);
+		DRLG_L3PlaceRndSet(universe, L3TITE11, 30);
+		DRLG_L3PlaceRndSet(universe, L3TITE12, 20);
+		DRLG_L3PlaceRndSet(universe, L3TITE13, 20);
+		DRLG_L3PlaceRndSet(universe, L3CREV1, 30);
+		DRLG_L3PlaceRndSet(universe, L3CREV2, 30);
+		DRLG_L3PlaceRndSet(universe, L3CREV3, 30);
+		DRLG_L3PlaceRndSet(universe, L3CREV4, 30);
+		DRLG_L3PlaceRndSet(universe, L3CREV5, 30);
+		DRLG_L3PlaceRndSet(universe, L3CREV6, 30);
+		DRLG_L3PlaceRndSet(universe, L3CREV7, 30);
+		DRLG_L3PlaceRndSet(universe, L3CREV8, 30);
+		DRLG_L3PlaceRndSet(universe, L3CREV9, 30);
+		DRLG_L3PlaceRndSet(universe, L3CREV10, 30);
+		DRLG_L3PlaceRndSet(universe, L3CREV11, 30);
+		DRLG_L3PlaceRndSet(universe, L3XTRA1, 25);
+		DRLG_L3PlaceRndSet(universe, L3XTRA2, 25);
+		DRLG_L3PlaceRndSet(universe, L3XTRA3, 25);
+		DRLG_L3PlaceRndSet(universe, L3XTRA4, 25);
+		DRLG_L3PlaceRndSet(universe, L3XTRA5, 25);
 #ifdef HELLFIRE
 	} else {
-		DRLG_L3PlaceRndSet(byte_48A76C, 20);
-		DRLG_L3PlaceRndSet(byte_48A770, 20);
-		DRLG_L3PlaceRndSet(byte_48A774, 20);
-		DRLG_L3PlaceRndSet(byte_48A778, 20);
-		DRLG_L3PlaceRndSet(byte_48A808, 10);
-		DRLG_L3PlaceRndSet(byte_48A820, 15);
-		DRLG_L3PlaceRndSet(byte_48A838, 20);
-		DRLG_L3PlaceRndSet(byte_48A850, 25);
-		DRLG_L3PlaceRndSet(byte_48A868, 30);
-		DRLG_L3PlaceRndSet(byte_48A880, 35);
-		DRLG_L3PlaceRndSet(byte_48A898, 40);
-		DRLG_L3PlaceRndSet(byte_48A8B0, 45);
-		DRLG_L3PlaceRndSet(byte_48A8C8, 50);
-		DRLG_L3PlaceRndSet(byte_48A8E0, 55);
-		DRLG_L3PlaceRndSet(byte_48A8E0, 10);
-		DRLG_L3PlaceRndSet(byte_48A8C8, 15);
-		DRLG_L3PlaceRndSet(byte_48A8B0, 20);
-		DRLG_L3PlaceRndSet(byte_48A898, 25);
-		DRLG_L3PlaceRndSet(byte_48A880, 30);
-		DRLG_L3PlaceRndSet(byte_48A868, 35);
-		DRLG_L3PlaceRndSet(byte_48A850, 40);
-		DRLG_L3PlaceRndSet(byte_48A838, 45);
-		DRLG_L3PlaceRndSet(byte_48A820, 50);
-		DRLG_L3PlaceRndSet(byte_48A808, 55);
-		DRLG_L3PlaceRndSet(byte_48A790, 40);
-		DRLG_L3PlaceRndSet(byte_48A7A8, 45);
-		DRLG_L3PlaceRndSet(byte_48A77C, 25);
-		DRLG_L3PlaceRndSet(byte_48A780, 25);
-		DRLG_L3PlaceRndSet(byte_48A784, 25);
-		DRLG_L3PlaceRndSet(byte_48A788, 25);
-		DRLG_L3PlaceRndSet(byte_48A7BC, 25);
-		DRLG_L3PlaceRndSet(byte_48A7C0, 25);
-		DRLG_L3PlaceRndSet(byte_48A7C4, 25);
-		DRLG_L3PlaceRndSet(byte_48A7C8, 25);
-		DRLG_L3PlaceRndSet(byte_48A7CC, 25);
-		DRLG_L3PlaceRndSet(byte_48A7D4, 25);
-		DRLG_L3PlaceRndSet(byte_48A7D8, 25);
-		DRLG_L3PlaceRndSet(byte_48A7DC, 25);
-		DRLG_L3PlaceRndSet(byte_48A7E0, 25);
-		DRLG_L3PlaceRndSet(byte_48A7E4, 25);
-		DRLG_L3PlaceRndSet(byte_48A7EC, 25);
-		DRLG_L3PlaceRndSet(byte_48A7F0, 25);
-		DRLG_L3PlaceRndSet(byte_48A7F4, 25);
-		DRLG_L3PlaceRndSet(byte_48A7F8, 25);
-		DRLG_L3PlaceRndSet(byte_48A7D0, 25);
-		DRLG_L3PlaceRndSet(byte_48A7E8, 25);
-		DRLG_L3PlaceRndSet(byte_48A7FC, 25);
-		DRLG_L3PlaceRndSet(byte_48A800, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A76C, 20);
+		DRLG_L3PlaceRndSet(universe, byte_48A770, 20);
+		DRLG_L3PlaceRndSet(universe, byte_48A774, 20);
+		DRLG_L3PlaceRndSet(universe, byte_48A778, 20);
+		DRLG_L3PlaceRndSet(universe, byte_48A808, 10);
+		DRLG_L3PlaceRndSet(universe, byte_48A820, 15);
+		DRLG_L3PlaceRndSet(universe, byte_48A838, 20);
+		DRLG_L3PlaceRndSet(universe, byte_48A850, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A868, 30);
+		DRLG_L3PlaceRndSet(universe, byte_48A880, 35);
+		DRLG_L3PlaceRndSet(universe, byte_48A898, 40);
+		DRLG_L3PlaceRndSet(universe, byte_48A8B0, 45);
+		DRLG_L3PlaceRndSet(universe, byte_48A8C8, 50);
+		DRLG_L3PlaceRndSet(universe, byte_48A8E0, 55);
+		DRLG_L3PlaceRndSet(universe, byte_48A8E0, 10);
+		DRLG_L3PlaceRndSet(universe, byte_48A8C8, 15);
+		DRLG_L3PlaceRndSet(universe, byte_48A8B0, 20);
+		DRLG_L3PlaceRndSet(universe, byte_48A898, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A880, 30);
+		DRLG_L3PlaceRndSet(universe, byte_48A868, 35);
+		DRLG_L3PlaceRndSet(universe, byte_48A850, 40);
+		DRLG_L3PlaceRndSet(universe, byte_48A838, 45);
+		DRLG_L3PlaceRndSet(universe, byte_48A820, 50);
+		DRLG_L3PlaceRndSet(universe, byte_48A808, 55);
+		DRLG_L3PlaceRndSet(universe, byte_48A790, 40);
+		DRLG_L3PlaceRndSet(universe, byte_48A7A8, 45);
+		DRLG_L3PlaceRndSet(universe, byte_48A77C, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A780, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A784, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A788, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7BC, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7C0, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7C4, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7C8, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7CC, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7D4, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7D8, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7DC, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7E0, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7E4, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7EC, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7F0, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7F4, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7F8, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7D0, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7E8, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A7FC, 25);
+		DRLG_L3PlaceRndSet(universe, byte_48A800, 25);
 	}
 #endif
 
 	memcpy(pdungeon, dungeon, sizeof(pdungeon));
 
-	DRLG_Init_Globals();
+	DRLG_Init_Globals(universe);
 
 	return levelSeed;
 }
 
-static void DRLG_L3Pass3()
+static void DRLG_L3Pass3(Universe& universe)
 {
 	int i, j, xx, yy;
 	long v1, v2, v3, v4, lv;
@@ -2672,7 +2672,7 @@ static void DRLG_L3Pass3()
 	for (j = 0; j < DMAXY; j++) {
 		xx = 16;
 		for (i = 0; i < DMAXX; i++) {
-			lv = GetDungeon(i, j) - 1;
+			lv = GetDungeon(universe, i, j) - 1;
 #ifdef USE_ASM
 			if (lv >= 0) {
 				__asm {
@@ -2737,7 +2737,7 @@ std::optional<uint32_t> CreateL3Dungeon(Universe& universe, DWORD rseed, int ent
 	std::optional<uint32_t> levelSeed = DRLG_L3(universe, entry, mode);
 	if (mode == DungeonMode::BreakOnFailure || mode == DungeonMode::BreakOnSuccess)
 		return levelSeed;
-	DRLG_L3Pass3();
+	DRLG_L3Pass3(universe);
 
 #ifdef HELLFIRE
 	if (currlevel < 17) {
@@ -2764,7 +2764,7 @@ void LoadL3Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
 
-	InitL3Dungeon();
+	InitL3Dungeon(universe);
 	dminx = 16;
 	dminy = 16;
 	dmaxx = 96;
@@ -2781,28 +2781,28 @@ void LoadL3Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm != 0) {
-				SetDungeon(i, j, *lm);
+				SetDungeon(universe, i, j, *lm);
 			} else {
-				SetDungeon(i, j, 7);
+				SetDungeon(universe, i, j, 7);
 			}
 			lm += 2;
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (GetDungeon(i, j) == 0) {
-				SetDungeon(i, j, 8);
+			if (GetDungeon(universe, i, j) == 0) {
+				SetDungeon(universe, i, j, 8);
 			}
 		}
 	}
 
 	universe.abyssx = MAXDUNX; // Unused
-	DRLG_L3Pass3();
-	DRLG_Init_Globals();
+	DRLG_L3Pass3(universe);
+	DRLG_Init_Globals(universe);
 	ViewX = 31;
 	ViewY = 83;
 	SetMapMonsters(universe, pLevelMap, 0, 0);
-	SetMapObjects(pLevelMap, 0, 0);
+	SetMapObjects(universe, pLevelMap, 0, 0);
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
@@ -2821,12 +2821,12 @@ void LoadL3Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 	mem_free_dbg(pLevelMap);
 }
 
-void LoadPreL3Dungeon(const char *sFileName, int vx, int vy)
+void LoadPreL3Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 {
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
 
-	InitL3Dungeon();
+	InitL3Dungeon(universe);
 	DRLG_InitTrans();
 	pLevelMap = LoadFileInMem(sFileName, NULL);
 
@@ -2839,17 +2839,17 @@ void LoadPreL3Dungeon(const char *sFileName, int vx, int vy)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm != 0) {
-				SetDungeon(i, j, *lm);
+				SetDungeon(universe, i, j, *lm);
 			} else {
-				SetDungeon(i, j, 7);
+				SetDungeon(universe, i, j, 7);
 			}
 			lm += 2;
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (GetDungeon(i, j) == 0) {
-				SetDungeon(i, j, 8);
+			if (GetDungeon(universe, i, j) == 0) {
+				SetDungeon(universe, i, j, 8);
 			}
 		}
 	}

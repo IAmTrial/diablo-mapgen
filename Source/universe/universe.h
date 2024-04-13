@@ -89,4 +89,19 @@ struct Universe {
 	BYTE dung[20][20];
 	//int dword_52A4DC;
 #endif  // SPAWN
+
+	// engine.h
+	BYTE gbMaxPlayers = 1;
+	BOOL leveldebug = false;
+	BOOL light4flag;
+	DWORD glSeedTbl[NUMLEVELS];
+	_gamedata sgGameInitInfo;
+	PlayerStruct plr[MAX_PLRS];
+	bool zoomflag = false;
+	int questdebug = -1;
+	bool oobread = false;
+	bool oobwrite = false;
+
+	// gendung.h
+	int gnDifficulty;
 };

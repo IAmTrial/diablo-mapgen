@@ -9,6 +9,7 @@
 #include "defs.h"
 #include "structs.h"
 #include "types.h"
+#include "Source/universe/universe.h"
 
 extern BYTE dungeon[DMAXX][DMAXY];
 extern BYTE pdungeon[DMAXX][DMAXY];
@@ -72,7 +73,7 @@ extern THEME_LOC themeLoc[MAXTHEMES];
 
 void FillSolidBlockTbls();
 int IsometricCoord(int x, int y);
-void SetDungeonMicros();
+void SetDungeonMicros(Universe& universe);
 void DRLG_InitTrans();
 void DRLG_MRectTrans(int x1, int y1, int x2, int y2);
 void DRLG_RectTrans(int x1, int y1, int x2, int y2);
@@ -82,9 +83,9 @@ void DRLG_AreaTrans(int num, const BYTE *List);
 void DRLG_InitSetPC();
 void DRLG_SetPC();
 void Make_SetPC(int x, int y, int w, int h);
-void DRLG_PlaceThemeRooms(int minSize, int maxSize, int floor, int freq, int rndSize);
+void DRLG_PlaceThemeRooms(Universe& universe, int minSize, int maxSize, int floor, int freq, int rndSize);
 void DRLG_HoldThemeRooms();
 BOOL SkipThemeRoom(int x, int y);
-void InitLevels();
+void InitLevels(Universe& universe);
 
 #endif /* __GENDUNG_H__ */

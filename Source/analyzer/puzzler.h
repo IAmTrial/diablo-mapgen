@@ -14,4 +14,4 @@ public:
 	bool levelMatches(std::optional<uint32_t> levelSeed) override;
 };
 
-void LocatePuzzler();
+void LocatePuzzler(Universe& universe);

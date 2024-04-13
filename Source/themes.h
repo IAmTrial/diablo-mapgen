@@ -9,6 +9,7 @@
 #include "defs.h"
 #include "structs.h"
 #include "types.h"
+#include "Source/universe/universe.h"
 
 extern int numthemes;
 extern BOOL armorFlag;
@@ -18,6 +19,6 @@ extern ThemeStruct themes[MAXTHEMES];
 
 void InitThemes();
 void HoldThemeRooms();
-void CreateThemeRooms();
+void CreateThemeRooms(Universe& universe);
 
 #endif /* __THEMES_H__ */

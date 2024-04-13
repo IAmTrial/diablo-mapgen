@@ -12,6 +12,7 @@
 #include "types.h"
 #include "Source/engine.h"
 #include "Source/gendung.h"
+#include "Source/universe/universe.h"
 
 int qtopline;
 BOOL questlog;
@@ -96,12 +97,12 @@ const int QuestGroup3[3] = { Q_MUSHROOM, Q_ZHAR, Q_ANVIL };
  */
 const int QuestGroup4[2] = { Q_VEIL, Q_WARLORD };
 
-void InitQuests()
+void InitQuests(Universe& universe)
 {
 	int i, initiatedQuests;
 	DWORD z;
 
-	if (gbMaxPlayers == 1) {
+	if (universe.gbMaxPlayers == 1) {
 		for (i = 0; i < MAXQUESTS; i++) {
 			quests[i]._qactive = QUEST_NOTAVAIL;
 		}
@@ -119,10 +120,10 @@ void InitQuests()
 	initiatedQuests = 0;
 
 	for (z = 0; z < MAXQUESTS; z++) {
-		if (gbMaxPlayers > 1 && !(questlist[z]._qflags & QUEST_ANY))
+		if (universe.gbMaxPlayers > 1 && !(questlist[z]._qflags & QUEST_ANY))
 			continue;
 		quests[z]._qtype = questlist[z]._qdtype;
-		if (gbMaxPlayers > 1) {
+		if (universe.gbMaxPlayers > 1) {
 			quests[z]._qlevel = questlist[z]._qdmultlvl;
 			if (!delta_quest_inited(initiatedQuests)) {
 				quests[z]._qactive = QUEST_INIT;
@@ -146,8 +147,8 @@ void InitQuests()
 		quests[z]._qmsg = questlist[z]._qdmsg;
 	}
 
-	if (gbMaxPlayers == 1) {
-		SetRndSeed(glSeedTbl[15]);
+	if (universe.gbMaxPlayers == 1) {
+		SetRndSeed(universe.glSeedTbl[15]);
 		if (random_(0, 2) != 0)
 			quests[Q_PWATER]._qactive = QUEST_NOTAVAIL;
 		else
@@ -174,7 +175,7 @@ void InitQuests()
 	if (quests[Q_ROCK]._qactive == QUEST_NOTAVAIL)
 		quests[Q_ROCK]._qvar2 = 2;
 	quests[Q_LTBANNER]._qvar1 = 1;
-	if (gbMaxPlayers != 1)
+	if (universe.gbMaxPlayers != 1)
 		quests[Q_BETRAYER]._qvar1 = 2;
 }
 
@@ -202,7 +203,7 @@ void DrawSkelKing(int q, int x, int y)
 	quests[q]._qty = 2 * y + 23;
 }
 
-void DrawWarLord(int x, int y)
+void DrawWarLord(Universe& universe, int x, int y)
 {
 	int rw, rh;
 	int i, j;
@@ -225,14 +226,14 @@ void DrawWarLord(int x, int y)
 			} else {
 				v = 6;
 			}
-			SetDungeon(i, j, v);
+			SetDungeon(universe, i, j, v);
 			sp += 2;
 		}
 	}
 	mem_free_dbg(setp);
 }
 
-void DrawSChamber(int q, int x, int y)
+void DrawSChamber(Universe& universe, int q, int x, int y)
 {
 	int i, j;
 	int rw, rh;
@@ -256,7 +257,7 @@ void DrawSChamber(int q, int x, int y)
 			} else {
 				v = 3;
 			}
-			SetDungeon(i, j, v);
+			SetDungeon(universe, i, j, v);
 			sp += 2;
 		}
 	}
@@ -319,7 +320,7 @@ void DrawBlind(int x, int y)
 	mem_free_dbg(setp);
 }
 
-void DrawBlood(int x, int y)
+void DrawBlood(Universe& universe, int x, int y)
 {
 	int rw, rh;
 	int i, j;
@@ -337,7 +338,7 @@ void DrawBlood(int x, int y)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
-				SetDungeon(x + i, y + j, *sp);
+				SetDungeon(universe, x + i, y + j, *sp);
 			}
 			sp += 2;
 		}
@@ -345,7 +346,7 @@ void DrawBlood(int x, int y)
 	mem_free_dbg(setp);
 }
 
-void DRLG_CheckQuests(int x, int y)
+void DRLG_CheckQuests(Universe& universe, int x, int y)
 {
 	int i;
 
@@ -362,16 +363,16 @@ void DRLG_CheckQuests(int x, int y)
 				DrawBlind(x, y);
 				break;
 			case Q_BLOOD:
-				DrawBlood(x, y);
+				DrawBlood(universe, x, y);
 				break;
 			case Q_WARLORD:
-				DrawWarLord(x, y);
+				DrawWarLord(universe, x, y);
 				break;
 			case Q_SKELKING:
 				DrawSkelKing(i, x, y);
 				break;
 			case Q_SCHAMB:
-				DrawSChamber(i, x, y);
+				DrawSChamber(universe, i, x, y);
 				break;
 			}
 		}

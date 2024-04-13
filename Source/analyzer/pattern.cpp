@@ -242,40 +242,40 @@ DungeonMode ScannerPattern::getDungeonMode()
 	return DungeonMode::BreakOnFailure;
 }
 
-void ForceSeeds(int level)
+void ForceSeeds(Universe& universe, int level)
 {
 	// Church
-	glSeedTbl[1] = sgGameInitInfo.dwSeed; // Matches level seed 1691869883, dungeon seed 1342003104, game seed 1230144506 24 18:48
+	universe.glSeedTbl[1] = universe.sgGameInitInfo.dwSeed; // Matches level seed 1691869883, dungeon seed 1342003104, game seed 1230144506 24 18:48
 	quests[Q_BUTCHER]._qactive = QUEST_INIT;
 	quests[Q_PWATER]._qactive = QUEST_INIT;
-	glSeedTbl[2] = sgGameInitInfo.dwSeed;         // Matches level seed 3227087147, dungeon seed  755133500, game seed 1229972777 22 19:06
+	universe.glSeedTbl[2] = universe.sgGameInitInfo.dwSeed;         // Matches level seed 3227087147, dungeon seed  755133500, game seed 1229972777 22 19:06
 	quests[Q_SKELKING]._qactive = QUEST_NOTAVAIL; // QUEST_INIT;
-	glSeedTbl[3] = sgGameInitInfo.dwSeed;
+	universe.glSeedTbl[3] = universe.sgGameInitInfo.dwSeed;
 	quests[Q_LTBANNER]._qactive = QUEST_NOTAVAIL;
-	glSeedTbl[4] = sgGameInitInfo.dwSeed;
+	universe.glSeedTbl[4] = universe.sgGameInitInfo.dwSeed;
 
 	// Catacombs
 	quests[Q_BLOOD]._qactive = QUEST_INIT;
-	glSeedTbl[5] = sgGameInitInfo.dwSeed; // Matches level seed 3155785492, dungeon seed 1293295771, game seed 1229975451 22 19:50
+	universe.glSeedTbl[5] = universe.sgGameInitInfo.dwSeed; // Matches level seed 3155785492, dungeon seed 1293295771, game seed 1229975451 22 19:50
 	quests[Q_SCHAMB]._qactive = QUEST_INIT;
-	glSeedTbl[6] = sgGameInitInfo.dwSeed; // Matches level seed 417801337, dungeon seed 2062861350, game seed 1230145611 24 19:06
+	universe.glSeedTbl[6] = universe.sgGameInitInfo.dwSeed; // Matches level seed 417801337, dungeon seed 2062861350, game seed 1230145611 24 19:06
 	quests[Q_BLIND]._qactive = QUEST_INIT;
-	glSeedTbl[7] = sgGameInitInfo.dwSeed; // Matches level seed 3750712200, dungeon seed  894816128, game seed 1230145480 24 19:04
-	glSeedTbl[8] = sgGameInitInfo.dwSeed; // Matches level seed 4191463473, dungeon seed 1560480383, game seed 1230145480 24 19:04
+	universe.glSeedTbl[7] = universe.sgGameInitInfo.dwSeed; // Matches level seed 3750712200, dungeon seed  894816128, game seed 1230145480 24 19:04
+	universe.glSeedTbl[8] = universe.sgGameInitInfo.dwSeed; // Matches level seed 4191463473, dungeon seed 1560480383, game seed 1230145480 24 19:04
 
 	// Caves
-	glSeedTbl[9] = sgGameInitInfo.dwSeed; // Matches level seed 3916317768, dungeon seed  764458097, game seed 1230001659 23 03:07
+	universe.glSeedTbl[9] = universe.sgGameInitInfo.dwSeed; // Matches level seed 3916317768, dungeon seed  764458097, game seed 1230001659 23 03:07
 	quests[Q_ANVIL]._qactive = QUEST_INIT;
-	glSeedTbl[10] = sgGameInitInfo.dwSeed; // Matches level seed  618024415, dungeon seed 1375523899, game seed 1229973508 22 19:18
-	glSeedTbl[11] = sgGameInitInfo.dwSeed; // Matches level seed 2376709555, dungeon seed  651290160, game seed 1229976092 22 20:01
-	glSeedTbl[12] = sgGameInitInfo.dwSeed; // Matches level seed 1903656652, dungeon seed 2134483070, game seed 1230145177 24 18:59
+	universe.glSeedTbl[10] = universe.sgGameInitInfo.dwSeed; // Matches level seed  618024415, dungeon seed 1375523899, game seed 1229973508 22 19:18
+	universe.glSeedTbl[11] = universe.sgGameInitInfo.dwSeed; // Matches level seed 2376709555, dungeon seed  651290160, game seed 1229976092 22 20:01
+	universe.glSeedTbl[12] = universe.sgGameInitInfo.dwSeed; // Matches level seed 1903656652, dungeon seed 2134483070, game seed 1230145177 24 18:59
 
 	// Hell
 	quests[Q_WARLORD]._qactive = QUEST_NOTAVAIL;
-	glSeedTbl[13] = sgGameInitInfo.dwSeed; // Matches level seed 4250794344, dungeon seed  723487375, game seed 1229976431 22 20:07
-	glSeedTbl[14] = sgGameInitInfo.dwSeed; // Matches level seed 1005627431, dungeon seed 2144005606, game seed 1229976755 22 20:12
-	glSeedTbl[15] = sgGameInitInfo.dwSeed; // Matches level seed 2844841604, dungeon seed 1342549707, game seed 1230053637 23 17:33
-	glSeedTbl[16] = sgGameInitInfo.dwSeed; // Matches level seed  277866386, dungeon seed  118068228, game seed 1230830247  1 17:17
+	universe.glSeedTbl[13] = universe.sgGameInitInfo.dwSeed; // Matches level seed 4250794344, dungeon seed  723487375, game seed 1229976431 22 20:07
+	universe.glSeedTbl[14] = universe.sgGameInitInfo.dwSeed; // Matches level seed 1005627431, dungeon seed 2144005606, game seed 1229976755 22 20:12
+	universe.glSeedTbl[15] = universe.sgGameInitInfo.dwSeed; // Matches level seed 2844841604, dungeon seed 1342549707, game seed 1230053637 23 17:33
+	universe.glSeedTbl[16] = universe.sgGameInitInfo.dwSeed; // Matches level seed  277866386, dungeon seed  118068228, game seed 1230830247  1 17:17
 }
 
 bool ScannerPattern::skipLevel(int level)
@@ -285,7 +285,7 @@ bool ScannerPattern::skipLevel(int level)
 		skip = level != *Config.target;
 
 	if (!skip && !UseObjectScanner(level) && !UseSolidScanner(level))
-		ForceSeeds(level); // TODO unclober the seeds and quests
+		ForceSeeds(universe, level); // TODO unclober the seeds and quests
 
 	return skip;
 }
@@ -365,7 +365,7 @@ const uint8_t Dlvl4Solid[SolidX][SolidY] = {
 	// clang-format on
 };
 
-bool matchesSolidPattern()
+bool matchesSolidPattern(Universe& universe)
 {
 	if (StairsDown != Point { Spawn.x + 6, Spawn.y + 2 })
 		return false;
@@ -400,12 +400,12 @@ bool matchesSolidPattern()
 		}
 	}
 
-	std::cout << sgGameInitInfo.dwSeed << " possible game Seed for dlvl " << (int)currlevel << std::endl;
+	std::cout << universe.sgGameInitInfo.dwSeed << " possible game Seed for dlvl " << (int)currlevel << std::endl;
 
 	return true;
 }
 
-bool matchesObjectPattern()
+bool matchesObjectPattern(Universe& universe)
 {
 	if (currlevel == 3) {
 		if (StairsDown != Point { Spawn.x + 6, Spawn.y + 2 })
@@ -451,7 +451,7 @@ bool matchesObjectPattern()
 			return false;
 	}
 
-	std::cout << sgGameInitInfo.dwSeed << " possible game Seed for dlvl " << (int)currlevel << std::endl;
+	std::cout << universe.sgGameInitInfo.dwSeed << " possible game Seed for dlvl " << (int)currlevel << std::endl;
 
 	return true;
 }
@@ -563,8 +563,8 @@ bool ScannerPattern::levelMatches(std::optional<uint32_t> levelSeed)
 	if (levelSeed == std::nullopt)
 		return false;
 	if (UseObjectScanner(currlevel))
-		return matchesObjectPattern();
+		return matchesObjectPattern(universe);
 	if (UseSolidScanner(currlevel))
-		return matchesSolidPattern();
+		return matchesSolidPattern(universe);
 	return matchesTilePattern(levelSeed);
 }

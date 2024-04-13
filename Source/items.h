@@ -9,6 +9,7 @@
 #include "defs.h"
 #include "structs.h"
 #include "types.h"
+#include "Source/universe/universe.h"
 
 extern int itemactive[MAXITEMS];
 extern BOOL uitemflag;
@@ -37,37 +38,37 @@ int get_amulet_max_value(int i);
 int get_axe_max_value(int i);
 #endif
 void InitItemGFX();
-void InitItems();
+void InitItems(Universe& universe);
 void CalcPlrItemVals(int p, BOOL Loadgfx);
 void CalcPlrScrolls(int p);
 void CalcPlrStaff(int p);
 void CalcPlrInv(int p, BOOL Loadgfx);
 void SetPlrHandItem(ItemStruct *h, int idata);
 void GetPlrHandSeed(ItemStruct *h);
-void GetGoldSeed(int pnum, ItemStruct *h);
+void GetGoldSeed(Universe& universe, int pnum, ItemStruct *h);
 void SetPlrHandGoldCurs(ItemStruct *h);
 void CreatePlrItems(int p);
 BOOL ItemSpaceOk(int i, int j);
 void GetSuperItemLoc(int x, int y, int &xx, int &yy);
-void GetItemAttrs(int i, int idata, int lvl);
-void SaveItemPower(int i, int power, int param1, int param2, int minval, int maxval, int multval);
-void GetItemPower(int i, int minlvl, int maxlvl, int flgs, BOOL onlygood);
-void SetupItem(int i);
-int RndItem(int m);
-void SpawnUnique(int uid, int x, int y);
-void SpawnItem(int m, int x, int y, BOOL sendmsg);
-void CreateItem(int uid, int x, int y);
-void CreateRndItem(int x, int y, BOOL onlygood, BOOL sendmsg, BOOL delta);
-void CreateRndUseful(int pnum, int x, int y, BOOL sendmsg);
-void CreateTypeItem(int x, int y, BOOL onlygood, int itype, int imisc, BOOL sendmsg, BOOL delta);
+void GetItemAttrs(Universe& universe, int i, int idata, int lvl);
+void SaveItemPower(Universe& universe, int i, int power, int param1, int param2, int minval, int maxval, int multval);
+void GetItemPower(Universe& universe, int i, int minlvl, int maxlvl, int flgs, BOOL onlygood);
+void SetupItem(Universe& universe, int i);
+int RndItem(Universe& universe, int m);
+void SpawnUnique(Universe& universe, int uid, int x, int y);
+void SpawnItem(Universe& universe, int m, int x, int y, BOOL sendmsg);
+void CreateItem(Universe& universe, int uid, int x, int y);
+void CreateRndItem(Universe& universe, int x, int y, BOOL onlygood, BOOL sendmsg, BOOL delta);
+void CreateRndUseful(Universe& universe, int pnum, int x, int y, BOOL sendmsg);
+void CreateTypeItem(Universe& universe, int x, int y, BOOL onlygood, int itype, int imisc, BOOL sendmsg, BOOL delta);
 void RecreateItem(int ii, int idx, WORD icreateinfo, int iseed, int ivalue);
 void RecreateEar(int ii, WORD ic, int iseed, int Id, int dur, int mdur, int ch, int mch, int ivalue, int ibuff);
 #ifdef HELLFIRE
 void CornerstoneSave();
 void CornerstoneLoad(int x, int y);
 #endif
-void SpawnQuestItem(int itemid, int x, int y, int randarea, int selflag);
-void SpawnRock();
+void SpawnQuestItem(Universe& universe, int itemid, int x, int y, int randarea, int selflag);
+void SpawnRock(Universe& universe);
 #ifdef HELLFIRE
 void SpawnRewardItem(int itemid, int xx, int yy);
 void SpawnMapOfDoom(int xx, int yy);
@@ -91,7 +92,7 @@ void DrawUniqueInfo();
 void PrintItemDetails(ItemStruct *x);
 void PrintItemDur(ItemStruct *x);
 void UseItem(int p, int Mid, int spl);
-BOOL StoreStatOk(ItemStruct *h);
+BOOL StoreStatOk(Universe& universe, ItemStruct *h);
 void SpawnSmith(int lvl);
 #ifdef HELLFIRE
 void SpawnPremium(int pnum);
@@ -106,12 +107,12 @@ void SpawnStoreGold();
 void RecreateTownItem(int ii, int idx, WORD icreateinfo, int iseed, int ivalue);
 void RecalcStoreStats();
 int ItemNoFlippy();
-void CreateSpellBook(int x, int y, int ispell, BOOL sendmsg, BOOL delta);
-void CreateMagicArmor(int x, int y, int imisc, int icurs, BOOL sendmsg, BOOL delta);
+void CreateSpellBook(Universe& universe, int x, int y, int ispell, BOOL sendmsg, BOOL delta);
+void CreateMagicArmor(Universe& universe, int x, int y, int imisc, int icurs, BOOL sendmsg, BOOL delta);
 #ifdef HELLFIRE
 void CreateAmulet(int x, int y, int curlv, BOOL sendmsg, BOOL delta);
 #endif
-void CreateMagicWeapon(int x, int y, int imisc, int icurs, BOOL sendmsg, BOOL delta);
+void CreateMagicWeapon(Universe& universe, int x, int y, int imisc, int icurs, BOOL sendmsg, BOOL delta);
 BOOL GetItemRecord(int nSeed, WORD wCI, int nIndex);
 void SetItemRecord(int nSeed, WORD wCI, int nIndex);
 void PutItemRecord(int nSeed, WORD wCI, int nIndex);

@@ -12,7 +12,7 @@
 #include "types.h"
 #include "Source/universe/universe.h"
 
-void DRLG_Init_Globals();
+void DRLG_Init_Globals(Universe& universe);
 void LoadL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy);
 void LoadPreL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy);
 std::optional<uint32_t> CreateL5Dungeon(Universe& universe, DWORD rseed, int entry, DungeonMode mode);

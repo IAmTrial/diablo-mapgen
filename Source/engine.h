@@ -27,18 +27,7 @@ struct Point {
 	}
 };
 
-const int myplr = 0;
-extern BYTE gbMaxPlayers;
-extern BOOL leveldebug;
-extern BOOL light4flag;
-extern DWORD glSeedTbl[NUMLEVELS];
-extern _gamedata sgGameInitInfo;
-extern int gnDifficulty;
-extern PlayerStruct plr[MAX_PLRS];
-extern bool zoomflag;
-extern int questdebug;
-extern bool oobread;
-extern bool oobwrite;
+extern const int myplr;
 
 /**
  * Get time stamp in microseconds.
@@ -53,61 +42,61 @@ void SetRndSeed(int s);
 int GetRndSeed();
 int GetRndState();
 
-inline int GetdPiece(int x, int y)
+inline int GetdPiece(Universe& universe, int x, int y)
 {
 	if (x < 0 || y < 0 || x >= MAXDUNX || y >= MAXDUNY) {
 		int index = x * MAXDUNY + y;
 		x = index / MAXDUNY;
 		y = index % MAXDUNY;
 		if (x < 0 || y < 0 || x >= MAXDUNX) {
-			oobread = true;
+			universe.oobread = true;
 			return 0;
 		}
 	}
 	return dPiece[x][y];
 }
 
-inline BYTE GetDungeon(int x, int y)
+inline BYTE GetDungeon(Universe& universe, int x, int y)
 {
 	if (x < 0 || y < 0 || x >= DMAXX || y >= DMAXY) {
 		int index = x * DMAXY + y;
 		x = index / DMAXY;
 		y = index % DMAXY;
 		if (x < 0 || y < 0 || x >= DMAXX) {
-			oobread = true;
+			universe.oobread = true;
 			return 0;
 		}
 	}
 	return dungeon[x][y];
 }
 
-inline void SetDungeon(int x, int y, BYTE value)
+inline void SetDungeon(Universe& universe, int x, int y, BYTE value)
 {
 	if (x < 0 || y < 0 || x >= DMAXX || y >= DMAXY) {
 		int index = x * DMAXY + y;
 		x = index / DMAXY;
 		y = index % DMAXY;
 		if (x < 0 || y < 0 || x >= DMAXX) {
-			oobwrite = true;
+			universe.oobwrite = true;
 			return;
 		}
 	}
 	dungeon[x][y] = value;
 }
 
-inline void SetObjectSelFlag(int id, int value)
+inline void SetObjectSelFlag(Universe& universe, int id, int value)
 {
 	if (id < 0 || id >= MAXOBJECTS) {
-		oobwrite = true;
+		universe.oobwrite = true;
 		return;
 	}
 	object[id]._oSelFlag = value;
 }
 
-inline void IncrementObjectFrame(int id, int value)
+inline void IncrementObjectFrame(Universe& universe, int id, int value)
 {
 	if (id < 0 || id >= MAXOBJECTS) {
-		oobwrite = true;
+		universe.oobwrite = true;
 		return;
 	}
 	object[id]._oAnimFrame += value;
@@ -117,7 +106,5 @@ BYTE *DiabloAllocPtr(DWORD dwBytes);
 void mem_free_dbg(void *p);
 BYTE *LoadFileInMem(std::string pszName, DWORD *pdwFileLen);
 void LoadLvlGFX();
-
-void SetMapObjects(BYTE *pMap, int startx, int starty);
 
 #endif

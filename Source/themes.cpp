@@ -17,6 +17,7 @@
 #include "Source/objects.h"
 #include "Source/quests.h"
 #include "Source/trigs.h"
+#include "Source/universe/universe.h"
 
 int numthemes;
 BOOL armorFlag;
@@ -499,12 +500,12 @@ void HoldThemeRooms()
 }
 
 /**
- * PlaceThemeMonsts places theme monsters with the specified frequency.
+ * PlaceThemeMonsts universe, places theme monsters with the specified frequency.
  *
  * @param t theme number (index into themes array).
  * @param f frequency (1/f likelihood of adding monster).
  */
-void PlaceThemeMonsts(int t, int f)
+void PlaceThemeMonsts(Universe& universe, int t, int f)
 {
 	int xp, yp;
 #ifdef HELLFIRE
@@ -526,7 +527,7 @@ void PlaceThemeMonsts(int t, int f)
 		for (xp = 0; xp < MAXDUNX; xp++) {
 			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]] && dItem[xp][yp] == 0 && dObject[xp][yp] == 0) {
 				if (random_(0, f) == 0) {
-					AddMonster(xp, yp, random_(0, 8), mtype, TRUE);
+					AddMonster(universe, xp, yp, random_(0, 8), mtype, TRUE);
 				}
 			}
 		}
@@ -538,7 +539,7 @@ void PlaceThemeMonsts(int t, int f)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_Barrel(int t)
+void Theme_Barrel(Universe& universe, int t)
 {
 	int xp, yp, r;
 	char barrnd[4] = { 2, 6, 4, 8 };
@@ -553,12 +554,12 @@ void Theme_Barrel(int t)
 					} else {
 						r = OBJ_BARRELEX;
 					}
-					AddObject(r, xp, yp);
+					AddObject(universe, r, xp, yp);
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 }
 
 /**
@@ -566,21 +567,21 @@ void Theme_Barrel(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_Shrine(int t)
+void Theme_Shrine(Universe& universe, int t)
 {
 	char monstrnd[4] = { 6, 6, 3, 9 };
 
 	TFit_Shrine(t);
 	if (themeVar1 == 1) {
-		AddObject(OBJ_CANDLE2, themex - 1, themey);
-		AddObject(OBJ_SHRINER, themex, themey);
-		AddObject(OBJ_CANDLE2, themex + 1, themey);
+		AddObject(universe, OBJ_CANDLE2, themex - 1, themey);
+		AddObject(universe, OBJ_SHRINER, themex, themey);
+		AddObject(universe, OBJ_CANDLE2, themex + 1, themey);
 	} else {
-		AddObject(OBJ_CANDLE2, themex, themey - 1);
-		AddObject(OBJ_SHRINEL, themex, themey);
-		AddObject(OBJ_CANDLE2, themex, themey + 1);
+		AddObject(universe, OBJ_CANDLE2, themex, themey - 1);
+		AddObject(universe, OBJ_SHRINEL, themex, themey);
+		AddObject(universe, OBJ_CANDLE2, themex, themey + 1);
 	}
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 }
 
 /**
@@ -588,7 +589,7 @@ void Theme_Shrine(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_MonstPit(int t)
+void Theme_MonstPit(Universe& universe, int t)
 {
 	int r;
 	int ixp, iyp;
@@ -612,9 +613,9 @@ void Theme_MonstPit(int t)
 			}
 		}
 	}
-	CreateRndItem(ixp, iyp, TRUE, FALSE, TRUE);
+	CreateRndItem(universe, ixp, iyp, TRUE, FALSE, TRUE);
 	ItemNoFlippy();
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 }
 
 /**
@@ -622,7 +623,7 @@ void Theme_MonstPit(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_SkelRoom(int t)
+void Theme_SkelRoom(Universe& universe, int t)
 {
 	int xp, yp, i;
 	char monstrnd[4] = { 6, 7, 3, 9 };
@@ -632,58 +633,58 @@ void Theme_SkelRoom(int t)
 	xp = themex;
 	yp = themey;
 
-	AddObject(OBJ_SKFIRE, xp, yp);
+	AddObject(universe, OBJ_SKFIRE, xp, yp);
 
 	if (random_(0, monstrnd[leveltype - 1]) != 0) {
-		i = PreSpawnSkeleton();
+		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(i, xp - 1, yp - 1);
 	} else {
-		AddObject(OBJ_BANNERL, xp - 1, yp - 1);
+		AddObject(universe, OBJ_BANNERL, xp - 1, yp - 1);
 	}
 
-	i = PreSpawnSkeleton();
+	i = PreSpawnSkeleton(universe);
 	SpawnSkeleton(i, xp, yp - 1);
 
 	if (random_(0, monstrnd[leveltype - 1]) != 0) {
-		i = PreSpawnSkeleton();
+		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(i, xp + 1, yp - 1);
 	} else {
-		AddObject(OBJ_BANNERR, xp + 1, yp - 1);
+		AddObject(universe, OBJ_BANNERR, xp + 1, yp - 1);
 	}
 	if (random_(0, monstrnd[leveltype - 1]) != 0) {
-		i = PreSpawnSkeleton();
+		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(i, xp - 1, yp);
 	} else {
-		AddObject(OBJ_BANNERM, xp - 1, yp);
+		AddObject(universe, OBJ_BANNERM, xp - 1, yp);
 	}
 	if (random_(0, monstrnd[leveltype - 1]) != 0) {
-		i = PreSpawnSkeleton();
+		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(i, xp + 1, yp);
 	} else {
-		AddObject(OBJ_BANNERM, xp + 1, yp);
+		AddObject(universe, OBJ_BANNERM, xp + 1, yp);
 	}
 	if (random_(0, monstrnd[leveltype - 1]) != 0) {
-		i = PreSpawnSkeleton();
+		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(i, xp - 1, yp + 1);
 	} else {
-		AddObject(OBJ_BANNERR, xp - 1, yp + 1);
+		AddObject(universe, OBJ_BANNERR, xp - 1, yp + 1);
 	}
 
-	i = PreSpawnSkeleton();
+	i = PreSpawnSkeleton(universe);
 	SpawnSkeleton(i, xp, yp + 1);
 
 	if (random_(0, monstrnd[leveltype - 1]) != 0) {
-		i = PreSpawnSkeleton();
+		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(i, xp + 1, yp + 1);
 	} else {
-		AddObject(OBJ_BANNERL, xp + 1, yp + 1);
+		AddObject(universe, OBJ_BANNERL, xp + 1, yp + 1);
 	}
 
 	if (dObject[xp][yp - 3] == 0) {
-		AddObject(OBJ_SKELBOOK, xp, yp - 2);
+		AddObject(universe, OBJ_SKELBOOK, xp, yp - 2);
 	}
 	if (dObject[xp][yp + 3] == 0) {
-		AddObject(OBJ_SKELBOOK, xp, yp + 2);
+		AddObject(universe, OBJ_SKELBOOK, xp, yp + 2);
 	}
 }
 
@@ -692,7 +693,7 @@ void Theme_SkelRoom(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_Treasure(int t)
+void Theme_Treasure(Universe& universe, int t)
 {
 	int xp, yp;
 	int i;
@@ -706,11 +707,11 @@ void Theme_Treasure(int t)
 				int rv = random_(0, treasrnd[leveltype - 1]);
 				// BUGFIX: the `2*` in `2*random_(0, treasrnd...) == 0` has no effect, should probably be `random_(0, 2*treasrnd...) == 0`
 				if ((2 * random_(0, treasrnd[leveltype - 1])) == 0) {
-					CreateTypeItem(xp, yp, FALSE, ITYPE_GOLD, IMISC_NONE, FALSE, TRUE);
+					CreateTypeItem(universe, xp, yp, FALSE, ITYPE_GOLD, IMISC_NONE, FALSE, TRUE);
 					ItemNoFlippy();
 				}
 				if (rv == 0) {
-					CreateRndItem(xp, yp, FALSE, FALSE, TRUE);
+					CreateRndItem(universe, xp, yp, FALSE, FALSE, TRUE);
 					ItemNoFlippy();
 				}
 				// BUGFIX: the following code is likely not working as intended.
@@ -729,7 +730,7 @@ void Theme_Treasure(int t)
 			}
 		}
 	}
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 }
 
 /**
@@ -737,7 +738,7 @@ void Theme_Treasure(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_Library(int t)
+void Theme_Library(Universe& universe, int t)
 {
 	int xp, yp, oi;
 	char librnd[4] = { 1, 2, 2, 5 };
@@ -746,23 +747,23 @@ void Theme_Library(int t)
 	TFit_Shrine(t);
 
 	if (themeVar1 == 1) {
-		AddObject(OBJ_BOOKCANDLE, themex - 1, themey);
-		AddObject(OBJ_BOOKCASER, themex, themey);
-		AddObject(OBJ_BOOKCANDLE, themex + 1, themey);
+		AddObject(universe, OBJ_BOOKCANDLE, themex - 1, themey);
+		AddObject(universe, OBJ_BOOKCASER, themex, themey);
+		AddObject(universe, OBJ_BOOKCANDLE, themex + 1, themey);
 	} else {
-		AddObject(OBJ_BOOKCANDLE, themex, themey - 1);
-		AddObject(OBJ_BOOKCASEL, themex, themey);
-		AddObject(OBJ_BOOKCANDLE, themex, themey + 1);
+		AddObject(universe, OBJ_BOOKCANDLE, themex, themey - 1);
+		AddObject(universe, OBJ_BOOKCASEL, themex, themey);
+		AddObject(universe, OBJ_BOOKCANDLE, themex, themey + 1);
 	}
 
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
 		for (xp = 1; xp < MAXDUNX - 1; xp++) {
 			if (CheckThemeObj3(xp, yp, t, -1) && dMonster[xp][yp] == 0 && random_(0, librnd[leveltype - 1]) == 0) {
-				AddObject(OBJ_BOOKSTAND, xp, yp);
+				AddObject(universe, OBJ_BOOKSTAND, xp, yp);
 				if (random_(0, 2 * librnd[leveltype - 1]) != 0) { /// BUGFIX: check dObject[xp][yp] was populated by AddObject
 					oi = dObject[xp][yp] - 1;
-					SetObjectSelFlag(oi, 0);
-					IncrementObjectFrame(oi, 2);
+					SetObjectSelFlag(universe, oi, 0);
+					IncrementObjectFrame(universe, oi, 2);
 				}
 			}
 		}
@@ -772,9 +773,9 @@ void Theme_Library(int t)
 		if (t == zharlib) {
 			return;
 		}
-		PlaceThemeMonsts(t, monstrnd[leveltype]); /// BUGFIX: `leveltype - 1`
+		PlaceThemeMonsts(universe, t, monstrnd[leveltype]); /// BUGFIX: `leveltype - 1`
 	} else {
-		PlaceThemeMonsts(t, monstrnd[leveltype]); /// BUGFIX: `leveltype - 1`
+		PlaceThemeMonsts(universe, t, monstrnd[leveltype]); /// BUGFIX: `leveltype - 1`
 	}
 }
 
@@ -783,7 +784,7 @@ void Theme_Library(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_Torture(int t)
+void Theme_Torture(Universe& universe, int t)
 {
 	int xp, yp;
 	char tortrnd[4] = { 6, 8, 3, 8 };
@@ -794,26 +795,26 @@ void Theme_Torture(int t)
 			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, tortrnd[leveltype - 1]) == 0) {
-						AddObject(OBJ_TNUDEM2, xp, yp);
+						AddObject(universe, OBJ_TNUDEM2, xp, yp);
 					}
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 }
 
 /**
  * Theme_BloodFountain initializes the blood fountain theme.
  * @param t Theme number (index into themes array).
  */
-void Theme_BloodFountain(int t)
+void Theme_BloodFountain(Universe& universe, int t)
 {
 	char monstrnd[4] = { 6, 8, 3, 9 };
 
 	TFit_Obj5(t);
-	AddObject(OBJ_BLOODFTN, themex, themey);
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	AddObject(universe, OBJ_BLOODFTN, themex, themey);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 }
 
 /**
@@ -821,7 +822,7 @@ void Theme_BloodFountain(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_Decap(int t)
+void Theme_Decap(Universe& universe, int t)
 {
 	int xp, yp;
 	char decaprnd[4] = { 6, 8, 3, 8 };
@@ -832,13 +833,13 @@ void Theme_Decap(int t)
 			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, decaprnd[leveltype - 1]) == 0) {
-						AddObject(OBJ_DECAP, xp, yp);
+						AddObject(universe, OBJ_DECAP, xp, yp);
 					}
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 }
 
 /**
@@ -846,13 +847,13 @@ void Theme_Decap(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_PurifyingFountain(int t)
+void Theme_PurifyingFountain(Universe& universe, int t)
 {
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(t);
-	AddObject(OBJ_PURIFYINGFTN, themex, themey);
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	AddObject(universe, OBJ_PURIFYINGFTN, themex, themey);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 }
 
 /**
@@ -860,7 +861,7 @@ void Theme_PurifyingFountain(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_ArmorStand(int t)
+void Theme_ArmorStand(Universe& universe, int t)
 {
 	int xp, yp;
 	char armorrnd[4] = { 6, 8, 3, 8 };
@@ -868,20 +869,20 @@ void Theme_ArmorStand(int t)
 
 	if (armorFlag) {
 		TFit_Obj3(t);
-		AddObject(OBJ_ARMORSTAND, themex, themey);
+		AddObject(universe, OBJ_ARMORSTAND, themex, themey);
 	}
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
 			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, armorrnd[leveltype - 1]) == 0) {
-						AddObject(OBJ_ARMORSTANDN, xp, yp);
+						AddObject(universe, OBJ_ARMORSTANDN, xp, yp);
 					}
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 	armorFlag = FALSE;
 }
 
@@ -890,16 +891,16 @@ void Theme_ArmorStand(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_GoatShrine(int t)
+void Theme_GoatShrine(Universe& universe, int t)
 {
 	int xx, yy;
 
 	TFit_GoatShrine(t);
-	AddObject(OBJ_GOATSHRINE, themex, themey);
+	AddObject(universe, OBJ_GOATSHRINE, themex, themey);
 	for (yy = themey - 1; yy <= themey + 1; yy++) {
 		for (xx = themex - 1; xx <= themex + 1; xx++) {
 			if (dTransVal[xx][yy] == themes[t].ttval && !nSolidTable[dPiece[xx][yy]] && (xx != themex || yy != themey)) {
-				AddMonster(xx, yy, DIR_SW, themeVar1, TRUE);
+				AddMonster(universe, xx, yy, DIR_SW, themeVar1, TRUE);
 			}
 		}
 	}
@@ -910,13 +911,13 @@ void Theme_GoatShrine(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_Cauldron(int t)
+void Theme_Cauldron(Universe& universe, int t)
 {
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(t);
-	AddObject(OBJ_CAULDRON, themex, themey);
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	AddObject(universe, OBJ_CAULDRON, themex, themey);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 }
 
 /**
@@ -924,13 +925,13 @@ void Theme_Cauldron(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_MurkyFountain(int t)
+void Theme_MurkyFountain(Universe& universe, int t)
 {
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(t);
-	AddObject(OBJ_MURKYFTN, themex, themey);
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	AddObject(universe, OBJ_MURKYFTN, themex, themey);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 }
 
 /**
@@ -938,13 +939,13 @@ void Theme_MurkyFountain(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_TearFountain(int t)
+void Theme_TearFountain(Universe& universe, int t)
 {
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(t);
-	AddObject(OBJ_TEARFTN, themex, themey);
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	AddObject(universe, OBJ_TEARFTN, themex, themey);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 }
 
 /**
@@ -952,7 +953,7 @@ void Theme_TearFountain(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_BrnCross(int t)
+void Theme_BrnCross(Universe& universe, int t)
 {
 	int xp, yp;
 	char monstrnd[4] = { 6, 8, 3, 9 };
@@ -963,13 +964,13 @@ void Theme_BrnCross(int t)
 			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, bcrossrnd[leveltype - 1]) == 0) {
-						AddObject(OBJ_TBCROSS, xp, yp);
+						AddObject(universe, OBJ_TBCROSS, xp, yp);
 					}
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 	bCrossFlag = TRUE;
 }
 
@@ -978,7 +979,7 @@ void Theme_BrnCross(int t)
  *
  * @param t theme number (index into themes array).
  */
-void Theme_WeaponRack(int t)
+void Theme_WeaponRack(Universe& universe, int t)
 {
 	int xp, yp;
 	char weaponrnd[4] = { 6, 8, 5, 8 };
@@ -986,20 +987,20 @@ void Theme_WeaponRack(int t)
 
 	if (weaponFlag) {
 		TFit_Obj3(t);
-		AddObject(OBJ_WEAPONRACK, themex, themey);
+		AddObject(universe, OBJ_WEAPONRACK, themex, themey);
 	}
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
 			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
 				if (CheckThemeObj3(xp, yp, t, -1)) {
 					if (random_(0, weaponrnd[leveltype - 1]) == 0) {
-						AddObject(OBJ_WEAPONRACKN, xp, yp);
+						AddObject(universe, OBJ_WEAPONRACKN, xp, yp);
 					}
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
 	weaponFlag = FALSE;
 }
 
@@ -1022,7 +1023,7 @@ void UpdateL4Trans()
 /**
  * CreateThemeRooms adds thematic elements to rooms.
  */
-void CreateThemeRooms()
+void CreateThemeRooms(Universe& universe)
 {
 	int i;
 
@@ -1035,55 +1036,55 @@ void CreateThemeRooms()
 		themey = 0;
 		switch (themes[i].ttype) {
 		case THEME_BARREL:
-			Theme_Barrel(i);
+			Theme_Barrel(universe, i);
 			break;
 		case THEME_SHRINE:
-			Theme_Shrine(i);
+			Theme_Shrine(universe, i);
 			break;
 		case THEME_MONSTPIT:
-			Theme_MonstPit(i);
+			Theme_MonstPit(universe, i);
 			break;
 		case THEME_SKELROOM:
-			Theme_SkelRoom(i);
+			Theme_SkelRoom(universe, i);
 			break;
 		case THEME_TREASURE:
-			Theme_Treasure(i);
+			Theme_Treasure(universe, i);
 			break;
 		case THEME_LIBRARY:
-			Theme_Library(i);
+			Theme_Library(universe, i);
 			break;
 		case THEME_TORTURE:
-			Theme_Torture(i);
+			Theme_Torture(universe, i);
 			break;
 		case THEME_BLOODFOUNTAIN:
-			Theme_BloodFountain(i);
+			Theme_BloodFountain(universe, i);
 			break;
 		case THEME_DECAPITATED:
-			Theme_Decap(i);
+			Theme_Decap(universe, i);
 			break;
 		case THEME_PURIFYINGFOUNTAIN:
-			Theme_PurifyingFountain(i);
+			Theme_PurifyingFountain(universe, i);
 			break;
 		case THEME_ARMORSTAND:
-			Theme_ArmorStand(i);
+			Theme_ArmorStand(universe, i);
 			break;
 		case THEME_GOATSHRINE:
-			Theme_GoatShrine(i);
+			Theme_GoatShrine(universe, i);
 			break;
 		case THEME_CAULDRON:
-			Theme_Cauldron(i);
+			Theme_Cauldron(universe, i);
 			break;
 		case THEME_MURKYFOUNTAIN:
-			Theme_MurkyFountain(i);
+			Theme_MurkyFountain(universe, i);
 			break;
 		case THEME_TEARFOUNTAIN:
-			Theme_TearFountain(i);
+			Theme_TearFountain(universe, i);
 			break;
 		case THEME_BRNCROSS:
-			Theme_BrnCross(i);
+			Theme_BrnCross(universe, i);
 			break;
 		case THEME_WEAPONRACK:
-			Theme_WeaponRack(i);
+			Theme_WeaponRack(universe, i);
 			break;
 		}
 	}

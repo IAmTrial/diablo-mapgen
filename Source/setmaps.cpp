@@ -165,7 +165,7 @@ void LoadSetMap(Universe& universe)
 		DRLG_ListTrans(sizeof(SkelKingTrans2) / 4, &SkelKingTrans2[0]);
 		DRLG_AreaTrans(sizeof(SkelKingTrans3) / 4, &SkelKingTrans3[0]);
 		DRLG_ListTrans(sizeof(SkelKingTrans4) / 4, &SkelKingTrans4[0]);
-		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
+		AddL1Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
 		AddSKingObjs();
 		InitSKingTriggers();
 		break;
@@ -175,20 +175,20 @@ void LoadSetMap(Universe& universe)
 		DRLG_ListTrans(sizeof(SkelChamTrans1) / 4, &SkelChamTrans1[0]);
 		DRLG_AreaTrans(sizeof(SkelChamTrans2) / 4, &SkelChamTrans2[0]);
 		DRLG_ListTrans(sizeof(SkelChamTrans3) / 4, &SkelChamTrans3[0]);
-		AddL2Objs(0, 0, MAXDUNX, MAXDUNY);
+		AddL2Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
 		AddSChamObjs();
 		InitSChambTriggers();
 		break;
 	case SL_MAZE:
 		LoadPreL1Dungeon(universe, "Levels\\L1Data\\Lv1MazeA.DUN", 20, 50);
 		LoadL1Dungeon(universe, "Levels\\L1Data\\Lv1MazeB.DUN", 20, 50);
-		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
+		AddL1Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
 		DRLG_SetMapTrans("Levels\\L1Data\\Lv1MazeA.DUN");
 		break;
 	case SL_POISONWATER:
 		if (quests[Q_PWATER]._qactive == QUEST_INIT)
 			quests[Q_PWATER]._qactive = QUEST_ACTIVE;
-		LoadPreL3Dungeon("Levels\\L3Data\\Foulwatr.DUN", 19, 50);
+		LoadPreL3Dungeon(universe, "Levels\\L3Data\\Foulwatr.DUN", 19, 50);
 		LoadL3Dungeon(universe, "Levels\\L3Data\\Foulwatr.DUN", 20, 50);
 		InitPWaterTriggers();
 		break;
@@ -200,7 +200,7 @@ void LoadSetMap(Universe& universe)
 		}
 		LoadPreL1Dungeon(universe, "Levels\\L1Data\\Vile1.DUN", 35, 36);
 		LoadL1Dungeon(universe, "Levels\\L1Data\\Vile2.DUN", 35, 36);
-		AddL1Objs(0, 0, MAXDUNX, MAXDUNY);
+		AddL1Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
 		AddVileObjs();
 		DRLG_SetMapTrans("Levels\\L1Data\\Vile1.DUN");
 		InitNoTriggers();

@@ -22,16 +22,10 @@
 #include "Source/gendung.h"
 #include "Source/objects.h"
 
-PlayerStruct plr[MAX_PLRS];
-DWORD glSeedTbl[NUMLEVELS];
-_gamedata sgGameInitInfo;
-BOOL light4flag;
+const int myplr = 0;
 
 const uint32_t RndMult = 0x015A4E35;
 const uint32_t RndInc = 1;
-BYTE gbMaxPlayers = 1;
-BOOL leveldebug = false;
-bool zoomflag = false;
 
 /** Seed value before the most recent call to SetRndSeed() */
 int orgseed;
@@ -39,8 +33,6 @@ int orgseed;
 uint32_t sglGameSeed;
 /** Number of times the current seed has been fetched */
 int SeedCount;
-
-int questdebug = -1;
 
 uint64_t micros()
 {
@@ -192,6 +184,3 @@ void app_fatal(const char *dummystring)
 void SetAutomapView(int nXPos, int nYPos)
 {
 }
-
-bool oobread = false;
-bool oobwrite = false;

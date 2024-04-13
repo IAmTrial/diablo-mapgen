@@ -17,16 +17,17 @@
 #include "monster.h"
 #include "objdat.h"
 #include "objects.h"
+#include "Source/universe/universe.h"
 
 inline void WriteLE16(FILE *out, uint16_t val)
 {
 	fwrite(&val, 1, 2, out);
 }
 
-void ExportDun(uint32_t seed)
+void ExportDun(Universe& universe, uint32_t seed)
 {
 	char fileName[32];
-	sprintf(fileName, "%u-%u-%u.dun", seed, currlevel, glSeedTbl[currlevel]);
+	sprintf(fileName, "%u-%u-%u.dun", seed, currlevel, universe.glSeedTbl[currlevel]);
 	FILE *dunFile = fopen(fileName, "wb");
 
 	WriteLE16(dunFile, DMAXX);

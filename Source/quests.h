@@ -9,6 +9,7 @@
 #include "defs.h"
 #include "structs.h"
 #include "types.h"
+#include "Source/universe/universe.h"
 
 extern BOOL questlog;
 extern BYTE *pQLogCel;
@@ -18,12 +19,12 @@ extern int ReturnLvlY;
 extern int ReturnLvlT;
 extern int ReturnLvl;
 
-void InitQuests();
+void InitQuests(Universe& universe);
 void CheckQuests();
 BOOL ForceQuests();
 BOOL QuestStatus(int i);
 void CheckQuestKill(int m, BOOL sendmsg);
-void DRLG_CheckQuests(int x, int y);
+void DRLG_CheckQuests(Universe& universe, int x, int y);
 void SetReturnLvlPos();
 void GetReturnLvlPos();
 void ResyncMPQuests();

@@ -8,6 +8,7 @@
 
 #include "types.h"
 #include "structs.h"
+#include "Source/universe/universe.h"
 
 extern LightListStruct VisionList[MAXVISION];
 extern BYTE lightactive[MAXLIGHTS];
@@ -27,12 +28,12 @@ void DoUnVision(int nXPos, int nYPos, int nRadius);
 void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible);
 void FreeLightTable();
 void InitLightTable();
-void MakeLightTable();
+void MakeLightTable(Universe& universe);
 #ifdef _DEBUG
 void ToggleLighting_2();
 void ToggleLighting();
 #endif
-void InitLightMax();
+void InitLightMax(Universe& universe);
 void InitLighting();
 int AddLight(int x, int y, int r);
 void AddUnLight(int i);
@@ -47,7 +48,7 @@ int AddVision(int x, int y, int r, BOOL mine);
 void ChangeVisionRadius(int id, int r);
 void ChangeVisionXY(int id, int x, int y);
 void ProcessVisionList();
-void lighting_color_cycling();
+void lighting_color_cycling(Universe& universe);
 
 /* rdata */
 

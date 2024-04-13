@@ -173,7 +173,7 @@ void setDoorSolidState(BOOLEAN doorState)
 	}
 }
 
-bool IsGoodLevelSoursororStrategy()
+bool IsGoodLevelSoursororStrategy(Universe& universe)
 {
 	int tickLenth = 0;
 	tickLenth += 20; // Load screens
@@ -187,7 +187,7 @@ bool IsGoodLevelSoursororStrategy()
 		}
 		tickLenth += walkTicks;
 	} else if (currlevel == 9) {
-		LocatePuzzler();
+		LocatePuzzler(universe);
 		int pathToPuzzler = -1;
 		if (POI != Point { -1, -1 }) {
 			int walkTicks = GetWalkTime(Spawn, POI);
@@ -290,10 +290,10 @@ bool IsGoodLevelSoursororStrategy()
 	return true;
 }
 
-bool IsGoodLevel()
+bool IsGoodLevel(Universe& universe)
 {
 	setDoorSolidState(FALSE); // Open doors
-	bool result = IsGoodLevelSoursororStrategy();
+	bool result = IsGoodLevelSoursororStrategy(universe);
 	setDoorSolidState(TRUE); // Close doors
 
 	return result;
@@ -309,7 +309,7 @@ bool ScannerPath::skipSeed()
 {
 	if (quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
 		if (Config.verbose)
-			std::cerr << "Game Seed: " << sgGameInitInfo.dwSeed << " thrown out: Sign Quest" << std::endl;
+			std::cerr << "Game Seed: " << universe.sgGameInitInfo.dwSeed << " thrown out: Sign Quest" << std::endl;
 		return true;
 	}
 
@@ -332,7 +332,7 @@ bool ScannerPath::skipLevel(int level)
 bool ScannerPath::levelMatches(std::optional<uint32_t> levelSeed)
 {
 	std::memset(Path, 0, sizeof(Path));
-	if (!IsGoodLevel()) {
+	if (!IsGoodLevel(universe)) {
 		Ended = true;
 		return Config.verbose;
 	}
@@ -341,7 +341,7 @@ bool ScannerPath::levelMatches(std::optional<uint32_t> levelSeed)
 
 	int level = currlevel;
 	if (level == 16) {
-		std::cout << sgGameInitInfo.dwSeed << " (etc " << formatTime() << ")" << std::endl;
+		std::cout << universe.sgGameInitInfo.dwSeed << " (etc " << formatTime() << ")" << std::endl;
 		Ended = true;
 	}
 

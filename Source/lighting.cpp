@@ -11,6 +11,7 @@
 #include "structs.h"
 #include "Source/engine.h"
 #include "Source/gendung.h"
+#include "Source/universe/universe.h"
 
 LightListStruct VisionList[MAXVISION];
 BYTE lightactive[MAXLIGHTS];
@@ -680,7 +681,7 @@ void InitLightTable()
 	pLightTbl = DiabloAllocPtr(LIGHTSIZE);
 }
 
-void MakeLightTable()
+void MakeLightTable(Universe& universe)
 {
 	int i, j, k, l, lights, shade, l1, l2, cnt, rem, div;
 	double fs, fa;
@@ -691,7 +692,7 @@ void MakeLightTable()
 	tbl = pLightTbl;
 	shade = 0;
 
-	if (light4flag) {
+	if (universe.light4flag) {
 		lights = 3;
 	} else {
 		lights = 15;
@@ -744,7 +745,7 @@ void MakeLightTable()
 				}
 			}
 		}
-		if (light4flag) {
+		if (universe.light4flag) {
 			shade += 5;
 		} else {
 			shade++;
@@ -926,9 +927,9 @@ void ToggleLighting()
 }
 #endif
 
-void InitLightMax()
+void InitLightMax(Universe& universe)
 {
-	if (light4flag) {
+	if (universe.light4flag) {
 		lightmax = 3;
 	} else {
 		lightmax = 15;
@@ -1161,13 +1162,13 @@ void ProcessVisionList()
 	dovision = FALSE;
 }
 
-void lighting_color_cycling()
+void lighting_color_cycling(Universe& universe)
 {
 	int i, j, l;
 	BYTE col;
 	BYTE *tbl;
 
-	l = light4flag ? 4 : 16;
+	l = universe.light4flag ? 4 : 16;
 
 	if (leveltype != DTYPE_HELL) {
 		return;

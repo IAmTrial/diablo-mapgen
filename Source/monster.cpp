@@ -182,7 +182,7 @@ const int rnd60[4] = { 60, 70, 80, 90 };
 //#endif
 //};
 
-void InitLevelMonsters()
+void InitLevelMonsters(Universe& universe)
 {
 	int i;
 
@@ -194,7 +194,7 @@ void InitLevelMonsters()
 		Monsters[i].mPlaceFlags = 0;
 	}
 
-	ClrAllMonsters();
+	ClrAllMonsters(universe);
 	nummonsters = 0;
 	totalmonsters = MAXMONSTERS;
 
@@ -228,7 +228,7 @@ int AddMonsterType(int type, int placeflag)
 	return i;
 }
 
-void GetLevelMTypes()
+void GetLevelMTypes(Universe& universe)
 {
 	int i;
 
@@ -286,7 +286,7 @@ void GetLevelMTypes()
 		if (QuestStatus(Q_WARLORD))
 			AddMonsterType(UniqMonst[UMT_WARLORD].mtype, PLACE_UNIQUE);
 
-		if (gbMaxPlayers != 1 && currlevel == quests[Q_SKELKING]._qlevel) {
+		if (universe.gbMaxPlayers != 1 && currlevel == quests[Q_SKELKING]._qlevel) {
 
 			AddMonsterType(MT_SKING, PLACE_UNIQUE);
 
@@ -366,7 +366,7 @@ void ClearMVars(int i)
 	monster[i]._mVar8 = 0;
 }
 
-void InitMonster(int i, int rd, int mtype, int x, int y)
+void InitMonster(Universe& universe, int i, int rd, int mtype, int x, int y)
 {
 	CMonster *monst = &Monsters[mtype];
 
@@ -398,7 +398,7 @@ void InitMonster(int i, int rd, int mtype, int x, int y)
 		monster[i]._mmaxhp = (monst->mMinHP + random_(88, monst->mMaxHP - monst->mMinHP + 1)) << 6;
 	}
 
-	if (gbMaxPlayers == 1) {
+	if (universe.gbMaxPlayers == 1) {
 		monster[i]._mmaxhp >>= 1;
 		if (monster[i]._mmaxhp < 64) {
 			monster[i]._mmaxhp = 64;
@@ -445,9 +445,9 @@ void InitMonster(int i, int rd, int mtype, int x, int y)
 		monster[i]._mmode = MM_SATTACK;
 	}
 
-	if (gnDifficulty == DIFF_NIGHTMARE) {
+	if (universe.gnDifficulty == DIFF_NIGHTMARE) {
 #ifdef HELLFIRE
-		monster[i]._mmaxhp = 3 * monster[i]._mmaxhp + ((gbMaxPlayers != 1 ? 100 : 50) << 6);
+		monster[i]._mmaxhp = 3 * monster[i]._mmaxhp + ((universe.gbMaxPlayers != 1 ? 100 : 50) << 6);
 #else
 		monster[i]._mmaxhp = 3 * monster[i]._mmaxhp + 64;
 #endif
@@ -466,9 +466,9 @@ void InitMonster(int i, int rd, int mtype, int x, int y)
 #ifdef HELLFIRE
 	else
 #endif
-	    if (gnDifficulty == DIFF_HELL) {
+	    if (universe.gnDifficulty == DIFF_HELL) {
 #ifdef HELLFIRE
-		monster[i]._mmaxhp = 4 * monster[i]._mmaxhp + ((gbMaxPlayers != 1 ? 200 : 100) << 6);
+		monster[i]._mmaxhp = 4 * monster[i]._mmaxhp + ((universe.gbMaxPlayers != 1 ? 200 : 100) << 6);
 #else
 		monster[i]._mmaxhp = 4 * monster[i]._mmaxhp + 192;
 #endif
@@ -486,7 +486,7 @@ void InitMonster(int i, int rd, int mtype, int x, int y)
 	}
 }
 
-void ClrAllMonsters()
+void ClrAllMonsters(Universe& universe)
 {
 	int i;
 	MonsterStruct *Monst;
@@ -516,9 +516,9 @@ void ClrAllMonsters()
 		Monst->_mFlags = 0;
 		Monst->_mDelFlag = FALSE;
 		Monst->_menemy = random_(89, 1);
-		// BUGFIX: `Monst->_menemy` may be referencing a player who already left the game, thus reading garbage data from `plr[Monst->_menemy]._pfutx`.
-		Monst->_menemyx = plr[Monst->_menemy]._pfutx;
-		Monst->_menemyy = plr[Monst->_menemy]._pfuty;
+		// BUGFIX: `Monst->_menemy` may be referencing a player who already left the game, thus reading garbage data from `universe.plr[Monst->_menemy]._pfutx`.
+		Monst->_menemyx = universe.plr[Monst->_menemy]._pfutx;
+		Monst->_menemyy = universe.plr[Monst->_menemy]._pfuty;
 	}
 }
 
@@ -576,7 +576,7 @@ void monster_some_crypt(Universe& universe)
 }
 
 #endif
-void PlaceMonster(int i, int mtype, int x, int y)
+void PlaceMonster(Universe& universe, int i, int mtype, int x, int y)
 {
 	int rd;
 
@@ -595,7 +595,7 @@ void PlaceMonster(int i, int mtype, int x, int y)
 	dMonster[x][y] = i + 1;
 
 	rd = random_(90, 8);
-	InitMonster(i, rd, mtype, x, y);
+	InitMonster(universe, i, rd, mtype, x, y);
 }
 
 #ifndef SPAWN
@@ -666,7 +666,7 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 			}
 		}
 	}
-	if (gbMaxPlayers == 1) {
+	if (universe.gbMaxPlayers == 1) {
 		if (uniqindex == UMT_LAZURUS) {
 			xp = 32;
 			yp = 46;
@@ -717,7 +717,7 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 		universe.UberDiabloMonsterIndex = nummonsters;
 	}
 #endif
-	PlaceMonster(nummonsters, uniqtype, xp, yp);
+	PlaceMonster(universe, nummonsters, uniqtype, xp, yp);
 	Monst->_uniqtype = uniqindex + 1;
 
 	if (Uniq->mlevel) {
@@ -730,7 +730,7 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 	Monst->mName = Uniq->mName;
 	Monst->_mmaxhp = Uniq->mmaxhp << 6;
 
-	if (gbMaxPlayers == 1) {
+	if (universe.gbMaxPlayers == 1) {
 		Monst->_mmaxhp = Monst->_mmaxhp >> 1;
 		if (Monst->_mmaxhp < 64) {
 			Monst->_mmaxhp = 64;
@@ -753,7 +753,7 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 #endif
 		Monst->mlid = AddLight(Monst->_mx, Monst->_my, 3);
 
-	if (gbMaxPlayers != 1) {
+	if (universe.gbMaxPlayers != 1) {
 		if (Monst->_mAi == AI_LAZHELP)
 			Monst->mtalkmsg = 0;
 #ifndef HELLFIRE
@@ -773,9 +773,9 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 #endif
 		Monst->_mgoal = MGOAL_INQUIRING;
 
-	if (gnDifficulty == DIFF_NIGHTMARE) {
+	if (universe.gnDifficulty == DIFF_NIGHTMARE) {
 #ifdef HELLFIRE
-		Monst->_mmaxhp = 3 * Monst->_mmaxhp + ((gbMaxPlayers != 1 ? 100 : 50) << 6);
+		Monst->_mmaxhp = 3 * Monst->_mmaxhp + ((universe.gbMaxPlayers != 1 ? 100 : 50) << 6);
 #else
 		Monst->_mmaxhp = 3 * Monst->_mmaxhp + 64;
 #endif
@@ -789,12 +789,12 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 	}
 
 #ifdef HELLFIRE
-	else if (gnDifficulty == DIFF_HELL) {
+	else if (universe.gnDifficulty == DIFF_HELL) {
 #else
-	if (gnDifficulty == DIFF_HELL) {
+	if (universe.gnDifficulty == DIFF_HELL) {
 #endif
 #ifdef HELLFIRE
-		Monst->_mmaxhp = 4 * Monst->_mmaxhp + ((gbMaxPlayers != 1 ? 200 : 100) << 6);
+		Monst->_mmaxhp = 4 * Monst->_mmaxhp + ((universe.gbMaxPlayers != 1 ? 200 : 100) << 6);
 #else
 		Monst->_mmaxhp = 4 * Monst->_mmaxhp + 192;
 #endif
@@ -820,7 +820,7 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 	nummonsters++;
 
 	if (Uniq->mUnqAttr & 1) {
-		PlaceGroup(miniontype, bosspacksize, Uniq->mUnqAttr, nummonsters - 1);
+		PlaceGroup(universe, miniontype, bosspacksize, Uniq->mUnqAttr, nummonsters - 1);
 	}
 
 	if (Monst->_mAi != AI_GARG) {
@@ -871,7 +871,7 @@ void PlaceQuestMonsters(Universe& universe)
 			PlaceUniqueMonst(universe, UMT_BUTCHER, 0, 0);
 		}
 
-		if (currlevel == quests[Q_SKELKING]._qlevel && gbMaxPlayers != 1) {
+		if (currlevel == quests[Q_SKELKING]._qlevel && universe.gbMaxPlayers != 1) {
 			skeltype = 0;
 
 			for (skeltype = 0; skeltype < nummtypes; skeltype++) {
@@ -916,7 +916,7 @@ void PlaceQuestMonsters(Universe& universe)
 			quests[Q_ZHAR]._qactive = QUEST_NOTAVAIL;
 		}
 
-		if (currlevel == quests[Q_BETRAYER]._qlevel && gbMaxPlayers != 1) {
+		if (currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
 			AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, PLACE_UNIQUE);
 			AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, PLACE_UNIQUE);
 			PlaceUniqueMonst(universe, UMT_LAZURUS, 0, 0);
@@ -954,7 +954,7 @@ void PlaceQuestMonsters(Universe& universe)
 }
 #endif
 
-void PlaceGroup(int mtype, int num, int leaderf, int leader)
+void PlaceGroup(Universe& universe, int mtype, int num, int leaderf, int leader)
 {
 	int placed, try1, try2, j;
 	int xp, yp, x1, y1;
@@ -992,7 +992,7 @@ void PlaceGroup(int mtype, int num, int leaderf, int leader)
 				continue;
 			}
 
-			PlaceMonster(nummonsters, mtype, xp, yp);
+			PlaceMonster(universe, nummonsters, mtype, xp, yp);
 			if (leaderf & 1) {
 				monster[nummonsters]._mmaxhp *= 2;
 				monster[nummonsters]._mhitpoints = monster[nummonsters]._mmaxhp;
@@ -1057,10 +1057,10 @@ void InitMonsters(Universe& universe)
 
 	numscattypes = 0;
 	if (!setlevel) {
-		AddMonster(1, 0, 0, 0, FALSE);
-		AddMonster(1, 0, 0, 0, FALSE);
-		AddMonster(1, 0, 0, 0, FALSE);
-		AddMonster(1, 0, 0, 0, FALSE);
+		AddMonster(universe, 1, 0, 0, 0, FALSE);
+		AddMonster(universe, 1, 0, 0, 0, FALSE);
+		AddMonster(universe, 1, 0, 0, 0, FALSE);
+		AddMonster(universe, 1, 0, 0, 0, FALSE);
 	}
 #ifndef SPAWN
 	if (!setlevel && currlevel == 16)
@@ -1088,7 +1088,7 @@ void InitMonsters(Universe& universe)
 				if (!SolidLoc(s, t))
 					na++;
 		numplacemonsters = na / 30;
-		if (gbMaxPlayers != 1)
+		if (universe.gbMaxPlayers != 1)
 			numplacemonsters += numplacemonsters >> 1;
 		if (nummonsters + numplacemonsters > MAXMONSTERS - 10)
 			numplacemonsters = MAXMONSTERS - 10 - nummonsters;
@@ -1111,7 +1111,7 @@ void InitMonsters(Universe& universe)
 				na = random_(95, 2) + 2;
 			else
 				na = random_(95, 3) + 3;
-			PlaceGroup(mtype, na, 0, 0);
+			PlaceGroup(universe, mtype, na, 0, 0);
 		}
 	}
 	for (i = 0; i < nt; i++) {
@@ -1132,10 +1132,10 @@ void SetMapMonsters(Universe& universe, BYTE *pMap, int startx, int starty)
 
 	AddMonsterType(MT_GOLEM, PLACE_SPECIAL);
 	// See https://github.com/diasurgical/devilutionX/pull/2822
-	AddMonster(1, 0, 0, 0, FALSE); // BUGFIX: add only if setlevel is true
-	AddMonster(1, 0, 0, 0, FALSE); // BUGFIX: add only if setlevel is true
-	AddMonster(1, 0, 0, 0, FALSE); // BUGFIX: add only if setlevel is true
-	AddMonster(1, 0, 0, 0, FALSE); // BUGFIX: add only if setlevel is true
+	AddMonster(universe, 1, 0, 0, 0, FALSE); // BUGFIX: add only if setlevel is true
+	AddMonster(universe, 1, 0, 0, 0, FALSE); // BUGFIX: add only if setlevel is true
+	AddMonster(universe, 1, 0, 0, 0, FALSE); // BUGFIX: add only if setlevel is true
+	AddMonster(universe, 1, 0, 0, 0, FALSE); // BUGFIX: add only if setlevel is true
 	if (setlevel && setlvlnum == SL_VILEBETRAYER) {
 		AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, PLACE_UNIQUE);
 		AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, PLACE_UNIQUE);
@@ -1156,7 +1156,7 @@ void SetMapMonsters(Universe& universe, BYTE *pMap, int startx, int starty)
 		for (i = 0; i < rw; i++) {
 			if (*lm != 0) {
 				mtype = AddMonsterType(MonstConvTbl[(*lm) - 1], PLACE_SPECIAL);
-				PlaceMonster(nummonsters++, mtype, i + startx + 16, j + starty + 16);
+				PlaceMonster(universe, nummonsters++, mtype, i + startx + 16, j + starty + 16);
 			}
 			lm++;
 		}
@@ -1164,7 +1164,7 @@ void SetMapMonsters(Universe& universe, BYTE *pMap, int startx, int starty)
 }
 #endif
 
-void DeleteMonster(int i)
+void DeleteMonster(Universe& universe, int i)
 {
 	int temp;
 
@@ -1174,13 +1174,13 @@ void DeleteMonster(int i)
 	monstactive[i] = temp;
 }
 
-int AddMonster(int x, int y, int dir, int mtype, BOOL InMap)
+int AddMonster(Universe& universe, int x, int y, int dir, int mtype, BOOL InMap)
 {
 	if (nummonsters < MAXMONSTERS) {
 		int i = monstactive[nummonsters++];
 		if (InMap)
 			dMonster[x][y] = i + 1;
-		InitMonster(i, dir, mtype, x, y);
+		InitMonster(universe, i, dir, mtype, x, y);
 		return i;
 	}
 
@@ -1381,7 +1381,7 @@ BOOL IsGoat(int mt)
 //			if (IsSkel(Monsters[i].mtype))
 //				j++;
 //		}
-//		skel = AddMonster(x, y, dir, i - 1, TRUE);
+//		skel = AddMonster(universe, x, y, dir, i - 1, TRUE);
 //		if (skel != -1)
 //			M_StartSpStand(skel, dir);
 //
@@ -1457,7 +1457,7 @@ BOOL SpawnSkeleton(int ii, int x, int y)
 	return TRUE;
 }
 
-int PreSpawnSkeleton()
+int PreSpawnSkeleton(Universe& universe)
 {
 	int i, j, skeltypes, skel;
 
@@ -1475,7 +1475,7 @@ int PreSpawnSkeleton()
 			if (IsSkel(Monsters[i].mtype))
 				j++;
 		}
-		skel = AddMonster(0, 0, 0, i - 1, FALSE);
+		skel = AddMonster(universe, 0, 0, 0, i - 1, FALSE);
 		//if (skel != -1)
 		//	M_StartStand(skel, 0);
 
