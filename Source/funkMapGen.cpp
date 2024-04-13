@@ -146,13 +146,13 @@ void CreateDungeonContent(Universe& universe)
 {
 	InitDungeonMonsters(universe);
 
-	InitThemes();
-	SetRndSeed(universe.glSeedTbl[currlevel]);
+	InitThemes(universe);
+	SetRndSeed(universe, universe.glSeedTbl[currlevel]);
 	HoldThemeRooms();
-	GetRndSeed();
+	GetRndSeed(universe);
 
 	InitMonsters(universe);
-	GetRndSeed();
+	GetRndSeed(universe);
 
 	InitObjects(universe);
 
@@ -202,10 +202,10 @@ std::optional<uint32_t> CreateDungeon(Universe& universe, DungeonMode mode)
 void SetGameSeed(Universe& universe, uint32_t seed)
 {
 	universe.sgGameInitInfo.dwSeed = seed;
-	SetRndSeed(universe.sgGameInitInfo.dwSeed);
+	SetRndSeed(universe, universe.sgGameInitInfo.dwSeed);
 
 	for (int i = 0; i < NUMLEVELS; i++) {
-		universe.glSeedTbl[i] = GetRndSeed();
+		universe.glSeedTbl[i] = GetRndSeed(universe);
 	}
 
 	InitQuests(universe);
@@ -390,7 +390,7 @@ void ParseArguments(int argc, char **argv)
 void InitDungeonMonsters(Universe& universe)
 {
 	InitLevelMonsters(universe);
-	SetRndSeed(universe.glSeedTbl[currlevel]);
+	SetRndSeed(universe, universe.glSeedTbl[currlevel]);
 	GetLevelMTypes(universe);
 }
 

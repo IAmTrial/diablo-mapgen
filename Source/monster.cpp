@@ -303,7 +303,7 @@ void GetLevelMTypes(Universe& universe)
 					}
 				}
 			}
-			AddMonsterType(skeltypes[random_(88, nt)], PLACE_SCATTER);
+			AddMonsterType(skeltypes[random_(universe, 88, nt)], PLACE_SCATTER);
 		}
 
 		nt = 0;
@@ -329,7 +329,7 @@ void GetLevelMTypes(Universe& universe)
 			}
 
 			if (nt != 0) {
-				i = random_(88, nt);
+				i = random_(universe, 88, nt);
 				AddMonsterType(typelist[i], PLACE_SCATTER);
 				typelist[i] = typelist[--nt];
 			}
@@ -384,18 +384,18 @@ void InitMonster(Universe& universe, int i, int rd, int mtype, int x, int y)
 	monster[i].MData = monst->MData;
 	monster[i]._mAnimData = monst->Anims[MA_STAND].Data[rd];
 	monster[i]._mAnimDelay = monst->Anims[MA_STAND].Rate;
-	monster[i]._mAnimCnt = random_(88, monster[i]._mAnimDelay - 1);
+	monster[i]._mAnimCnt = random_(universe, 88, monster[i]._mAnimDelay - 1);
 	monster[i]._mAnimLen = monst->Anims[MA_STAND].Frames;
-	monster[i]._mAnimFrame = random_(88, monster[i]._mAnimLen - 1) + 1;
+	monster[i]._mAnimFrame = random_(universe, 88, monster[i]._mAnimLen - 1) + 1;
 
 	if (monst->mtype == MT_DIABLO) {
 #ifdef HELLFIRE
-		monster[i]._mmaxhp = (random_(88, 1) + 3333) << 6;
+		monster[i]._mmaxhp = (random_(universe, 88, 1) + 3333) << 6;
 #else
-		monster[i]._mmaxhp = (random_(88, 1) + 1666) << 6;
+		monster[i]._mmaxhp = (random_(universe, 88, 1) + 1666) << 6;
 #endif
 	} else {
-		monster[i]._mmaxhp = (monst->mMinHP + random_(88, monst->mMaxHP - monst->mMinHP + 1)) << 6;
+		monster[i]._mmaxhp = (monst->mMinHP + random_(universe, 88, monst->mMaxHP - monst->mMinHP + 1)) << 6;
 	}
 
 	if (universe.gbMaxPlayers == 1) {
@@ -420,8 +420,8 @@ void InitMonster(Universe& universe, int i, int rd, int mtype, int x, int y)
 #ifdef HELLFIRE
 	monster[i].mlid = 0;
 #endif
-	monster[i]._mRndSeed = GetRndSeed();
-	monster[i]._mAISeed = GetRndSeed();
+	monster[i]._mRndSeed = GetRndSeed(universe);
+	monster[i]._mAISeed = GetRndSeed(universe);
 	monster[i].mWhoHit = 0;
 	monster[i].mLevel = monst->MData->mLevel;
 	monster[i].mExp = monst->MData->mExp;
@@ -505,7 +505,7 @@ void ClrAllMonsters(Universe& universe)
 		Monst->_mfuty = 0;
 		Monst->_moldx = 0;
 		Monst->_moldy = 0;
-		Monst->_mdir = random_(89, 8);
+		Monst->_mdir = random_(universe, 89, 8);
 		Monst->_mxvel = 0;
 		Monst->_myvel = 0;
 		Monst->_mAnimData = NULL;
@@ -515,7 +515,7 @@ void ClrAllMonsters(Universe& universe)
 		Monst->_mAnimFrame = 0;
 		Monst->_mFlags = 0;
 		Monst->_mDelFlag = FALSE;
-		Monst->_menemy = random_(89, 1);
+		Monst->_menemy = random_(universe, 89, 1);
 		// BUGFIX: `Monst->_menemy` may be referencing a player who already left the game, thus reading garbage data from `universe.plr[Monst->_menemy]._pfutx`.
 		Monst->_menemyx = universe.plr[Monst->_menemy]._pfutx;
 		Monst->_menemyy = universe.plr[Monst->_menemy]._pfuty;
@@ -594,7 +594,7 @@ void PlaceMonster(Universe& universe, int i, int mtype, int x, int y)
 #endif
 	dMonster[x][y] = i + 1;
 
-	rd = random_(90, 8);
+	rd = random_(universe, 90, 8);
 	InitMonster(universe, i, rd, mtype, x, y);
 }
 
@@ -625,8 +625,8 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 	}
 
 	while (1) {
-		xp = random_(91, 80) + 16;
-		yp = random_(91, 80) + 16;
+		xp = random_(universe, 91, 80) + 16;
+		yp = random_(universe, 91, 80) + 16;
 		count2 = 0;
 		for (x = xp - 3; x < xp + 3; x++) {
 			for (y = yp - 3; y < yp + 3; y++) {
@@ -825,7 +825,7 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 
 	if (Monst->_mAi != AI_GARG) {
 		Monst->_mAnimData = Monst->MType->Anims[MA_STAND].Data[Monst->_mdir];
-		Monst->_mAnimFrame = random_(88, Monst->_mAnimLen - 1) + 1;
+		Monst->_mAnimFrame = random_(universe, 88, Monst->_mAnimLen - 1) + 1;
 		Monst->_mFlags &= ~MFLAG_ALLOW_SPECIAL;
 		Monst->_mmode = MM_STAND;
 	}
@@ -969,13 +969,13 @@ void PlaceGroup(Universe& universe, int mtype, int num, int leaderf, int leader)
 		}
 
 		if (leaderf & 1) {
-			int offset = random_(92, 8);
+			int offset = random_(universe, 92, 8);
 			x1 = xp = monster[leader]._mx + offset_x[offset];
 			y1 = yp = monster[leader]._my + offset_y[offset];
 		} else {
 			do {
-				x1 = xp = random_(93, 80) + 16;
-				y1 = yp = random_(93, 80) + 16;
+				x1 = xp = random_(universe, 93, 80) + 16;
+				y1 = yp = random_(universe, 93, 80) + 16;
 			} while (!MonstPlace(xp, yp));
 		}
 
@@ -984,7 +984,7 @@ void PlaceGroup(Universe& universe, int mtype, int num, int leaderf, int leader)
 		}
 
 		j = 0;
-		for (try2 = 0; j < num && try2 < 100; xp += offset_x[random_(94, 8)], yp += offset_x[random_(94, 8)]) { /// BUGFIX: `yp += offset_y`
+		for (try2 = 0; j < num && try2 < 100; xp += offset_x[random_(universe, 94, 8)], yp += offset_x[random_(universe, 94, 8)]) { /// BUGFIX: `yp += offset_y`
 			if (!MonstPlace(xp, yp)
 			    || (dTransVal[xp][yp] != dTransVal[x1][y1])
 			    || (leaderf & 2) && ((abs(xp - x1) >= 4) || (abs(yp - y1) >= 4))) {
@@ -1006,7 +1006,7 @@ void PlaceGroup(Universe& universe, int mtype, int num, int leaderf, int leader)
 
 				if (monster[nummonsters]._mAi != AI_GARG) {
 					monster[nummonsters]._mAnimData = monster[nummonsters].MType->Anims[MA_STAND].Data[monster[nummonsters]._mdir];
-					monster[nummonsters]._mAnimFrame = random_(88, monster[nummonsters]._mAnimLen - 1) + 1;
+					monster[nummonsters]._mAnimFrame = random_(universe, 88, monster[nummonsters]._mAnimLen - 1) + 1;
 					monster[nummonsters]._mFlags &= ~MFLAG_ALLOW_SPECIAL;
 					monster[nummonsters]._mmode = MM_STAND;
 				}
@@ -1100,17 +1100,17 @@ void InitMonsters(Universe& universe)
 			}
 		}
 		while (nummonsters < totalmonsters) {
-			mtype = scattertypes[random_(95, numscattypes)];
-			if (currlevel == 1 || random_(95, 2) == 0)
+			mtype = scattertypes[random_(universe, 95, numscattypes)];
+			if (currlevel == 1 || random_(universe, 95, 2) == 0)
 				na = 1;
 #ifdef HELLFIRE
 			else if (currlevel == 2 || currlevel >= 21 && currlevel <= 24)
 #else
 			else if (currlevel == 2)
 #endif
-				na = random_(95, 2) + 2;
+				na = random_(universe, 95, 2) + 2;
 			else
-				na = random_(95, 3) + 3;
+				na = random_(universe, 95, 3) + 3;
 			PlaceGroup(universe, mtype, na, 0, 0);
 		}
 	}
@@ -1375,7 +1375,7 @@ BOOL IsGoat(int mt)
 //	}
 //
 //	if (j) {
-//		skeltypes = random_(136, j);
+//		skeltypes = random_(universe, 136, j);
 //		j = 0;
 //		for (i = 0; i < nummtypes && j <= skeltypes; i++) {
 //			if (IsSkel(Monsters[i].mtype))
@@ -1402,7 +1402,7 @@ void ActivateSpawn(int i, int x, int y, int dir)
 	monster[i]._moldy = y;
 }
 
-BOOL SpawnSkeleton(int ii, int x, int y)
+BOOL SpawnSkeleton(Universe& universe, int ii, int x, int y)
 {
 	int dx, dy, xx, yy, dir, j, k, rs;
 	BOOL savail;
@@ -1432,7 +1432,7 @@ BOOL SpawnSkeleton(int ii, int x, int y)
 		return FALSE;
 	}
 
-	rs = random_(137, 15) + 1;
+	rs = random_(universe, 137, 15) + 1;
 	xx = 0;
 	yy = 0;
 	while (rs > 0) {
@@ -1469,7 +1469,7 @@ int PreSpawnSkeleton(Universe& universe)
 	}
 
 	if (j) {
-		skeltypes = random_(136, j);
+		skeltypes = random_(universe, 136, j);
 		j = 0;
 		for (i = 0; i < nummtypes && j <= skeltypes; i++) {
 			if (IsSkel(Monsters[i].mtype))

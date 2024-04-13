@@ -9,6 +9,7 @@
 #include "Source/gendung.h"
 #include "Source/monster.h"
 #include "Source/objects.h"
+#include "Source/universe/universe.h"
 
 #define assert_fail(exp) ((void)(exp))
 
@@ -35,12 +36,12 @@ extern const int myplr;
 uint64_t micros();
 
 BOOL delta_quest_inited(int i);
-int random_(BYTE idx, int v);
+int random_(Universe& universe, BYTE idx, int v);
 [[noreturn]] void app_fatal(const char *dummystring);
 void SetAutomapView(int nXPos, int nYPos);
-void SetRndSeed(int s);
-int GetRndSeed();
-int GetRndState();
+void SetRndSeed(Universe& universe, int s);
+int GetRndSeed(Universe& universe);
+int GetRndState(Universe& universe);
 
 inline int GetdPiece(Universe& universe, int x, int y)
 {

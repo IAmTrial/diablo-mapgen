@@ -19,7 +19,7 @@ void CreateItemsFromObject(Universe& universe, int oid)
 	case OBJ_TCHEST1:
 	case OBJ_TCHEST2:
 	case OBJ_TCHEST3:
-		SetRndSeed(object[oid]._oRndSeed);
+		SetRndSeed(universe, object[oid]._oRndSeed);
 		if (setlevel) {
 			for (int j = 0; j < object[oid]._oVar1; j++) {
 				CreateRndItem(universe, object[oid]._ox, object[oid]._oy, TRUE, TRUE, FALSE);
@@ -34,16 +34,16 @@ void CreateItemsFromObject(Universe& universe, int oid)
 		}
 		break;
 	case OBJ_SARC:
-		SetRndSeed(object[oid]._oRndSeed);
+		SetRndSeed(universe, object[oid]._oRndSeed);
 		if (object[oid]._oVar1 <= 2)
 			CreateRndItem(universe, object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
 		break;
 	case OBJ_DECAP:
-		SetRndSeed(object[oid]._oRndSeed);
+		SetRndSeed(universe, object[oid]._oRndSeed);
 		CreateRndItem(universe, object[oid]._ox, object[oid]._oy, FALSE, TRUE, FALSE);
 		break;
 	case OBJ_BARREL:
-		SetRndSeed(object[oid]._oRndSeed);
+		SetRndSeed(universe, object[oid]._oRndSeed);
 		if (object[oid]._oVar2 <= 1) {
 			if (object[oid]._oVar3 == 0)
 				CreateRndUseful(universe, 0, object[oid]._ox, object[oid]._oy, TRUE);
@@ -53,21 +53,21 @@ void CreateItemsFromObject(Universe& universe, int oid)
 		break;
 	case OBJ_SKELBOOK:
 	case OBJ_BOOKSTAND:
-		SetRndSeed(object[oid]._oRndSeed);
-		if (random_(161, 5) != 0)
+		SetRndSeed(universe, object[oid]._oRndSeed);
+		if (random_(universe, 161, 5) != 0)
 			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_SCROLL, TRUE, FALSE);
 		else
 			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_BOOK, TRUE, FALSE);
 		break;
 	case OBJ_BOOKCASEL:
 	case OBJ_BOOKCASER:
-		SetRndSeed(object[oid]._oRndSeed);
+		SetRndSeed(universe, object[oid]._oRndSeed);
 		CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, FALSE, ITYPE_MISC, IMISC_BOOK, TRUE, FALSE);
 		break;
 	case OBJ_ARMORSTAND:
 	case OBJ_WARARMOR: {
-		SetRndSeed(object[oid]._oRndSeed);
-		BOOL uniqueRnd = random_(0, 2);
+		SetRndSeed(universe, object[oid]._oRndSeed);
+		BOOL uniqueRnd = random_(universe, 0, 2);
 		if (currlevel <= 5) {
 			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, TRUE, ITYPE_LARMOR, IMISC_NONE, TRUE, FALSE);
 		} else if (currlevel >= 6 && currlevel <= 9) {
@@ -80,10 +80,10 @@ void CreateItemsFromObject(Universe& universe, int oid)
 	} break;
 	case OBJ_WARWEAP:
 	case OBJ_WEAPONRACK: {
-		SetRndSeed(object[oid]._oRndSeed);
+		SetRndSeed(universe, object[oid]._oRndSeed);
 		int weaponType;
 
-		switch (random_(0, 4) + ITYPE_SWORD) {
+		switch (random_(universe, 0, 4) + ITYPE_SWORD) {
 		case ITYPE_SWORD:
 			weaponType = ITYPE_SWORD;
 			break;
@@ -113,7 +113,7 @@ void DropAllItems(Universe& universe)
 		int mid = monstactive[i];
 		if (monster[mid].MType->mtype == MT_GOLEM)
 			continue;
-		SetRndSeed(monster[mid]._mRndSeed);
+		SetRndSeed(universe, monster[mid]._mRndSeed);
 		SpawnItem(universe, mid, monster[mid]._mx, monster[mid]._my, TRUE);
 	}
 

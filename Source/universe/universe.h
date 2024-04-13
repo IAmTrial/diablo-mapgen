@@ -102,6 +102,14 @@ struct Universe {
 	bool oobread = false;
 	bool oobwrite = false;
 
+	// engine.cpp
+	/** Seed value before the most recent call to SetRndSeed() */
+	int orgseed;
+	/** Current game seed */
+	int sglGameSeed;
+	/** Number of times the current seed has been fetched */
+	int SeedCount;
+
 	// gendung.h
 	int gnDifficulty;
 };

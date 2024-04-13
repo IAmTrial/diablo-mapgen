@@ -368,30 +368,30 @@ void AddInitItems(Universe& universe)
 #ifdef HELLFIRE
 	int curlv = items_get_currlevel();
 #endif
-	rnd = random_(11, 3) + 3;
+	rnd = random_(universe, 11, 3) + 3;
 	for (j = 0; j < rnd; j++) {
 		i = itemavail[0];
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = i;
-		x = random_(12, 80) + 16;
-		y = random_(12, 80) + 16;
+		x = random_(universe, 12, 80) + 16;
+		y = random_(universe, 12, 80) + 16;
 		while (!ItemPlace(x, y)) {
-			x = random_(12, 80) + 16;
-			y = random_(12, 80) + 16;
+			x = random_(universe, 12, 80) + 16;
+			y = random_(universe, 12, 80) + 16;
 		}
 		item[i]._ix = x;
 		item[i]._iy = y;
 		dItem[x][y] = i + 1;
-		item[i]._iSeed = GetRndSeed();
-		SetRndSeed(item[i]._iSeed);
+		item[i]._iSeed = GetRndSeed(universe);
+		SetRndSeed(universe, item[i]._iSeed);
 #ifdef HELLFIRE
-		if (random_(12, 2) != 0)
+		if (random_(universe, 12, 2) != 0)
 			GetItemAttrs(universe, i, IDI_HEAL, curlv);
 		else
 			GetItemAttrs(universe, i, IDI_MANA, curlv);
 		item[i]._iCreateInfo = curlv + CF_PREGEN;
 #else
-		if (random_(12, 2) != 0)
+		if (random_(universe, 12, 2) != 0)
 			GetItemAttrs(universe, i, IDI_HEAL, currlevel);
 		else
 			GetItemAttrs(universe, i, IDI_MANA, currlevel);
@@ -431,7 +431,7 @@ void InitItems(Universe& universe)
 	}
 
 	if (!setlevel) {
-		s = GetRndSeed(); /* unused */
+		s = GetRndSeed(universe); /* unused */
 		if (QuestStatus(Q_ROCK))
 			SpawnRock(universe);
 		if (QuestStatus(Q_ANVIL))
@@ -455,9 +455,9 @@ void InitItems(Universe& universe)
 	// BUGFIX: item get records not reset when resetting items.
 }
 
-void GetPlrHandSeed(ItemStruct *h)
+void GetPlrHandSeed(Universe& universe, ItemStruct *h)
 {
-	h->_iSeed = GetRndSeed();
+	h->_iSeed = GetRndSeed(universe);
 }
 
 void GetGoldSeed(Universe& universe, int pnum, ItemStruct *h)
@@ -467,7 +467,7 @@ void GetGoldSeed(Universe& universe, int pnum, ItemStruct *h)
 
 	do {
 		doneflag = TRUE;
-		s = GetRndSeed();
+		s = GetRndSeed(universe);
 		for (i = 0; i < numitems; i++) {
 			ii = itemactive[i];
 			if (item[ii]._iSeed == s)
@@ -537,7 +537,7 @@ BOOL ItemSpaceOk(int i, int j)
 	return !nSolidTable[dPiece[i][j]];
 }
 
-BOOL GetItemSpace(int x, int y, char inum)
+BOOL GetItemSpace(Universe& universe, int x, int y, char inum)
 {
 	int i, j, rs;
 	int xx, yy;
@@ -561,7 +561,7 @@ BOOL GetItemSpace(int x, int y, char inum)
 		}
 	}
 
-	rs = random_(13, 15) + 1;
+	rs = random_(universe, 13, 15) + 1;
 
 	if (!savail)
 		return FALSE;
@@ -591,12 +591,12 @@ BOOL GetItemSpace(int x, int y, char inum)
 	return TRUE;
 }
 
-void GetSuperItemSpace(int x, int y, char inum)
+void GetSuperItemSpace(Universe& universe, int x, int y, char inum)
 {
 	int xx, yy;
 	int i, j, k;
 
-	if (!GetItemSpace(x, y, inum)) {
+	if (!GetItemSpace(universe, x, y, inum)) {
 		for (k = 2; k < 50; k++) {
 			for (j = -k; j <= k; j++) {
 				yy = y + j;
@@ -655,7 +655,7 @@ void GetBookSpell(Universe& universe, int i, int lvl)
 
 	if (lvl == 0)
 		lvl = 1;
-	rv = random_(14, MAX_SPELLS) + 1;
+	rv = random_(universe, 14, MAX_SPELLS) + 1;
 #ifdef SPAWN
 	if (lvl > 5)
 		lvl = 5;
@@ -709,7 +709,7 @@ void GetStaffPower(Universe& universe, int i, int lvl, int bs, BOOL onlygood)
 	BOOL addok;
 	int tmp;
 
-	tmp = random_(15, 10);
+	tmp = random_(universe, 15, 10);
 	preidx = -1;
 	if (tmp == 0 || onlygood) {
 		nl = 0;
@@ -729,7 +729,7 @@ void GetStaffPower(Universe& universe, int i, int lvl, int bs, BOOL onlygood)
 			}
 		}
 		if (nl != 0) {
-			preidx = l[random_(16, nl)];
+			preidx = l[random_(universe, 16, nl)];
 			sprintf(istr, "%s %s", PL_Prefix[preidx].PLName, item[i]._iIName);
 			strcpy(item[i]._iIName, istr);
 			item[i]._iMagical = ITEM_QUALITY_MAGIC;
@@ -754,7 +754,7 @@ void GetStaffSpell(Universe& universe, int i, int lvl, BOOL onlygood)
 	char istr[64];
 
 #ifndef HELLFIRE
-	if (random_(17, 4) == 0) {
+	if (random_(universe, 17, 4) == 0) {
 		GetItemPower(universe, i, lvl >> 1, lvl, PLT_STAFF, onlygood);
 	} else
 #endif
@@ -762,7 +762,7 @@ void GetStaffSpell(Universe& universe, int i, int lvl, BOOL onlygood)
 		l = lvl >> 1;
 		if (l == 0)
 			l = 1;
-		rv = random_(18, MAX_SPELLS) + 1;
+		rv = random_(universe, 18, MAX_SPELLS) + 1;
 #ifdef SPAWN
 		if (lvl > 10)
 			lvl = 10;
@@ -788,7 +788,7 @@ void GetStaffSpell(Universe& universe, int i, int lvl, BOOL onlygood)
 		minc = spelldata[bs].sStaffMin;
 		maxc = spelldata[bs].sStaffMax - minc + 1;
 		item[i]._iSpell = bs;
-		item[i]._iCharges = minc + random_(19, maxc);
+		item[i]._iCharges = minc + random_(universe, 19, maxc);
 		item[i]._iMaxCharges = item[i]._iCharges;
 
 		item[i]._iMinMag = spelldata[bs].sMinInt;
@@ -814,7 +814,7 @@ void GetItemAttrs(Universe& universe, int i, int idata, int lvl)
 	item[i]._iClass = AllItemsList[idata].iClass;
 	item[i]._iMinDam = AllItemsList[idata].iMinDam;
 	item[i]._iMaxDam = AllItemsList[idata].iMaxDam;
-	item[i]._iAC = AllItemsList[idata].iMinAC + random_(20, AllItemsList[idata].iMaxAC - AllItemsList[idata].iMinAC + 1);
+	item[i]._iAC = AllItemsList[idata].iMinAC + random_(universe, 20, AllItemsList[idata].iMaxAC - AllItemsList[idata].iMinAC + 1);
 #ifndef HELLFIRE
 	item[i]._iFlags = AllItemsList[idata].iFlags;
 #endif
@@ -866,11 +866,11 @@ void GetItemAttrs(Universe& universe, int i, int idata, int lvl)
 
 	if (item[i]._itype == ITYPE_GOLD) {
 		if (universe.gnDifficulty == DIFF_NORMAL)
-			rndv = 5 * currlevel + random_(21, 10 * currlevel);
+			rndv = 5 * currlevel + random_(universe, 21, 10 * currlevel);
 		if (universe.gnDifficulty == DIFF_NIGHTMARE)
-			rndv = 5 * (currlevel + 16) + random_(21, 10 * (currlevel + 16));
+			rndv = 5 * (currlevel + 16) + random_(universe, 21, 10 * (currlevel + 16));
 		if (universe.gnDifficulty == DIFF_HELL)
-			rndv = 5 * (currlevel + 32) + random_(21, 10 * (currlevel + 32));
+			rndv = 5 * (currlevel + 32) + random_(universe, 21, 10 * (currlevel + 32));
 #else
 	item[i]._iFlags = 0;
 	item[i]._iDamAcFlags = 0;
@@ -884,11 +884,11 @@ void GetItemAttrs(Universe& universe, int i, int idata, int lvl)
 	itemlevel = items_get_currlevel();
 	if (item[i]._itype == ITYPE_GOLD) {
 		if (universe.gnDifficulty == DIFF_NORMAL)
-			rndv = 5 * itemlevel + random_(21, 10 * itemlevel);
+			rndv = 5 * itemlevel + random_(universe, 21, 10 * itemlevel);
 		else if (universe.gnDifficulty == DIFF_NIGHTMARE)
-			rndv = 5 * (itemlevel + 16) + random_(21, 10 * (itemlevel + 16));
+			rndv = 5 * (itemlevel + 16) + random_(universe, 21, 10 * (itemlevel + 16));
 		else if (universe.gnDifficulty == DIFF_HELL)
-			rndv = 5 * (itemlevel + 32) + random_(21, 10 * (itemlevel + 32));
+			rndv = 5 * (itemlevel + 32) + random_(universe, 21, 10 * (itemlevel + 32));
 #endif
 		if (leveltype == DTYPE_HELL)
 			rndv += rndv >> 3;
@@ -904,9 +904,9 @@ void GetItemAttrs(Universe& universe, int i, int idata, int lvl)
 	}
 }
 
-int RndPL(int param1, int param2)
+int RndPL(Universe& universe, int param1, int param2)
 {
-	return param1 + random_(22, param2 - param1 + 1);
+	return param1 + random_(universe, 22, param2 - param1 + 1);
 }
 
 int PLVal(int pv, int p1, int p2, int minv, int maxv)
@@ -922,7 +922,7 @@ void SaveItemPower(Universe& universe, int i, int power, int param1, int param2,
 {
 	int r, r2;
 
-	r = RndPL(param1, param2);
+	r = RndPL(universe, param1, param2);
 	switch (power) {
 	case IPL_TOHIT:
 		item[i]._iPLToHit += r;
@@ -942,34 +942,34 @@ void SaveItemPower(Universe& universe, int i, int power, int param1, int param2,
 		// no break
 #endif
 	case IPL_TOHIT_DAMP:
-		r = RndPL(param1, param2);
+		r = RndPL(universe, param1, param2);
 		item[i]._iPLDam += r;
 		if (param1 == 20)
-			r2 = RndPL(1, 5);
+			r2 = RndPL(universe, 1, 5);
 		if (param1 == 36)
-			r2 = RndPL(6, 10);
+			r2 = RndPL(universe, 6, 10);
 		if (param1 == 51)
-			r2 = RndPL(11, 15);
+			r2 = RndPL(universe, 11, 15);
 		if (param1 == 66)
-			r2 = RndPL(16, 20);
+			r2 = RndPL(universe, 16, 20);
 		if (param1 == 81)
-			r2 = RndPL(21, 30);
+			r2 = RndPL(universe, 21, 30);
 		if (param1 == 96)
-			r2 = RndPL(31, 40);
+			r2 = RndPL(universe, 31, 40);
 		if (param1 == 111)
-			r2 = RndPL(41, 50);
+			r2 = RndPL(universe, 41, 50);
 		if (param1 == 126)
-			r2 = RndPL(51, 75);
+			r2 = RndPL(universe, 51, 75);
 		if (param1 == 151)
-			r2 = RndPL(76, 100);
+			r2 = RndPL(universe, 76, 100);
 		item[i]._iPLToHit += r2;
 		break;
 	case IPL_TOHIT_DAMP_CURSE:
 		item[i]._iPLDam -= r;
 		if (param1 == 25)
-			r2 = RndPL(1, 5);
+			r2 = RndPL(universe, 1, 5);
 		if (param1 == 50)
-			r2 = RndPL(6, 10);
+			r2 = RndPL(universe, 6, 10);
 		item[i]._iPLToHit -= r2;
 		break;
 	case IPL_ACP:
@@ -1350,10 +1350,10 @@ void GetItemPower(Universe& universe, int i, int minlvl, int maxlvl, int flgs, B
 	char istr[128];
 	BYTE goe;
 
-	pre = random_(23, 4);
-	post = random_(23, 3);
+	pre = random_(universe, 23, 4);
+	post = random_(universe, 23, 3);
 	if (pre != 0 && post == 0) {
-		if (random_(23, 2) != 0)
+		if (random_(universe, 23, 2) != 0)
 			post = 1;
 		else
 			pre = 0;
@@ -1361,7 +1361,7 @@ void GetItemPower(Universe& universe, int i, int minlvl, int maxlvl, int flgs, B
 	preidx = -1;
 	sufidx = -1;
 	goe = GOE_ANY;
-	if (!onlygood && random_(0, 3) != 0)
+	if (!onlygood && random_(universe, 0, 3) != 0)
 		onlygood = TRUE;
 	if (pre == 0) {
 		nt = 0;
@@ -1378,7 +1378,7 @@ void GetItemPower(Universe& universe, int i, int minlvl, int maxlvl, int flgs, B
 			}
 		}
 		if (nt != 0) {
-			preidx = l[random_(23, nt)];
+			preidx = l[random_(universe, 23, nt)];
 			sprintf(istr, "%s %s", PL_Prefix[preidx].PLName, item[i]._iIName);
 			strcpy(item[i]._iIName, istr);
 			item[i]._iMagical = ITEM_QUALITY_MAGIC;
@@ -1407,7 +1407,7 @@ void GetItemPower(Universe& universe, int i, int minlvl, int maxlvl, int flgs, B
 			}
 		}
 		if (nl != 0) {
-			sufidx = l[random_(23, nl)];
+			sufidx = l[random_(universe, 23, nl)];
 			sprintf(istr, "%s of %s", item[i]._iIName, PL_Suffix[sufidx].PLName);
 			strcpy(item[i]._iIName, istr);
 			item[i]._iMagical = ITEM_QUALITY_MAGIC;
@@ -1507,10 +1507,10 @@ int RndItem(Universe& universe, int m)
 	if (monster[m].MData->mTreasure & 0x4000)
 		return 0;
 
-	if (random_(24, 100) > 40)
+	if (random_(universe, 24, 100) > 40)
 		return 0;
 
-	if (random_(24, 100) > 25)
+	if (random_(universe, 24, 100) > 25)
 		return IDI_GOLD + 1;
 
 	ri = 0;
@@ -1540,7 +1540,7 @@ int RndItem(Universe& universe, int m)
 			ri--;
 	}
 
-	r = random_(24, ri);
+	r = random_(universe, 24, ri);
 	return ril[r] + 1;
 }
 
@@ -1594,7 +1594,7 @@ int RndUItem(Universe& universe, int m)
 		}
 	}
 
-	return ril[random_(25, ri)];
+	return ril[random_(universe, 25, ri)];
 }
 
 int RndAllItems(Universe& universe)
@@ -1602,7 +1602,7 @@ int RndAllItems(Universe& universe)
 	int i, ri;
 	int ril[512];
 
-	if (random_(26, 100) > 25)
+	if (random_(universe, 26, 100) > 25)
 		return 0;
 
 #ifdef HELLFIRE
@@ -1624,13 +1624,13 @@ int RndAllItems(Universe& universe)
 			ri--;
 	}
 
-	return ril[random_(26, ri)];
+	return ril[random_(universe, 26, ri)];
 }
 
 #ifdef HELLFIRE
-int RndTypeItems(int itype, int imid, int lvl)
+int RndTypeItems(Universe& universe, int itype, int imid, int lvl)
 #else
-int RndTypeItems(int itype, int imid)
+int RndTypeItems(Universe& universe, int itype, int imid)
 #endif
 {
 	int i, ri;
@@ -1662,7 +1662,7 @@ int RndTypeItems(int itype, int imid)
 		}
 	}
 
-	return ril[random_(27, ri)];
+	return ril[random_(universe, 27, ri)];
 }
 
 int CheckUnique(Universe& universe, int i, int lvl, int uper, BOOL recreate)
@@ -1670,7 +1670,7 @@ int CheckUnique(Universe& universe, int i, int lvl, int uper, BOOL recreate)
 	int j, idata, numu;
 	BOOLEAN uok[128];
 
-	if (random_(28, 100) > uper)
+	if (random_(universe, 28, 100) > uper)
 		return UITYPE_INVALID;
 
 	numu = 0;
@@ -1687,7 +1687,7 @@ int CheckUnique(Universe& universe, int i, int lvl, int uper, BOOL recreate)
 	if (numu == 0)
 		return UITYPE_INVALID;
 
-	random_(29, 10); /// BUGFIX: unused, last unique in array always gets chosen
+	random_(universe, 29, 10); /// BUGFIX: unused, last unique in array always gets chosen
 	idata = 0;
 	while (numu > 0) {
 		if (uok[idata])
@@ -1740,7 +1740,7 @@ void SpawnUnique(Universe& universe, int uid, int x, int y)
 		return;
 
 	ii = itemavail[0];
-	GetSuperItemSpace(x, y, ii);
+	GetSuperItemSpace(universe, x, y, ii);
 	itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 	itemactive[numitems] = ii;
 
@@ -1759,10 +1759,10 @@ void SpawnUnique(Universe& universe, int uid, int x, int y)
 	numitems++;
 }
 
-void ItemRndDur(int ii)
+void ItemRndDur(Universe& universe, int ii)
 {
 	if (item[ii]._iDurability && item[ii]._iDurability != DUR_INDESTRUCTIBLE)
-		item[ii]._iDurability = random_(0, item[ii]._iMaxDur >> 1) + (item[ii]._iMaxDur >> 2) + 1;
+		item[ii]._iDurability = random_(universe, 0, item[ii]._iMaxDur >> 1) + (item[ii]._iMaxDur >> 2) + 1;
 }
 
 void SetupAllItems(Universe& universe, int ii, int idx, int iseed, int lvl, int uper, BOOL onlygood, BOOL recreate, BOOL pregen)
@@ -1770,7 +1770,7 @@ void SetupAllItems(Universe& universe, int ii, int idx, int iseed, int lvl, int 
 	int iblvl, uid;
 
 	item[ii]._iSeed = iseed;
-	SetRndSeed(iseed);
+	SetRndSeed(universe, iseed);
 	GetItemAttrs(universe, ii, idx, lvl >> 1);
 	item[ii]._iCreateInfo = lvl;
 
@@ -1786,7 +1786,7 @@ void SetupAllItems(Universe& universe, int ii, int idx, int iseed, int lvl, int 
 
 	if (item[ii]._iMiscId != IMISC_UNIQUE) {
 		iblvl = -1;
-		if (random_(32, 100) <= 10 || random_(33, 100) <= lvl) {
+		if (random_(universe, 32, 100) <= 10 || random_(universe, 33, 100) <= lvl) {
 			iblvl = lvl;
 		}
 		if (iblvl == -1 && item[ii]._iMiscId == IMISC_STAFF) {
@@ -1816,7 +1816,7 @@ void SetupAllItems(Universe& universe, int ii, int idx, int iseed, int lvl, int 
 			}
 		}
 		if (item[ii]._iMagical != ITEM_QUALITY_UNIQUE)
-			ItemRndDur(ii);
+			ItemRndDur(universe, ii);
 	} else {
 		if (item[ii]._iLoc != ILOC_UNEQUIPABLE) {
 			//uid = CheckUnique(universe, ii, iblvl, uper, recreate);
@@ -1860,13 +1860,13 @@ void SpawnItem(Universe& universe, int m, int x, int y, BOOL sendmsg)
 
 	if (numitems < MAXITEMS) {
 		ii = itemavail[0];
-		GetSuperItemSpace(x, y, ii);
+		GetSuperItemSpace(universe, x, y, ii);
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
 		if (monster[m]._uniqtype) {
-			SetupAllItems(universe, ii, idx, GetRndSeed(), monster[m].MData->mLevel, 15, onlygood, FALSE, FALSE);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), monster[m].MData->mLevel, 15, onlygood, FALSE, FALSE);
 		} else {
-			SetupAllItems(universe, ii, idx, GetRndSeed(), monster[m].MData->mLevel, 1, onlygood, FALSE, FALSE);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), monster[m].MData->mLevel, 1, onlygood, FALSE, FALSE);
 		}
 		numitems++;
 	}
@@ -1881,7 +1881,7 @@ void CreateItem(Universe& universe, int uid, int x, int y)
 #endif
 	if (numitems < MAXITEMS) {
 		ii = itemavail[0];
-		GetSuperItemSpace(x, y, ii);
+		GetSuperItemSpace(universe, x, y, ii);
 		idx = 0;
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
@@ -1916,13 +1916,13 @@ void CreateRndItem(Universe& universe, int x, int y, BOOL onlygood, BOOL sendmsg
 
 	if (numitems < MAXITEMS) {
 		ii = itemavail[0];
-		GetSuperItemSpace(x, y, ii);
+		GetSuperItemSpace(universe, x, y, ii);
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
 #ifdef HELLFIRE
-		SetupAllItems(universe, ii, idx, GetRndSeed(), 2 * curlv, 1, onlygood, FALSE, delta);
+		SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * curlv, 1, onlygood, FALSE, delta);
 #else
-		SetupAllItems(universe, ii, idx, GetRndSeed(), 2 * currlevel, 1, onlygood, FALSE, delta);
+		SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * currlevel, 1, onlygood, FALSE, delta);
 #endif
 		numitems++;
 	}
@@ -1933,10 +1933,10 @@ void SetupAllUseful(Universe& universe, int ii, int iseed, int lvl)
 	int idx;
 
 	item[ii]._iSeed = iseed;
-	SetRndSeed(iseed);
+	SetRndSeed(universe, iseed);
 
 #ifdef HELLFIRE
-	idx = random_(34, 7);
+	idx = random_(universe, 34, 7);
 	switch (idx) {
 	case 0:
 		idx = IDI_PORTAL;
@@ -1964,12 +1964,12 @@ void SetupAllUseful(Universe& universe, int ii, int iseed, int lvl)
 		break;
 	}
 #else
-	if (random_(34, 2) != 0)
+	if (random_(universe, 34, 2) != 0)
 		idx = IDI_HEAL;
 	else
 		idx = IDI_MANA;
 
-	if (lvl > 1 && random_(34, 3) == 0)
+	if (lvl > 1 && random_(universe, 34, 3) == 0)
 		idx = IDI_PORTAL;
 #endif
 
@@ -1987,13 +1987,13 @@ void CreateRndUseful(Universe& universe, int pnum, int x, int y, BOOL sendmsg)
 #endif
 	if (numitems < MAXITEMS) {
 		ii = itemavail[0];
-		GetSuperItemSpace(x, y, ii);
+		GetSuperItemSpace(universe, x, y, ii);
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
 #ifdef HELLFIRE
-		SetupAllUseful(ii, GetRndSeed(), curlv);
+		SetupAllUseful(ii, GetRndSeed(universe), curlv);
 #else
-		SetupAllUseful(universe, ii, GetRndSeed(), currlevel);
+		SetupAllUseful(universe, ii, GetRndSeed(universe), currlevel);
 #endif
 		numitems++;
 	}
@@ -2006,23 +2006,23 @@ void CreateTypeItem(Universe& universe, int x, int y, BOOL onlygood, int itype, 
 #ifdef HELLFIRE
 	int curlv = items_get_currlevel();
 	if (itype != ITYPE_GOLD)
-		idx = RndTypeItems(itype, imisc, curlv);
+		idx = RndTypeItems(universe, itype, imisc, curlv);
 #else
 	if (itype != ITYPE_GOLD)
-		idx = RndTypeItems(itype, imisc);
+		idx = RndTypeItems(universe, itype, imisc);
 #endif
 	else
 		idx = IDI_GOLD;
 
 	if (numitems < MAXITEMS) {
 		ii = itemavail[0];
-		GetSuperItemSpace(x, y, ii);
+		GetSuperItemSpace(universe, x, y, ii);
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
 #ifdef HELLFIRE
-		SetupAllItems(universe, ii, idx, GetRndSeed(), 2 * curlv, 1, onlygood, FALSE, delta);
+		SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * curlv, 1, onlygood, FALSE, delta);
 #else
-		SetupAllItems(universe, ii, idx, GetRndSeed(), 2 * currlevel, 1, onlygood, FALSE, delta);
+		SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * currlevel, 1, onlygood, FALSE, delta);
 #endif
 
 		numitems++;
@@ -2043,8 +2043,8 @@ void SpawnQuestItem(Universe& universe, int itemid, int x, int y, int randarea, 
 			tries++;
 			if (tries > 1000 && randarea > 1)
 				randarea--;
-			x = random_(0, MAXDUNX);
-			y = random_(0, MAXDUNY);
+			x = random_(universe, 0, MAXDUNX);
+			y = random_(universe, 0, MAXDUNY);
 			failed = FALSE;
 			for (i = 0; i < randarea && !failed; i++) {
 				for (j = 0; j < randarea && !failed; j++) {
@@ -2155,7 +2155,7 @@ BOOL SmithItemOk(int i)
 	return rv;
 }
 
-int RndSmithItem(int lvl)
+int RndSmithItem(Universe& universe, int lvl)
 {
 	int i, ri;
 	int ril[512];
@@ -2180,7 +2180,7 @@ int RndSmithItem(int lvl)
 		}
 	}
 
-	return ril[random_(50, ri)] + 1;
+	return ril[random_(universe, 50, ri)] + 1;
 }
 
 void BubbleSwapItem(ItemStruct *a, ItemStruct *b)
@@ -2238,20 +2238,20 @@ void CreateSpellBook(Universe& universe, int x, int y, int ispell, BOOL sendmsg,
 	if (lvl < 1) {
 		return;
 	}
-	idx = RndTypeItems(ITYPE_MISC, IMISC_BOOK, lvl);
+	idx = RndTypeItems(universe, ITYPE_MISC, IMISC_BOOK, lvl);
 #else
-	idx = RndTypeItems(ITYPE_MISC, IMISC_BOOK);
+	idx = RndTypeItems(universe, ITYPE_MISC, IMISC_BOOK);
 #endif
 	if (numitems < MAXITEMS) {
 		ii = itemavail[0];
-		GetSuperItemSpace(x, y, ii);
+		GetSuperItemSpace(universe, x, y, ii);
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
 		while (!done) {
 #ifdef HELLFIRE
-			SetupAllItems(universe, ii, idx, GetRndSeed(), 2 * lvl, 1, TRUE, FALSE, delta);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * lvl, 1, TRUE, FALSE, delta);
 #else
-			SetupAllItems(universe, ii, idx, GetRndSeed(), 2 * currlevel, 1, TRUE, FALSE, delta);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * currlevel, 1, TRUE, FALSE, delta);
 #endif
 			if (item[ii]._iMiscId == IMISC_BOOK && item[ii]._iSpell == ispell)
 				done = TRUE;
@@ -2271,27 +2271,27 @@ void CreateMagicArmor(Universe& universe, int x, int y, int imisc, int icurs, BO
 #endif
 	if (numitems < MAXITEMS) {
 		ii = itemavail[0];
-		GetSuperItemSpace(x, y, ii);
+		GetSuperItemSpace(universe, x, y, ii);
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
 #ifdef HELLFIRE
-		idx = RndTypeItems(imisc, IMISC_NONE, curlv);
+		idx = RndTypeItems(universe, imisc, IMISC_NONE, curlv);
 #else
-		idx = RndTypeItems(imisc, IMISC_NONE);
+		idx = RndTypeItems(universe, imisc, IMISC_NONE);
 #endif
 		while (!done) {
 #ifdef HELLFIRE
-			SetupAllItems(universe, ii, idx, GetRndSeed(), 2 * curlv, 1, TRUE, FALSE, delta);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * curlv, 1, TRUE, FALSE, delta);
 #else
-			SetupAllItems(universe, ii, idx, GetRndSeed(), 2 * currlevel, 1, TRUE, FALSE, delta);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * currlevel, 1, TRUE, FALSE, delta);
 #endif
 			if (item[ii]._iCurs == icurs)
 				done = TRUE;
 			else
 #ifdef HELLFIRE
-				idx = RndTypeItems(imisc, IMISC_NONE, curlv);
+				idx = RndTypeItems(universe, imisc, IMISC_NONE, curlv);
 #else
-				idx = RndTypeItems(imisc, IMISC_NONE);
+				idx = RndTypeItems(universe, imisc, IMISC_NONE);
 #endif
 		}
 		numitems++;
@@ -2314,27 +2314,27 @@ void CreateMagicWeapon(Universe& universe, int x, int y, int imisc, int icurs, B
 #endif
 	if (numitems < MAXITEMS) {
 		ii = itemavail[0];
-		GetSuperItemSpace(x, y, ii);
+		GetSuperItemSpace(universe, x, y, ii);
 		itemavail[0] = itemavail[MAXITEMS - numitems - 1];
 		itemactive[numitems] = ii;
 #ifdef HELLFIRE
-		idx = RndTypeItems(imisc, imid, curlv);
+		idx = RndTypeItems(universe, imisc, imid, curlv);
 #else
-		idx = RndTypeItems(imisc, IMISC_NONE);
+		idx = RndTypeItems(universe, imisc, IMISC_NONE);
 #endif
 		while (!done) {
 #ifdef HELLFIRE
-			SetupAllItems(universe, ii, idx, GetRndSeed(), 2 * curlv, 1, TRUE, FALSE, delta);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * curlv, 1, TRUE, FALSE, delta);
 #else
-			SetupAllItems(universe, ii, idx, GetRndSeed(), 2 * currlevel, 1, TRUE, FALSE, delta);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * currlevel, 1, TRUE, FALSE, delta);
 #endif
 			if (item[ii]._iCurs == icurs)
 				done = TRUE;
 			else
 #ifdef HELLFIRE
-				idx = RndTypeItems(imisc, imid, curlv);
+				idx = RndTypeItems(universe, imisc, imid, curlv);
 #else
-				idx = RndTypeItems(imisc, IMISC_NONE);
+				idx = RndTypeItems(universe, imisc, IMISC_NONE);
 #endif
 		}
 		numitems++;

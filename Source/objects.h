@@ -25,7 +25,7 @@ void InitObjects(Universe& universe);
 void SetMapObjects(Universe& universe, BYTE *pMap, int startx, int starty);
 void SetObjMapRange(int i, int x1, int y1, int x2, int y2, int v);
 void SetBookMsg(int i, int msg);
-void GetRndObjLoc(int randarea, int &xx, int &yy);
+void GetRndObjLoc(Universe& universe, int randarea, int &xx, int &yy);
 void AddMushPatch(Universe& universe);
 void AddSlainHero(Universe& universe);
 #ifdef HELLFIRE

@@ -956,11 +956,11 @@ static int DRLG_PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmin, 
 	if (tmax - tmin == 0)
 		numt = 1;
 	else
-		numt = random_(0, tmax - tmin) + tmin;
+		numt = random_(universe, 0, tmax - tmin) + tmin;
 
 	for (i = 0; i < numt; i++) {
-		sx = random_(0, DMAXX - sw);
-		sy = random_(0, DMAXY - sh);
+		sx = random_(universe, 0, DMAXX - sw);
+		sy = random_(universe, 0, DMAXY - sh);
 		abort = FALSE;
 		found = 0;
 
@@ -1067,7 +1067,7 @@ static void DRLG_L1Floor(Universe& universe)
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
 			if (universe.L5dflags[i][j] == 0 && GetDungeon(universe, i, j) == 13) {
-				rv = random_(0, 3);
+				rv = random_(universe, 0, 3);
 
 				if (rv == 1)
 					SetDungeon(universe, i, j, 162);
@@ -1405,13 +1405,13 @@ static void L5roomGen(Universe& universe, int x, int y, int w, int h, int dir)
 	int width, height, rx, ry, ry2;
 	int cw, ch, cx1, cy1, cx2;
 
-	dirProb = random_(0, 4);
+	dirProb = random_(universe, 0, 4);
 
 	if (!(dir == 1 ? dirProb != 0 : dirProb == 0)) {
 		num = 0;
 		do {
-			cw = (random_(0, 5) + 2) & 0xFFFFFFFE;
-			ch = (random_(0, 5) + 2) & 0xFFFFFFFE;
+			cw = (random_(universe, 0, 5) + 2) & 0xFFFFFFFE;
+			ch = (random_(universe, 0, 5) + 2) & 0xFFFFFFFE;
 			cy1 = h / 2 + y - ch / 2;
 			cx1 = x - cw;
 			ran = L5checkRoom(universe, cx1 - 1, cy1 - 1, ch + 2, cw + 1); /// BUGFIX: swap args 3 and 4 ("ch+2" and "cw+1")
@@ -1431,8 +1431,8 @@ static void L5roomGen(Universe& universe, int x, int y, int w, int h, int dir)
 	} else {
 		num = 0;
 		do {
-			width = (random_(0, 5) + 2) & 0xFFFFFFFE;
-			height = (random_(0, 5) + 2) & 0xFFFFFFFE;
+			width = (random_(universe, 0, 5) + 2) & 0xFFFFFFFE;
+			height = (random_(universe, 0, 5) + 2) & 0xFFFFFFFE;
 			rx = w / 2 + x - width / 2;
 			ry = y - height;
 			ran = L5checkRoom(universe, rx - 1, ry - 1, width + 2, height + 1);
@@ -1457,13 +1457,13 @@ static void L5firstRoom(Universe& universe)
 	int ys, ye, y;
 	int xs, xe, x;
 
-	if (random_(0, 2) == 0) {
+	if (random_(universe, 0, 2) == 0) {
 		ys = 1;
 		ye = DMAXY - 1;
 
-		universe.VR1 = random_(0, 2);
-		universe.VR2 = random_(0, 2);
-		universe.VR3 = random_(0, 2);
+		universe.VR1 = random_(universe, 0, 2);
+		universe.VR2 = random_(universe, 0, 2);
+		universe.VR3 = random_(universe, 0, 2);
 
 		if (universe.VR1 + universe.VR3 <= 1)
 			universe.VR2 = 1;
@@ -1502,9 +1502,9 @@ static void L5firstRoom(Universe& universe)
 		xs = 1;
 		xe = DMAXX - 1;
 
-		universe.HR1 = random_(0, 2);
-		universe.HR2 = random_(0, 2);
-		universe.HR3 = random_(0, 2);
+		universe.HR1 = random_(universe, 0, 2);
+		universe.HR2 = random_(universe, 0, 2);
+		universe.HR3 = random_(universe, 0, 2);
 
 		if (universe.HR1 + universe.HR3 <= 1)
 			universe.HR2 = 1;
@@ -1655,7 +1655,7 @@ static void L5HorizWall(Universe& universe, int i, int j, char p, int dx)
 	int xx;
 	char wt, dt;
 
-	switch (random_(0, 4)) {
+	switch (random_(universe, 0, 4)) {
 	case 0:
 	case 1:
 		dt = 2;
@@ -1676,7 +1676,7 @@ static void L5HorizWall(Universe& universe, int i, int j, char p, int dx)
 		break;
 	}
 
-	if (random_(0, 6) == 5)
+	if (random_(universe, 0, 6) == 5)
 		wt = 12;
 	else
 		wt = 26;
@@ -1689,7 +1689,7 @@ static void L5HorizWall(Universe& universe, int i, int j, char p, int dx)
 		SetDungeon(universe, i + xx, j, dt);
 	}
 
-	xx = random_(0, dx - 1) + 1;
+	xx = random_(universe, 0, dx - 1) + 1;
 
 	if (wt == 12) {
 		SetDungeon(universe, i + xx, j, wt);
@@ -1704,7 +1704,7 @@ static void L5VertWall(Universe& universe, int i, int j, char p, int dy)
 	int yy;
 	char wt, dt;
 
-	switch (random_(0, 4)) {
+	switch (random_(universe, 0, 4)) {
 	case 0:
 	case 1:
 		dt = 1;
@@ -1725,7 +1725,7 @@ static void L5VertWall(Universe& universe, int i, int j, char p, int dy)
 		break;
 	}
 
-	if (random_(0, 6) == 5)
+	if (random_(universe, 0, 6) == 5)
 		wt = 11;
 	else
 		wt = 25;
@@ -1738,7 +1738,7 @@ static void L5VertWall(Universe& universe, int i, int j, char p, int dy)
 		SetDungeon(universe, i, j + yy, dt);
 	}
 
-	yy = random_(0, dy - 1) + 1;
+	yy = random_(universe, 0, dy - 1) + 1;
 
 	if (wt == 11) {
 		SetDungeon(universe, i, j + yy, wt);
@@ -1755,32 +1755,32 @@ static void L5AddWall(Universe& universe)
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
 			if (!universe.L5dflags[i][j]) {
-				if (GetDungeon(universe, i, j) == 3 && random_(0, 100) < 100) {
+				if (GetDungeon(universe, i, j) == 3 && random_(universe, 0, 100) < 100) {
 					x = L5HWallOk(universe, i, j);
 					if (x != -1)
 						L5HorizWall(universe, i, j, 2, x);
 				}
-				if (GetDungeon(universe, i, j) == 3 && random_(0, 100) < 100) {
+				if (GetDungeon(universe, i, j) == 3 && random_(universe, 0, 100) < 100) {
 					y = L5VWallOk(universe, i, j);
 					if (y != -1)
 						L5VertWall(universe, i, j, 1, y);
 				}
-				if (GetDungeon(universe, i, j) == 6 && random_(0, 100) < 100) {
+				if (GetDungeon(universe, i, j) == 6 && random_(universe, 0, 100) < 100) {
 					x = L5HWallOk(universe, i, j);
 					if (x != -1)
 						L5HorizWall(universe, i, j, 4, x);
 				}
-				if (GetDungeon(universe, i, j) == 7 && random_(0, 100) < 100) {
+				if (GetDungeon(universe, i, j) == 7 && random_(universe, 0, 100) < 100) {
 					y = L5VWallOk(universe, i, j);
 					if (y != -1)
 						L5VertWall(universe, i, j, 4, y);
 				}
-				if (GetDungeon(universe, i, j) == 2 && random_(0, 100) < 100) {
+				if (GetDungeon(universe, i, j) == 2 && random_(universe, 0, 100) < 100) {
 					x = L5HWallOk(universe, i, j);
 					if (x != -1)
 						L5HorizWall(universe, i, j, 2, x);
 				}
-				if (GetDungeon(universe, i, j) == 1 && random_(0, 100) < 100) {
+				if (GetDungeon(universe, i, j) == 1 && random_(universe, 0, 100) < 100) {
 					y = L5VWallOk(universe, i, j);
 					if (y != -1)
 						L5VertWall(universe, i, j, 1, y);
@@ -2018,7 +2018,7 @@ void drlg_l1_crypt_rndset(const BYTE *miniset, int rndper)
 					found = FALSE;
 				}
 			}
-			if (found == TRUE && random_(0, 100) < rndper) {
+			if (found == TRUE && random_(universe, 0, 100) < rndper) {
 				for (yy = 0; yy < sh; yy++) {
 					for (xx = 0; xx < sw; xx++) {
 						if (miniset[kk] != 0) {
@@ -2039,11 +2039,11 @@ static void DRLG_L5Subs(Universe& universe)
 
 	for (y = 0; y < DMAXY; y++) {
 		for (x = 0; x < DMAXX; x++) {
-			if (random_(0, 4) == 0) {
+			if (random_(universe, 0, 4) == 0) {
 				BYTE c = L5BTYPES[GetDungeon(universe, x, y)];
 
 				if (c && !universe.L5dflags[x][y]) {
-					rv = random_(0, 16);
+					rv = random_(universe, 0, 16);
 					i = -1;
 
 					while (rv >= 0) {
@@ -2155,20 +2155,20 @@ static void L5FillChambers(Universe& universe)
 	if (currlevel == 24) {
 		if (universe.VR1 || universe.VR2 || universe.VR3) {
 			c = 1;
-			if (!universe.VR1 && universe.VR2 && universe.VR3 && random_(0, 2) != 0)
+			if (!universe.VR1 && universe.VR2 && universe.VR3 && random_(universe, 0, 2) != 0)
 				c = 2;
-			if (universe.VR1 && universe.VR2 && !universe.VR3 && random_(0, 2) != 0)
+			if (universe.VR1 && universe.VR2 && !universe.VR3 && random_(universe, 0, 2) != 0)
 				c = 0;
 
 			if (universe.VR1 && !universe.VR2 && universe.VR3) {
-				if (random_(0, 2) != 0)
+				if (random_(universe, 0, 2) != 0)
 					c = 0;
 				else
 					c = 2;
 			}
 
 			if (universe.VR1 && universe.VR2 && universe.VR3)
-				c = random_(0, 3);
+				c = random_(universe, 0, 3);
 
 			switch (c) {
 			case 0:
@@ -2183,20 +2183,20 @@ static void L5FillChambers(Universe& universe)
 			}
 		} else {
 			c = 1;
-			if (!universe.HR1 && universe.HR2 && universe.HR3 && random_(0, 2) != 0)
+			if (!universe.HR1 && universe.HR2 && universe.HR3 && random_(universe, 0, 2) != 0)
 				c = 2;
-			if (universe.HR1 && universe.HR2 && !universe.HR3 && random_(0, 2) != 0)
+			if (universe.HR1 && universe.HR2 && !universe.HR3 && random_(universe, 0, 2) != 0)
 				c = 0;
 
 			if (universe.HR1 && !universe.HR2 && universe.HR3) {
-				if (random_(0, 2) != 0)
+				if (random_(universe, 0, 2) != 0)
 					c = 0;
 				else
 					c = 2;
 			}
 
 			if (universe.HR1 && universe.HR2 && universe.HR3)
-				c = random_(0, 3);
+				c = random_(universe, 0, 3);
 
 			switch (c) {
 			case 0:
@@ -2214,20 +2214,20 @@ static void L5FillChambers(Universe& universe)
 	if (currlevel == 21) {
 		if (universe.VR1 || universe.VR2 || universe.VR3) {
 			c = 1;
-			if (!universe.VR1 && universe.VR2 && universe.VR3 && random_(0, 2) != 0)
+			if (!universe.VR1 && universe.VR2 && universe.VR3 && random_(universe, 0, 2) != 0)
 				c = 2;
-			if (universe.VR1 && universe.VR2 && !universe.VR3 && random_(0, 2) != 0)
+			if (universe.VR1 && universe.VR2 && !universe.VR3 && random_(universe, 0, 2) != 0)
 				c = 0;
 
 			if (universe.VR1 && !universe.VR2 && universe.VR3) {
-				if (random_(0, 2) != 0)
+				if (random_(universe, 0, 2) != 0)
 					c = 0;
 				else
 					c = 2;
 			}
 
 			if (universe.VR1 && universe.VR2 && universe.VR3)
-				c = random_(0, 3);
+				c = random_(universe, 0, 3);
 
 			switch (c) {
 			case 0:
@@ -2242,20 +2242,20 @@ static void L5FillChambers(Universe& universe)
 			}
 		} else {
 			c = 1;
-			if (!universe.HR1 && universe.HR2 && universe.HR3 && random_(0, 2))
+			if (!universe.HR1 && universe.HR2 && universe.HR3 && random_(universe, 0, 2))
 				c = 2;
-			if (universe.HR1 && universe.HR2 && !universe.HR3 && random_(0, 2))
+			if (universe.HR1 && universe.HR2 && !universe.HR3 && random_(universe, 0, 2))
 				c = 0;
 
 			if (universe.HR1 && !universe.HR2 && universe.HR3) {
-				if (random_(0, 2))
+				if (random_(universe, 0, 2))
 					c = 0;
 				else
 					c = 2;
 			}
 
 			if (universe.HR1 && universe.HR2 && universe.HR3)
-				c = random_(0, 3);
+				c = random_(universe, 0, 3);
 
 			switch (c) {
 			case 0:
@@ -2274,20 +2274,20 @@ static void L5FillChambers(Universe& universe)
 	if (universe.L5setloadflag) {
 		if (universe.VR1 || universe.VR2 || universe.VR3) {
 			c = 1;
-			if (!universe.VR1 && universe.VR2 && universe.VR3 && random_(0, 2) != 0)
+			if (!universe.VR1 && universe.VR2 && universe.VR3 && random_(universe, 0, 2) != 0)
 				c = 2;
-			if (universe.VR1 && universe.VR2 && !universe.VR3 && random_(0, 2) != 0)
+			if (universe.VR1 && universe.VR2 && !universe.VR3 && random_(universe, 0, 2) != 0)
 				c = 0;
 
 			if (universe.VR1 && !universe.VR2 && universe.VR3) {
-				if (random_(0, 2) != 0)
+				if (random_(universe, 0, 2) != 0)
 					c = 0;
 				else
 					c = 2;
 			}
 
 			if (universe.VR1 && universe.VR2 && universe.VR3)
-				c = random_(0, 3);
+				c = random_(universe, 0, 3);
 
 			switch (c) {
 			case 0:
@@ -2302,20 +2302,20 @@ static void L5FillChambers(Universe& universe)
 			}
 		} else {
 			c = 1;
-			if (!universe.HR1 && universe.HR2 && universe.HR3 && random_(0, 2) != 0)
+			if (!universe.HR1 && universe.HR2 && universe.HR3 && random_(universe, 0, 2) != 0)
 				c = 2;
-			if (universe.HR1 && universe.HR2 && !universe.HR3 && random_(0, 2) != 0)
+			if (universe.HR1 && universe.HR2 && !universe.HR3 && random_(universe, 0, 2) != 0)
 				c = 0;
 
 			if (universe.HR1 && !universe.HR2 && universe.HR3) {
-				if (random_(0, 2) != 0)
+				if (random_(universe, 0, 2) != 0)
 					c = 0;
 				else
 					c = 2;
 			}
 
 			if (universe.HR1 && universe.HR2 && universe.HR3)
-				c = random_(0, 3);
+				c = random_(universe, 0, 3);
 
 			switch (c) {
 			case 0:
@@ -2601,7 +2601,7 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 
 		bool failed;
 		do {
-			levelSeed = GetRndState();
+			levelSeed = GetRndState(universe);
 			InitL5Dungeon(universe);
 			L5firstRoom(universe);
 			failed = L5GetArea(universe) < minarea;
@@ -2834,7 +2834,7 @@ std::optional<uint32_t> CreateL5Dungeon(Universe& universe, DWORD rseed, int ent
 	int i, j;
 #endif
 
-	SetRndSeed(rseed);
+	SetRndSeed(universe, rseed);
 
 	dminx = 16;
 	dminy = 16;

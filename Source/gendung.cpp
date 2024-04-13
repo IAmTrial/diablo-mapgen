@@ -963,7 +963,7 @@ void DRLG_CreateThemeRoom(Universe& universe, int themeIndex)
 	}
 
 	if (leveltype == DTYPE_CATACOMBS) {
-		switch (random_(0, 2)) {
+		switch (random_(universe, 0, 2)) {
 		case 0:
 			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 4);
 			break;
@@ -973,7 +973,7 @@ void DRLG_CreateThemeRoom(Universe& universe, int themeIndex)
 		}
 	}
 	if (leveltype == DTYPE_CAVES) {
-		switch (random_(0, 2)) {
+		switch (random_(universe, 0, 2)) {
 		case 0:
 			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 147);
 			break;
@@ -983,7 +983,7 @@ void DRLG_CreateThemeRoom(Universe& universe, int themeIndex)
 		}
 	}
 	if (leveltype == DTYPE_HELL) {
-		switch (random_(0, 2)) {
+		switch (random_(universe, 0, 2)) {
 		case 0:
 			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2 - 1, 53);
 			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 6);
@@ -1011,16 +1011,16 @@ void DRLG_PlaceThemeRooms(Universe& universe, int minSize, int maxSize, int floo
 	memset(themeLoc, 0, sizeof(*themeLoc));
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == floor && !random_(0, freq) && DRLG_WillThemeRoomFit(universe, floor, i, j, minSize, maxSize, &themeW, &themeH)) {
+			if (dungeon[i][j] == floor && !random_(universe, 0, freq) && DRLG_WillThemeRoomFit(universe, floor, i, j, minSize, maxSize, &themeW, &themeH)) {
 				if (rndSize) {
 					min = minSize - 2;
 					max = maxSize - 2;
-					rv2 = min + random_(0, random_(0, themeW - min + 1));
+					rv2 = min + random_(universe, 0, random_(universe, 0, themeW - min + 1));
 					if (rv2 >= min && rv2 <= max)
 						themeW = rv2;
 					else
 						themeW = min;
-					rv2 = min + random_(0, random_(0, themeH - min + 1));
+					rv2 = min + random_(universe, 0, random_(universe, 0, themeH - min + 1));
 					if (rv2 >= min && rv2 <= max)
 						themeH = rv2;
 					else

@@ -1655,12 +1655,12 @@ static BOOL DRLG_L2PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmi
 	if (tmax - tmin == 0) {
 		numt = 1;
 	} else {
-		numt = random_(0, tmax - tmin) + tmin;
+		numt = random_(universe, 0, tmax - tmin) + tmin;
 	}
 
 	for (i = 0; i < numt; i++) {
-		sx = random_(0, DMAXX - sw);
-		sy = random_(0, DMAXY - sh);
+		sx = random_(universe, 0, DMAXX - sw);
+		sy = random_(universe, 0, DMAXY - sh);
 		found = FALSE;
 		for (bailcnt = 0; !found && bailcnt < 200; bailcnt++) {
 			found = TRUE;
@@ -1668,13 +1668,13 @@ static BOOL DRLG_L2PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmi
 				found = FALSE;
 			}
 			if (cx != -1 && sx >= cx - sw && sx <= cx + 12) {
-				sx = random_(0, DMAXX - sw);
-				sy = random_(0, DMAXY - sh);
+				sx = random_(universe, 0, DMAXX - sw);
+				sy = random_(universe, 0, DMAXY - sh);
 				found = FALSE;
 			}
 			if (cy != -1 && sy >= cy - sh && sy <= cy + 12) {
-				sx = random_(0, DMAXX - sw);
-				sy = random_(0, DMAXY - sh);
+				sx = random_(universe, 0, DMAXX - sw);
+				sy = random_(universe, 0, DMAXY - sh);
 				found = FALSE;
 			}
 			ii = 2;
@@ -1767,7 +1767,7 @@ static void DRLG_L2PlaceRndSet(Universe& universe, const BYTE *miniset, int rndp
 					}
 				}
 			}
-			if (found == TRUE && random_(0, 100) < rndper) {
+			if (found == TRUE && random_(universe, 0, 100) < rndper) {
 				for (yy = 0; yy < sh; yy++) {
 					for (xx = 0; xx < sw; xx++) {
 						if (miniset[kk] != 0) {
@@ -1788,10 +1788,10 @@ static void DRLG_L2Subs(Universe& universe)
 
 	for (y = 0; y < DMAXY; y++) {
 		for (x = 0; x < DMAXX; x++) {
-			if ((x < universe.nSx1 || x > universe.nSx2) && (y < universe.nSy1 || y > universe.nSy2) && random_(0, 4) == 0) { // BUGFIX: Should be (x < universe.nSx1 || x > universe.nSx2 || y < universe.nSy1 || y >= universe.nSy2)
+			if ((x < universe.nSx1 || x > universe.nSx2) && (y < universe.nSy1 || y > universe.nSy2) && random_(universe, 0, 4) == 0) { // BUGFIX: Should be (x < universe.nSx1 || x > universe.nSx2 || y < universe.nSy1 || y >= universe.nSy2)
 				c = BTYPESL2[GetDungeon(universe, x, y)];
 				if (c != 0) {
-					rv = random_(0, 16);
+					rv = random_(universe, 0, 16);
 					k = -1;
 					while (rv >= 0) {
 						k++;
@@ -2061,16 +2061,16 @@ static void CreateRoom(Universe& universe, int nX1, int nY1, int nX2, int nY2, i
 	}
 
 	if (nAw > Room_Max) {
-		nRw = random_(0, Room_Max - Room_Min) + Room_Min;
+		nRw = random_(universe, 0, Room_Max - Room_Min) + Room_Min;
 	} else if (nAw > Room_Min) {
-		nRw = random_(0, nAw - Room_Min) + Room_Min;
+		nRw = random_(universe, 0, nAw - Room_Min) + Room_Min;
 	} else {
 		nRw = nAw;
 	}
 	if (nAh > Room_Max) {
-		nRh = random_(0, Room_Max - Room_Min) + Room_Min;
+		nRh = random_(universe, 0, Room_Max - Room_Min) + Room_Min;
 	} else if (nAh > Room_Min) {
-		nRh = random_(0, nAh - Room_Min) + Room_Min;
+		nRh = random_(universe, 0, nAh - Room_Min) + Room_Min;
 	} else {
 		nRh = nAh;
 	}
@@ -2080,8 +2080,8 @@ static void CreateRoom(Universe& universe, int nX1, int nY1, int nX2, int nY2, i
 		nRh = nH;
 	}
 
-	nRx1 = random_(0, nX2 - nX1) + nX1;
-	nRy1 = random_(0, nY2 - nY1) + nY1;
+	nRx1 = random_(universe, 0, nX2 - nX1) + nX1;
+	nRy1 = random_(universe, 0, nY2 - nY1) + nY1;
 	nRx2 = nRw + nRx1;
 	nRy2 = nRh + nRy1;
 	if (nRx2 > nX2) {
@@ -2131,32 +2131,32 @@ static void CreateRoom(Universe& universe, int nX1, int nY1, int nX2, int nY2, i
 
 	if (nRDest != 0) {
 		if (nHDir == 1) {
-			nHx1 = random_(0, nRx2 - nRx1 - 2) + nRx1 + 1;
+			nHx1 = random_(universe, 0, nRx2 - nRx1 - 2) + nRx1 + 1;
 			nHy1 = nRy1;
 			nHw = universe.RoomList[nRDest].nRoomx2 - universe.RoomList[nRDest].nRoomx1 - 2;
-			nHx2 = random_(0, nHw) + universe.RoomList[nRDest].nRoomx1 + 1;
+			nHx2 = random_(universe, 0, nHw) + universe.RoomList[nRDest].nRoomx1 + 1;
 			nHy2 = universe.RoomList[nRDest].nRoomy2;
 		}
 		if (nHDir == 3) {
-			nHx1 = random_(0, nRx2 - nRx1 - 2) + nRx1 + 1;
+			nHx1 = random_(universe, 0, nRx2 - nRx1 - 2) + nRx1 + 1;
 			nHy1 = nRy2;
 			nHw = universe.RoomList[nRDest].nRoomx2 - universe.RoomList[nRDest].nRoomx1 - 2;
-			nHx2 = random_(0, nHw) + universe.RoomList[nRDest].nRoomx1 + 1;
+			nHx2 = random_(universe, 0, nHw) + universe.RoomList[nRDest].nRoomx1 + 1;
 			nHy2 = universe.RoomList[nRDest].nRoomy1;
 		}
 		if (nHDir == 2) {
 			nHx1 = nRx2;
-			nHy1 = random_(0, nRy2 - nRy1 - 2) + nRy1 + 1;
+			nHy1 = random_(universe, 0, nRy2 - nRy1 - 2) + nRy1 + 1;
 			nHx2 = universe.RoomList[nRDest].nRoomx1;
 			nHh = universe.RoomList[nRDest].nRoomy2 - universe.RoomList[nRDest].nRoomy1 - 2;
-			nHy2 = random_(0, nHh) + universe.RoomList[nRDest].nRoomy1 + 1;
+			nHy2 = random_(universe, 0, nHh) + universe.RoomList[nRDest].nRoomy1 + 1;
 		}
 		if (nHDir == 4) {
 			nHx1 = nRx1;
-			nHy1 = random_(0, nRy2 - nRy1 - 2) + nRy1 + 1;
+			nHy1 = random_(universe, 0, nRy2 - nRy1 - 2) + nRy1 + 1;
 			nHx2 = universe.RoomList[nRDest].nRoomx2;
 			nHh = universe.RoomList[nRDest].nRoomy2 - universe.RoomList[nRDest].nRoomy1 - 2;
-			nHy2 = random_(0, nHh) + universe.RoomList[nRDest].nRoomy1 + 1;
+			nHy2 = random_(universe, 0, nHh) + universe.RoomList[nRDest].nRoomy1 + 1;
 		}
 		AddHall(universe, nHx1, nHy1, nHx2, nHy2, nHDir);
 	}
@@ -2194,8 +2194,8 @@ static void ConnectHall(Universe& universe, int nX1, int nY1, int nX2, int nY2, 
 	BOOL fDoneflag, fInroom;
 
 	fDoneflag = FALSE;
-	fMinusFlag = random_(0, 100);
-	fPlusFlag = random_(0, 100);
+	fMinusFlag = random_(universe, 0, 100);
+	fPlusFlag = random_(universe, 0, 100);
 	nOrigX1 = nX1;
 	nOrigY1 = nY1;
 	CreateDoorType(universe, nX1, nY1);
@@ -2276,7 +2276,7 @@ static void ConnectHall(Universe& universe, int nX1, int nY1, int nX2, int nY2, 
 			if (nRp > 30) {
 				nRp = 30;
 			}
-			if (random_(0, 100) < nRp) {
+			if (random_(universe, 0, 100) < nRp) {
 				if (nX2 <= nX1 || nX1 >= DMAXX) {
 					nCurrd = 4;
 				} else {
@@ -2288,7 +2288,7 @@ static void ConnectHall(Universe& universe, int nX1, int nY1, int nX2, int nY2, 
 			if (nRp > 80) {
 				nRp = 80;
 			}
-			if (random_(0, 100) < nRp) {
+			if (random_(universe, 0, 100) < nRp) {
 				if (nY2 <= nY1 || nY1 >= DMAXY) {
 					nCurrd = 1;
 				} else {
@@ -2532,8 +2532,8 @@ static BOOL DL2_FillVoids(Universe& universe)
 
 	to = 0;
 	while (DL2_NumNoChar(universe) > 700 && to < 100) {
-		xx = random_(0, 38) + 1;
-		yy = random_(0, 38) + 1;
+		xx = random_(universe, 0, 38) + 1;
+		yy = random_(universe, 0, 38) + 1;
 		if (universe.predungeon[xx][yy] != 35) {
 			continue;
 		}
@@ -3199,7 +3199,7 @@ static std::optional<uint32_t> DRLG_L2(Universe& universe, int entry, DungeonMod
 	doneflag = FALSE;
 	std::optional<uint32_t> levelSeed = std::nullopt;
 	while (!doneflag) {
-		levelSeed = GetRndState();
+		levelSeed = GetRndState(universe);
 		universe.nRoomCnt = 0;
 		InitDungeon(universe);
 		DRLG_InitTrans();
@@ -3536,7 +3536,7 @@ std::optional<uint32_t> CreateL2Dungeon(Universe& universe, DWORD rseed, int ent
 		}
 	}
 
-	SetRndSeed(rseed);
+	SetRndSeed(universe, rseed);
 
 	dminx = 16;
 	dminy = 16;

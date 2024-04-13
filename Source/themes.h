@@ -17,7 +17,7 @@ extern BOOL weaponFlag;
 extern int zharlib;
 extern ThemeStruct themes[MAXTHEMES];
 
-void InitThemes();
+void InitThemes(Universe& universe);
 void HoldThemeRooms();
 void CreateThemeRooms(Universe& universe);
 

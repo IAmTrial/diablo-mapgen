@@ -21,18 +21,12 @@
 #include "types.h"
 #include "Source/gendung.h"
 #include "Source/objects.h"
+#include "Source/universe/universe.h"
 
 const int myplr = 0;
 
 const uint32_t RndMult = 0x015A4E35;
 const uint32_t RndInc = 1;
-
-/** Seed value before the most recent call to SetRndSeed() */
-int orgseed;
-/** Current game seed */
-uint32_t sglGameSeed;
-/** Number of times the current seed has been fetched */
-int SeedCount;
 
 uint64_t micros()
 {
@@ -50,37 +44,37 @@ BOOL delta_quest_inited(int i)
  * @brief Set the RNG seed
  * @param s RNG seed
  */
-void SetRndSeed(int s)
+void SetRndSeed(Universe& universe, int s)
 {
-	SeedCount = 0;
-	sglGameSeed = s;
-	orgseed = s;
+	universe.SeedCount = 0;
+	universe.sglGameSeed = s;
+	universe.orgseed = s;
 }
 
 /**
  * @brief Get the current RNG seed
  * @return RNG seed
  */
-int GetRndSeed()
+int GetRndSeed(Universe& universe)
 {
-	SeedCount++;
-	sglGameSeed = RndMult * sglGameSeed + RndInc;
-	int32_t seed = (int32_t)sglGameSeed;
+	universe.SeedCount++;
+	universe.sglGameSeed = RndMult * universe.sglGameSeed + RndInc;
+	int32_t seed = (int32_t)universe.sglGameSeed;
 	return seed == std::numeric_limits<int32_t>::min() ? std::numeric_limits<int32_t>::min() : std::abs(seed);
 }
 
-int GetRndState()
+int GetRndState(Universe& universe)
 {
-	return sglGameSeed;
+	return universe.sglGameSeed;
 }
 
-int random_(BYTE idx, int v)
+int random_(Universe& universe, BYTE idx, int v)
 {
 	if (v <= 0)
 		return 0;
 	if (v < 0xFFFF)
-		return (GetRndSeed() >> 16) % v;
-	return GetRndSeed() % v;
+		return (GetRndSeed(universe) >> 16) % v;
+	return GetRndSeed(universe) % v;
 }
 
 BYTE *DiabloAllocPtr(DWORD dwBytes)

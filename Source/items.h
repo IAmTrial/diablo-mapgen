@@ -44,7 +44,7 @@ void CalcPlrScrolls(int p);
 void CalcPlrStaff(int p);
 void CalcPlrInv(int p, BOOL Loadgfx);
 void SetPlrHandItem(ItemStruct *h, int idata);
-void GetPlrHandSeed(ItemStruct *h);
+void GetPlrHandSeed(Universe& universe, ItemStruct *h);
 void GetGoldSeed(Universe& universe, int pnum, ItemStruct *h);
 void SetPlrHandGoldCurs(ItemStruct *h);
 void CreatePlrItems(int p);

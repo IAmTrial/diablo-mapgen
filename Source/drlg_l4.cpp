@@ -412,7 +412,7 @@ static void L4HorizWall(Universe& universe, int i, int j, int dx)
 		SetDungeon(universe, i + dx, j, 29);
 	}
 
-	xx = random_(0, dx - 3) + 1;
+	xx = random_(universe, 0, dx - 3) + 1;
 	SetDungeon(universe, i + xx, j, 57);
 	SetDungeon(universe, i + xx + 2, j, 56);
 	SetDungeon(universe, i + xx + 1, j, 60);
@@ -459,7 +459,7 @@ static void L4VertWall(Universe& universe, int i, int j, int dy)
 		SetDungeon(universe, i, j + dy, 29);
 	}
 
-	yy = random_(0, dy - 3) + 1;
+	yy = random_(universe, 0, dy - 3) + 1;
 	SetDungeon(universe, i, j + yy, 53);
 	SetDungeon(universe, i, j + yy + 2, 52);
 	SetDungeon(universe, i, j + yy + 1, 6);
@@ -481,91 +481,91 @@ static void L4AddWall(Universe& universe)
 			if (dflags[i][j] != 0) {
 				continue;
 			}
-			if (GetDungeon(universe, i, j) == 10 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 10 && random_(universe, 0, 100) < 100) {
 				x = L4HWallOk(universe, i, j);
 				if (x != -1) {
 					L4HorizWall(universe, i, j, x);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 12 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 12 && random_(universe, 0, 100) < 100) {
 				x = L4HWallOk(universe, i, j);
 				if (x != -1) {
 					L4HorizWall(universe, i, j, x);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 13 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 13 && random_(universe, 0, 100) < 100) {
 				x = L4HWallOk(universe, i, j);
 				if (x != -1) {
 					L4HorizWall(universe, i, j, x);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 15 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 15 && random_(universe, 0, 100) < 100) {
 				x = L4HWallOk(universe, i, j);
 				if (x != -1) {
 					L4HorizWall(universe, i, j, x);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 16 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 16 && random_(universe, 0, 100) < 100) {
 				x = L4HWallOk(universe, i, j);
 				if (x != -1) {
 					L4HorizWall(universe, i, j, x);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 21 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 21 && random_(universe, 0, 100) < 100) {
 				x = L4HWallOk(universe, i, j);
 				if (x != -1) {
 					L4HorizWall(universe, i, j, x);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 22 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 22 && random_(universe, 0, 100) < 100) {
 				x = L4HWallOk(universe, i, j);
 				if (x != -1) {
 					L4HorizWall(universe, i, j, x);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 8 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 8 && random_(universe, 0, 100) < 100) {
 				y = L4VWallOk(universe, i, j);
 				if (y != -1) {
 					L4VertWall(universe, i, j, y);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 9 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 9 && random_(universe, 0, 100) < 100) {
 				y = L4VWallOk(universe, i, j);
 				if (y != -1) {
 					L4VertWall(universe, i, j, y);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 11 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 11 && random_(universe, 0, 100) < 100) {
 				y = L4VWallOk(universe, i, j);
 				if (y != -1) {
 					L4VertWall(universe, i, j, y);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 14 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 14 && random_(universe, 0, 100) < 100) {
 				y = L4VWallOk(universe, i, j);
 				if (y != -1) {
 					L4VertWall(universe, i, j, y);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 15 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 15 && random_(universe, 0, 100) < 100) {
 				y = L4VWallOk(universe, i, j);
 				if (y != -1) {
 					L4VertWall(universe, i, j, y);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 16 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 16 && random_(universe, 0, 100) < 100) {
 				y = L4VWallOk(universe, i, j);
 				if (y != -1) {
 					L4VertWall(universe, i, j, y);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 21 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 21 && random_(universe, 0, 100) < 100) {
 				y = L4VWallOk(universe, i, j);
 				if (y != -1) {
 					L4VertWall(universe, i, j, y);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 23 && random_(0, 100) < 100) {
+			if (GetDungeon(universe, i, j) == 23 && random_(universe, 0, 100) < 100) {
 				y = L4VWallOk(universe, i, j);
 				if (y != -1) {
 					L4VertWall(universe, i, j, y);
@@ -928,12 +928,12 @@ static void DRLG_L4Subs(Universe& universe)
 
 	for (y = 0; y < DMAXY; y++) {
 		for (x = 0; x < DMAXX; x++) {
-			rv = random_(0, 3);
+			rv = random_(universe, 0, 3);
 			if (rv == 0) {
 				c = GetDungeon(universe, x, y);
 				c = L4BTYPES[c];
 				if (c != 0 && dflags[x][y] == 0) {
-					rv = random_(0, 16);
+					rv = random_(universe, 0, 16);
 					i = -1;
 					while (rv >= 0) {
 						i++;
@@ -951,11 +951,11 @@ static void DRLG_L4Subs(Universe& universe)
 	}
 	for (y = 0; y < DMAXY; y++) {
 		for (x = 0; x < DMAXX; x++) {
-			rv = random_(0, 10);
+			rv = random_(universe, 0, 10);
 			if (rv == 0) {
 				c = GetDungeon(universe, x, y);
 				if (L4BTYPES[c] == 6 && dflags[x][y] == 0) {
-					SetDungeon(universe, x, y, random_(0, 3) + 95);
+					SetDungeon(universe, x, y, random_(universe, 0, 3) + 95);
 				}
 			}
 		}
@@ -1029,7 +1029,7 @@ static void uShape(Universe& universe)
 		}
 	}
 
-	rv = random_(0, 19) + 1;
+	rv = random_(universe, 0, 19) + 1;
 	do {
 		if (universe.hallok[rv]) {
 			for (i = 19; i >= 0; i--) {
@@ -1066,7 +1066,7 @@ static void uShape(Universe& universe)
 		}
 	}
 
-	rv = random_(0, 19) + 1;
+	rv = random_(universe, 0, 19) + 1;
 	do {
 		if (universe.hallok[rv]) {
 			for (j = 19; j >= 0; j--) {
@@ -1145,13 +1145,13 @@ static void L4roomGen(Universe& universe, int x, int y, int w, int h, int dir)
 	int width, height, rx, ry, ry2;
 	int cw, ch, cx1, cy1, cx2;
 
-	int dirProb = random_(0, 4);
+	int dirProb = random_(universe, 0, 4);
 
 	if (!(dir == 1 ? dirProb != 0 : dirProb == 0)) {
 		num = 0;
 		do {
-			cw = (random_(0, 5) + 2) & ~1;
-			ch = (random_(0, 5) + 2) & ~1;
+			cw = (random_(universe, 0, 5) + 2) & ~1;
+			ch = (random_(universe, 0, 5) + 2) & ~1;
 			cy1 = h / 2 + y - ch / 2;
 			cx1 = x - cw;
 			ran = L4checkRoom(universe, cx1 - 1, cy1 - 1, ch + 2, cw + 1); /// BUGFIX: swap args 3 and 4 ("ch+2" and "cw+1")
@@ -1171,8 +1171,8 @@ static void L4roomGen(Universe& universe, int x, int y, int w, int h, int dir)
 	} else {
 		num = 0;
 		do {
-			width = (random_(0, 5) + 2) & ~1;
-			height = (random_(0, 5) + 2) & ~1;
+			width = (random_(universe, 0, 5) + 2) & ~1;
+			height = (random_(universe, 0, 5) + 2) & ~1;
 			rx = w / 2 + x - width / 2;
 			ry = y - height;
 			ran = L4checkRoom(universe, rx - 1, ry - 1, width + 2, height + 1);
@@ -1205,8 +1205,8 @@ static void L4firstRoom(Universe& universe)
 			w = 11;
 			h = 11;
 		} else {
-			w = random_(0, 5) + 2;
-			h = random_(0, 5) + 2;
+			w = random_(universe, 0, 5) + 2;
+			h = random_(universe, 0, 5) + 2;
 		}
 	} else {
 		w = 14;
@@ -1215,7 +1215,7 @@ static void L4firstRoom(Universe& universe)
 
 	xmin = (20 - w) >> 1;
 	xmax = 19 - w;
-	rndx = random_(0, xmax - xmin + 1) + xmin;
+	rndx = random_(universe, 0, xmax - xmin + 1) + xmin;
 	if (rndx + w > 19) {
 		tx = w + rndx - 19;
 		x = rndx - tx + 1;
@@ -1224,7 +1224,7 @@ static void L4firstRoom(Universe& universe)
 	}
 	ymin = (20 - h) >> 1;
 	ymax = 19 - h;
-	rndy = random_(0, ymax - ymin + 1) + ymin;
+	rndy = random_(universe, 0, ymax - ymin + 1) + ymin;
 	if (rndy + h > 19) {
 		ty = h + rndy - 19;
 		y = rndy - ty + 1;
@@ -1249,7 +1249,7 @@ static void L4firstRoom(Universe& universe)
 	}
 
 	L4drawRoom(universe, x, y, w, h);
-	L4roomGen(universe, x, y, w, h, random_(0, 2));
+	L4roomGen(universe, x, y, w, h, random_(universe, 0, 2));
 }
 
 void L4SaveQuads(Universe& universe)
@@ -1337,12 +1337,12 @@ static BOOL DRLG_L4PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmi
 	if (tmax - tmin == 0) {
 		numt = 1;
 	} else {
-		numt = random_(0, tmax - tmin) + tmin;
+		numt = random_(universe, 0, tmax - tmin) + tmin;
 	}
 
 	for (i = 0; i < numt; i++) {
-		sx = random_(0, DMAXX - sw);
-		sy = random_(0, DMAXY - sh);
+		sx = random_(universe, 0, DMAXX - sw);
+		sy = random_(universe, 0, DMAXY - sh);
 		found = FALSE;
 		for (bailcnt = 0; !found && bailcnt < 200; bailcnt++) {
 			found = TRUE;
@@ -1350,13 +1350,13 @@ static BOOL DRLG_L4PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmi
 				found = FALSE;
 			}
 			if (cx != -1 && sx >= cx - sw && sx <= cx + 12) {
-				sx = random_(0, DMAXX - sw);
-				sy = random_(0, DMAXY - sh);
+				sx = random_(universe, 0, DMAXX - sw);
+				sy = random_(universe, 0, DMAXY - sh);
 				found = FALSE;
 			}
 			if (cy != -1 && sy >= cy - sh && sy <= cy + 12) {
-				sx = random_(0, DMAXX - sw);
-				sy = random_(0, DMAXY - sh);
+				sx = random_(universe, 0, DMAXX - sw);
+				sy = random_(universe, 0, DMAXY - sh);
 				found = FALSE;
 			}
 			ii = 2;
@@ -1603,7 +1603,7 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 	do {
 		DRLG_InitTrans();
 		do {
-			levelSeed = GetRndState();
+			levelSeed = GetRndState(universe);
 			InitL4Dungeon(universe);
 			L4firstRoom(universe);
 			L4FixRim(universe);
@@ -1862,7 +1862,7 @@ static void DRLG_L4Pass3(Universe& universe)
 
 std::optional<uint32_t> CreateL4Dungeon(Universe& universe, DWORD rseed, int entry, DungeonMode mode)
 {
-	SetRndSeed(rseed);
+	SetRndSeed(universe, rseed);
 
 	dminx = 16;
 	dminy = 16;

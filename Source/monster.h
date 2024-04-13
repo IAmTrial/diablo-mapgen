@@ -126,7 +126,7 @@ BOOL PosOkMonst3(int i, int x, int y);
 BOOL IsSkel(int mt);
 BOOL IsGoat(int mt);
 int M_SpawnSkel(int x, int y, int dir);
-BOOL SpawnSkeleton(int ii, int x, int y);
+BOOL SpawnSkeleton(Universe& universe, int ii, int x, int y);
 int PreSpawnSkeleton(Universe& universe);
 void TalktoMonster(int i);
 void SpawnGolum(int i, int x, int y, int mi);

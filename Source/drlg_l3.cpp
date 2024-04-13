@@ -882,18 +882,18 @@ static BOOL DRLG_L3FillRoom(Universe& universe, int x1, int y1, int x2, int y2)
 		}
 	}
 	for (j = y1; j <= y2; j++) {
-		if (random_(0, 2) != 0) {
+		if (random_(universe, 0, 2) != 0) {
 			SetDungeon(universe, x1, j, 1);
 		}
-		if (random_(0, 2) != 0) {
+		if (random_(universe, 0, 2) != 0) {
 			SetDungeon(universe, x2, j, 1);
 		}
 	}
 	for (i = x1; i <= x2; i++) {
-		if (random_(0, 2) != 0) {
+		if (random_(universe, 0, 2) != 0) {
 			SetDungeon(universe, i, y1, 1);
 		}
-		if (random_(0, 2) != 0) {
+		if (random_(universe, 0, 2) != 0) {
 			SetDungeon(universe, i, y2, 1);
 		}
 	}
@@ -906,20 +906,20 @@ static void DRLG_L3CreateBlock(Universe& universe, int x, int y, int obs, int di
 	int blksizex, blksizey, x1, y1, x2, y2;
 	int contflag;
 
-	blksizex = random_(0, 2) + 3;
-	blksizey = random_(0, 2) + 3;
+	blksizex = random_(universe, 0, 2) + 3;
+	blksizey = random_(universe, 0, 2) + 3;
 
 	if (dir == 0) {
 		y2 = y - 1;
 		y1 = y2 - blksizey;
 		if (blksizex < obs) {
-			x1 = random_(0, blksizex) + x;
+			x1 = random_(universe, 0, blksizex) + x;
 		}
 		if (blksizex == obs) {
 			x1 = x;
 		}
 		if (blksizex > obs) {
-			x1 = x - random_(0, blksizex);
+			x1 = x - random_(universe, 0, blksizex);
 		}
 		x2 = blksizex + x1;
 	}
@@ -927,13 +927,13 @@ static void DRLG_L3CreateBlock(Universe& universe, int x, int y, int obs, int di
 		x2 = x - 1;
 		x1 = x2 - blksizex;
 		if (blksizey < obs) {
-			y1 = random_(0, blksizey) + y;
+			y1 = random_(universe, 0, blksizey) + y;
 		}
 		if (blksizey == obs) {
 			y1 = y;
 		}
 		if (blksizey > obs) {
-			y1 = y - random_(0, blksizey);
+			y1 = y - random_(universe, 0, blksizey);
 		}
 		y2 = y1 + blksizey;
 	}
@@ -941,13 +941,13 @@ static void DRLG_L3CreateBlock(Universe& universe, int x, int y, int obs, int di
 		y1 = y + 1;
 		y2 = y1 + blksizey;
 		if (blksizex < obs) {
-			x1 = random_(0, blksizex) + x;
+			x1 = random_(universe, 0, blksizex) + x;
 		}
 		if (blksizex == obs) {
 			x1 = x;
 		}
 		if (blksizex > obs) {
-			x1 = x - random_(0, blksizex);
+			x1 = x - random_(universe, 0, blksizex);
 		}
 		x2 = blksizex + x1;
 	}
@@ -955,19 +955,19 @@ static void DRLG_L3CreateBlock(Universe& universe, int x, int y, int obs, int di
 		x1 = x + 1;
 		x2 = x1 + blksizex;
 		if (blksizey < obs) {
-			y1 = random_(0, blksizey) + y;
+			y1 = random_(universe, 0, blksizey) + y;
 		}
 		if (blksizey == obs) {
 			y1 = y;
 		}
 		if (blksizey > obs) {
-			y1 = y - random_(0, blksizey);
+			y1 = y - random_(universe, 0, blksizey);
 		}
 		y2 = y1 + blksizey;
 	}
 
 	if (DRLG_L3FillRoom(universe, x1, y1, x2, y2) == TRUE) {
-		contflag = random_(0, 4);
+		contflag = random_(universe, 0, 4);
 		if (contflag != 0 && dir != 2) {
 			DRLG_L3CreateBlock(universe, x1, y1, blksizey, 0);
 		}
@@ -994,7 +994,7 @@ static void DRLG_L3FloorArea(int x1, int y1, int x2, int y2)
 	}
 }
 
-static void DRLG_L3FillDiags()
+static void DRLG_L3FillDiags(Universe& universe)
 {
 	int i, j, v;
 
@@ -1002,14 +1002,14 @@ static void DRLG_L3FillDiags()
 		for (i = 0; i < DMAXX - 1; i++) {
 			v = dungeon[i + 1][j + 1] + 2 * dungeon[i][j + 1] + 4 * dungeon[i + 1][j] + 8 * dungeon[i][j];
 			if (v == 6) {
-				if (random_(0, 2) == 0) {
+				if (random_(universe, 0, 2) == 0) {
 					dungeon[i][j] = 1;
 				} else {
 					dungeon[i + 1][j + 1] = 1;
 				}
 			}
 			if (v == 9) {
-				if (random_(0, 2) == 0) {
+				if (random_(universe, 0, 2) == 0) {
 					dungeon[i + 1][j] = 1;
 				} else {
 					dungeon[i][j + 1] = 1;
@@ -1035,7 +1035,7 @@ static void DRLG_L3FillSingles()
 	}
 }
 
-static void DRLG_L3FillStraights()
+static void DRLG_L3FillStraights(Universe& universe)
 {
 	int i, j, xc, xs, yc, ys, k, rv;
 
@@ -1048,9 +1048,9 @@ static void DRLG_L3FillStraights()
 				}
 				xs++;
 			} else {
-				if (xs > 3 && random_(0, 2) != 0) {
+				if (xs > 3 && random_(universe, 0, 2) != 0) {
 					for (k = xc; k < i; k++) {
-						rv = random_(0, 2);
+						rv = random_(universe, 0, 2);
 						dungeon[k][j] = rv;
 					}
 				}
@@ -1067,9 +1067,9 @@ static void DRLG_L3FillStraights()
 				}
 				xs++;
 			} else {
-				if (xs > 3 && random_(0, 2) != 0) {
+				if (xs > 3 && random_(universe, 0, 2) != 0) {
 					for (k = xc; k < i; k++) {
-						rv = random_(0, 2);
+						rv = random_(universe, 0, 2);
 						dungeon[k][j + 1] = rv;
 					}
 				}
@@ -1086,9 +1086,9 @@ static void DRLG_L3FillStraights()
 				}
 				ys++;
 			} else {
-				if (ys > 3 && random_(0, 2) != 0) {
+				if (ys > 3 && random_(universe, 0, 2) != 0) {
 					for (k = yc; k < j; k++) {
-						rv = random_(0, 2);
+						rv = random_(universe, 0, 2);
 						dungeon[i][k] = rv;
 					}
 				}
@@ -1105,9 +1105,9 @@ static void DRLG_L3FillStraights()
 				}
 				ys++;
 			} else {
-				if (ys > 3 && random_(0, 2) != 0) {
+				if (ys > 3 && random_(universe, 0, 2) != 0) {
 					for (k = yc; k < j; k++) {
-						rv = random_(0, 2);
+						rv = random_(universe, 0, 2);
 						dungeon[i + 1][k] = rv;
 					}
 				}
@@ -1152,7 +1152,7 @@ static void DRLG_L3MakeMegas(Universe& universe)
 		for (i = 0; i < DMAXX - 1; i++) {
 			v = GetDungeon(universe, i + 1, j + 1) + 2 * GetDungeon(universe, i, j + 1) + 4 * GetDungeon(universe, i + 1, j) + 8 * GetDungeon(universe, i, j);
 			if (v == 6) {
-				rv = random_(0, 2);
+				rv = random_(universe, 0, 2);
 				if (rv == 0) {
 					v = 12;
 				} else {
@@ -1160,7 +1160,7 @@ static void DRLG_L3MakeMegas(Universe& universe)
 				}
 			}
 			if (v == 9) {
-				rv = random_(0, 2);
+				rv = random_(universe, 0, 2);
 				if (rv == 0) {
 					v = 13;
 				} else {
@@ -1199,8 +1199,8 @@ static void DRLG_L3River(Universe& universe)
 			i = 0;
 			// BUGFIX: Replace with `(ry >= DMAXY || GetDungeon(universe, rx, ry) < 25 || GetDungeon(universe, rx, ry) > 28) && i < 100`
 			while ((GetDungeon(universe, rx, ry) < 25 || GetDungeon(universe, rx, ry) > 28) && i < 100) {
-				rx = random_(0, DMAXX);
-				ry = random_(0, DMAXY);
+				rx = random_(universe, 0, DMAXX);
+				ry = random_(universe, 0, DMAXY);
 				i++;
 				// BUGFIX: Move `ry < DMAXY` check before dungeon checks
 				while ((GetDungeon(universe, rx, ry) < 25 || GetDungeon(universe, rx, ry) > 28) && ry < DMAXY) {
@@ -1246,7 +1246,7 @@ static void DRLG_L3River(Universe& universe)
 				px = rx;
 				py = ry;
 				if (dircheck == 0) {
-					dir = random_(0, 4);
+					dir = random_(universe, 0, 4);
 				} else {
 					dir = (dir + 1) & 3;
 				}
@@ -1270,10 +1270,10 @@ static void DRLG_L3River(Universe& universe)
 				if (GetDungeon(universe, rx, ry) == 7) {
 					dircheck = 0;
 					if (dir < 2) {
-						river[2][riveramt] = (BYTE)random_(0, 2) + 17;
+						river[2][riveramt] = (BYTE)random_(universe, 0, 2) + 17;
 					}
 					if (dir > 1) {
-						river[2][riveramt] = (BYTE)random_(0, 2) + 15;
+						river[2][riveramt] = (BYTE)random_(universe, 0, 2) + 15;
 					}
 					river[0][riveramt] = rx;
 					river[1][riveramt] = ry;
@@ -1385,7 +1385,7 @@ static void DRLG_L3River(Universe& universe)
 			lpcnt = 0;
 			while (found == 0 && lpcnt < 30) {
 				lpcnt++;
-				bridge = random_(0, riveramt);
+				bridge = random_(universe, 0, riveramt);
 				if ((river[2][bridge] == 15 || river[2][bridge] == 16)
 				    && GetDungeon(universe, river[0][bridge], river[1][bridge] - 1) == 7
 				    && GetDungeon(universe, river[0][bridge], river[1][bridge] + 1) == 7) {
@@ -1570,7 +1570,7 @@ static void DRLG_L3Pool(Universe& universe)
 			} else {
 				found = TRUE;
 			}
-			poolchance = random_(0, 100);
+			poolchance = random_(universe, 0, 100);
 			for (j = duny - totarea; j < duny + totarea; j++) {
 				for (i = dunx - totarea; i < dunx + totarea; i++) {
 					// BUGFIX: In the following swap the order to first do the
@@ -1624,25 +1624,25 @@ static BOOL DRLG_L3PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmi
 	if (tmax - tmin == 0) {
 		numt = 1;
 	} else {
-		numt = random_(0, tmax - tmin) + tmin;
+		numt = random_(universe, 0, tmax - tmin) + tmin;
 	}
 
 	for (i = 0; i < numt; i++) {
-		sx = random_(0, DMAXX - sw);
-		sy = random_(0, DMAXY - sh);
+		sx = random_(universe, 0, DMAXX - sw);
+		sy = random_(universe, 0, DMAXY - sh);
 		found = FALSE;
 		trys = 0;
 		while (!found && trys < 200) {
 			trys++;
 			found = TRUE;
 			if (cx != -1 && sx >= cx - sw && sx <= cx + 12) {
-				sx = random_(0, DMAXX - sw);
-				sy = random_(0, DMAXY - sh);
+				sx = random_(universe, 0, DMAXX - sw);
+				sy = random_(universe, 0, DMAXY - sh);
 				found = FALSE;
 			}
 			if (cy != -1 && sy >= cy - sh && sy <= cy + 12) {
-				sx = random_(0, DMAXX - sw);
-				sy = random_(0, DMAXY - sh);
+				sx = random_(universe, 0, DMAXX - sw);
+				sy = random_(universe, 0, DMAXY - sh);
 				found = FALSE;
 			}
 			ii = 2;
@@ -1735,7 +1735,7 @@ static void DRLG_L3PlaceRndSet(Universe& universe, const BYTE *miniset, int rndp
 					found = FALSE;
 				}
 			}
-			if (found == TRUE && random_(0, 100) < rndper) {
+			if (found == TRUE && random_(universe, 0, 100) < rndper) {
 				for (yy = 0; yy < sh; yy++) {
 					for (xx = 0; xx < sw; xx++) {
 						if (miniset[kk] != 0) {
@@ -1792,7 +1792,7 @@ BOOLEAN drlg_l3_hive_rnd_piece(const BYTE *miniset, int rndper)
 					found = FALSE;
 				}
 			}
-			if (found == TRUE && random_(0, 100) < rndper) {
+			if (found == TRUE && random_(universe, 0, 100) < rndper) {
 				placed = TRUE;
 				for (yy = 0; yy < sh; yy++) {
 					for (xx = 0; xx < sw; xx++) {
@@ -1985,7 +1985,7 @@ static void DRLG_L3Wood(Universe& universe)
 
 	for (j = 0; j < DMAXY - 1; j++) {     // BUGFIX: Change '0' to '1'
 		for (i = 0; i < DMAXX - 1; i++) { // BUGFIX: Change '0' to '1'
-			if (GetDungeon(universe, i, j) == 10 && random_(0, 2) != 0) {
+			if (GetDungeon(universe, i, j) == 10 && random_(universe, 0, 2) != 0) {
 				x = i;
 				while (GetDungeon(universe, x, j) == 10) {
 					x++;
@@ -1994,7 +1994,7 @@ static void DRLG_L3Wood(Universe& universe)
 				if (x - i > 0) {
 					SetDungeon(universe, i, j, 127);
 					for (xx = i + 1; xx < x; xx++) {
-						if (random_(0, 2) != 0) {
+						if (random_(universe, 0, 2) != 0) {
 							SetDungeon(universe, xx, j, 126);
 						} else {
 							SetDungeon(universe, xx, j, 129);
@@ -2003,7 +2003,7 @@ static void DRLG_L3Wood(Universe& universe)
 					SetDungeon(universe, x, j, 128);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 9 && random_(0, 2) != 0) {
+			if (GetDungeon(universe, i, j) == 9 && random_(universe, 0, 2) != 0) {
 				y = j;
 				while (GetDungeon(universe, i, y) == 9) {
 					y++;
@@ -2012,7 +2012,7 @@ static void DRLG_L3Wood(Universe& universe)
 				if (y - j > 0) {
 					SetDungeon(universe, i, j, 123);
 					for (yy = j + 1; yy < y; yy++) {
-						if (random_(0, 2) != 0) {
+						if (random_(universe, 0, 2) != 0) {
 							SetDungeon(universe, i, yy, 121);
 						} else {
 							SetDungeon(universe, i, yy, 124);
@@ -2021,7 +2021,7 @@ static void DRLG_L3Wood(Universe& universe)
 					SetDungeon(universe, i, y, 122);
 				}
 			}
-			if (GetDungeon(universe, i, j) == 11 && GetDungeon(universe, i + 1, j) == 10 && GetDungeon(universe, i, j + 1) == 9 && random_(0, 2) != 0) {
+			if (GetDungeon(universe, i, j) == 11 && GetDungeon(universe, i + 1, j) == 10 && GetDungeon(universe, i, j + 1) == 9 && random_(universe, 0, 2) != 0) {
 				SetDungeon(universe, i, j, 125);
 				x = i + 1;
 				while (GetDungeon(universe, x, j) == 10) {
@@ -2029,7 +2029,7 @@ static void DRLG_L3Wood(Universe& universe)
 				}
 				x--;
 				for (xx = i + 1; xx < x; xx++) {
-					if (random_(0, 2) != 0) {
+					if (random_(universe, 0, 2) != 0) {
 						SetDungeon(universe, xx, j, 126);
 					} else {
 						SetDungeon(universe, xx, j, 129);
@@ -2042,7 +2042,7 @@ static void DRLG_L3Wood(Universe& universe)
 				}
 				y--;
 				for (yy = j + 1; yy < y; yy++) {
-					if (random_(0, 2) != 0) {
+					if (random_(universe, 0, 2) != 0) {
 						SetDungeon(universe, i, yy, 121);
 					} else {
 						SetDungeon(universe, i, yy, 124);
@@ -2055,8 +2055,8 @@ static void DRLG_L3Wood(Universe& universe)
 
 	for (j = 0; j < DMAXY; j++) {     // BUGFIX: Change '0' to '1'
 		for (i = 0; i < DMAXX; i++) { // BUGFIX: Change '0' to '1'
-			if (GetDungeon(universe, i, j) == 7 && random_(0, 1) == 0 && SkipThemeRoom(i, j)) {
-				rt = random_(0, 2);
+			if (GetDungeon(universe, i, j) == 7 && random_(universe, 0, 1) == 0 && SkipThemeRoom(i, j)) {
+				rt = random_(universe, 0, 2);
 				if (rt == 0) {
 					y1 = j;
 					// BUGFIX: Check `y1 >= 0` first
@@ -2078,13 +2078,13 @@ static void DRLG_L3Wood(Universe& universe)
 						skip = FALSE;
 					}
 					if (y2 - y1 > 1 && skip) {
-						rp = random_(0, y2 - y1 - 1) + y1 + 1;
+						rp = random_(universe, 0, y2 - y1 - 1) + y1 + 1;
 						for (y = y1; y <= y2; y++) {
 							if (y == rp) {
 								continue;
 							}
 							if (GetDungeon(universe, i, y) == 7) {
-								if (random_(0, 2) != 0) {
+								if (random_(universe, 0, 2) != 0) {
 									SetDungeon(universe, i, y, 135);
 								} else {
 									SetDungeon(universe, i, y, 137);
@@ -2132,13 +2132,13 @@ static void DRLG_L3Wood(Universe& universe)
 						skip = FALSE;
 					}
 					if (x2 - x1 > 1 && skip) {
-						rp = random_(0, x2 - x1 - 1) + x1 + 1;
+						rp = random_(universe, 0, x2 - x1 - 1) + x1 + 1;
 						for (x = x1; x <= x2; x++) {
 							if (x == rp) {
 								continue;
 							}
 							if (GetDungeon(universe, x, j) == 7) {
-								if (random_(0, 2) != 0) {
+								if (random_(universe, 0, 2) != 0) {
 									SetDungeon(universe, x, j, 134);
 								} else {
 									SetDungeon(universe, x, j, 136);
@@ -2180,8 +2180,8 @@ BOOL DRLG_L3Anvil(Universe& universe)
 
 	sw = L3ANVIL[0];
 	sh = L3ANVIL[1];
-	sx = random_(0, DMAXX - sw);
-	sy = random_(0, DMAXY - sh);
+	sx = random_(universe, 0, DMAXX - sw);
+	sy = random_(universe, 0, DMAXY - sh);
 
 	found = FALSE;
 	trys = 0;
@@ -2330,10 +2330,10 @@ static std::optional<uint32_t> DRLG_L3(Universe& universe, int entry, DungeonMod
 	do {
 		do {
 			do {
-				levelSeed = GetRndState();
+				levelSeed = GetRndState(universe);
 				InitL3Dungeon(universe);
-				x1 = random_(0, 20) + 10;
-				y1 = random_(0, 20) + 10;
+				x1 = random_(universe, 0, 20) + 10;
+				y1 = random_(universe, 0, 20) + 10;
 				x2 = x1 + 2;
 				y2 = y1 + 2;
 				DRLG_L3FillRoom(universe, x1, y1, x2, y2);
@@ -2342,16 +2342,16 @@ static std::optional<uint32_t> DRLG_L3(Universe& universe, int entry, DungeonMod
 				DRLG_L3CreateBlock(universe, x1, y2, 2, 2);
 				DRLG_L3CreateBlock(universe, x1, y1, 2, 3);
 				if (QuestStatus(Q_ANVIL)) {
-					x1 = random_(0, 10) + 10;
-					y1 = random_(0, 10) + 10;
+					x1 = random_(universe, 0, 10) + 10;
+					y1 = random_(universe, 0, 10) + 10;
 					x2 = x1 + 12;
 					y2 = y1 + 12;
 					DRLG_L3FloorArea(x1, y1, x2, y2);
 				}
-				DRLG_L3FillDiags();
+				DRLG_L3FillDiags(universe);
 				DRLG_L3FillSingles();
-				DRLG_L3FillStraights();
-				DRLG_L3FillDiags();
+				DRLG_L3FillStraights(universe);
+				DRLG_L3FillDiags(universe);
 				DRLG_L3Edges(universe);
 				if (DRLG_L3GetFloorArea(universe) >= 600) {
 					found = DRLG_L3Lockout(universe);
@@ -2727,7 +2727,7 @@ std::optional<uint32_t> CreateL3Dungeon(Universe& universe, DWORD rseed, int ent
 {
 	int i, j;
 
-	SetRndSeed(rseed);
+	SetRndSeed(universe, rseed);
 	dminx = 16;
 	dminy = 16;
 	dmaxx = 96;
