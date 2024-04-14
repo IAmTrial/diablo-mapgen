@@ -11,6 +11,15 @@
 #include "types.h"
 
 struct Universe {
+	constexpr Universe() = default;
+
+	// Remove the copy constructor and operator, preventing accidental copies
+	Universe(Universe&) = delete;
+	Universe& operator=(Universe&) = delete;
+
+	constexpr Universe(Universe&&) noexcept = default;
+	Universe& operator=(Universe&&) noexcept = default;
+
 	// drlg_l1.h
 #ifdef HELLFIRE
 	int UberRow;
