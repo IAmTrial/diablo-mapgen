@@ -236,4 +236,29 @@ struct Universe {
 	char dSpecial[MAXDUNX][MAXDUNY];
 	int themeCount;
 	THEME_LOC themeLoc[MAXTHEMES];
+
+	// gendung.cpp
+	/** Specifies the CEL frame occurrence for each frame of the level CEL (e.g. "levels/l1data/l1.cel"). */
+	int level_frame_count[MAXTILES];
+	int tile_defs[MAXTILES];
+	/**
+	 * Secifies the CEL frame decoder type for each frame of the
+	 * level CEL (e.g. "levels/l1data/l1.cel"), Indexed by frame numbers starting at 1.
+	 * The decoder type may be one of the following.
+	 *  0x0000 - cel.decodeType0
+	 *  0x1000 - cel.decodeType1
+	 *  0x2000 - cel.decodeType2
+	 *  0x3000 - cel.decodeType3
+	 *  0x4000 - cel.decodeType4
+	 *  0x5000 - cel.decodeType5
+	 *  0x6000 - cel.decodeType6
+	 */
+	WORD level_frame_types[MAXTILES];
+	/**
+	 * Specifies the size of each frame of the level cel (e.g.
+	 * "levels/l1data/l1.cel"). Indexed by frame numbers starting at 1.
+	 */
+	int level_frame_sizes[MAXTILES];
+	/** Specifies the number of frames in the level cel (e.g. "levels/l1data/l1.cel"). */
+	int nlevel_frames;
 };

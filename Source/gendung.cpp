@@ -20,29 +20,6 @@ BYTE *pMegaTiles;
 BYTE *pLevelPieces;
 BYTE *pDungeonCels;
 BYTE *pSpeedCels;
-/** Specifies the CEL frame occurrence for each frame of the level CEL (e.g. "levels/l1data/l1.cel"). */
-int level_frame_count[MAXTILES];
-int tile_defs[MAXTILES];
-/**
- * Secifies the CEL frame decoder type for each frame of the
- * level CEL (e.g. "levels/l1data/l1.cel"), Indexed by frame numbers starting at 1.
- * The decoder type may be one of the following.
- *  0x0000 - cel.decodeType0
- *  0x1000 - cel.decodeType1
- *  0x2000 - cel.decodeType2
- *  0x3000 - cel.decodeType3
- *  0x4000 - cel.decodeType4
- *  0x5000 - cel.decodeType5
- *  0x6000 - cel.decodeType6
- */
-WORD level_frame_types[MAXTILES];
-/**
- * Specifies the size of each frame of the level cel (e.g.
- * "levels/l1data/l1.cel"). Indexed by frame numbers starting at 1.
- */
-int level_frame_sizes[MAXTILES];
-/** Specifies the number of frames in the level cel (e.g. "levels/l1data/l1.cel"). */
-int nlevel_frames;
 
 void FillSolidBlockTbls(Universe& universe)
 {
@@ -115,25 +92,25 @@ void FillSolidBlockTbls(Universe& universe)
 	mem_free_dbg(pSBFile);
 }
 
-static void SwapTile(int f1, int f2)
+static void SwapTile(Universe& universe, int f1, int f2)
 {
 	int swap;
 
-	swap = level_frame_count[f1];
-	level_frame_count[f1] = level_frame_count[f2];
-	level_frame_count[f2] = swap;
-	swap = tile_defs[f1];
-	tile_defs[f1] = tile_defs[f2];
-	tile_defs[f2] = swap;
-	swap = level_frame_types[f1];
-	level_frame_types[f1] = level_frame_types[f2];
-	level_frame_types[f2] = swap;
-	swap = level_frame_sizes[f1];
-	level_frame_sizes[f1] = level_frame_sizes[f2];
-	level_frame_sizes[f2] = swap;
+	swap = universe.level_frame_count[f1];
+	universe.level_frame_count[f1] = universe.level_frame_count[f2];
+	universe.level_frame_count[f2] = swap;
+	swap = universe.tile_defs[f1];
+	universe.tile_defs[f1] = universe.tile_defs[f2];
+	universe.tile_defs[f2] = swap;
+	swap = universe.level_frame_types[f1];
+	universe.level_frame_types[f1] = universe.level_frame_types[f2];
+	universe.level_frame_types[f2] = swap;
+	swap = universe.level_frame_sizes[f1];
+	universe.level_frame_sizes[f1] = universe.level_frame_sizes[f2];
+	universe.level_frame_sizes[f2] = swap;
 }
 
-static void SortTiles(int frames)
+static void SortTiles(Universe& universe, int frames)
 {
 	int i;
 	BOOL doneflag;
@@ -142,8 +119,8 @@ static void SortTiles(int frames)
 	while (frames > 0 && !doneflag) {
 		doneflag = TRUE;
 		for (i = 0; i < frames; i++) {
-			if (level_frame_count[i] < level_frame_count[i + 1]) {
-				SwapTile(i, i + 1);
+			if (universe.level_frame_count[i] < universe.level_frame_count[i + 1]) {
+				SwapTile(universe, i, i + 1);
 				doneflag = FALSE;
 			}
 		}
@@ -166,9 +143,9 @@ void MakeSpeedCels(Universe& universe)
 #endif
 
 	for (i = 0; i < MAXTILES; i++) {
-		tile_defs[i] = i;
-		level_frame_count[i] = 0;
-		level_frame_types[i] = 0;
+		universe.tile_defs[i] = i;
+		universe.level_frame_count[i] = 0;
+		universe.level_frame_types[i] = 0;
 	}
 
 	if (universe.leveltype != DTYPE_HELL)
@@ -182,8 +159,8 @@ void MakeSpeedCels(Universe& universe)
 			for (j = 0; j < blocks; j++) {
 				mt = pMap->mt[j];
 				if (mt) {
-					level_frame_count[pMap->mt[j] & 0xFFF]++;
-					level_frame_types[pMap->mt[j] & 0xFFF] = mt & 0x7000;
+					universe.level_frame_count[pMap->mt[j] & 0xFFF]++;
+					universe.level_frame_types[pMap->mt[j] & 0xFFF] = mt & 0x7000;
 				}
 			}
 		}
@@ -199,12 +176,12 @@ void MakeSpeedCels(Universe& universe)
 	pFrameTable = (DWORD *)pDungeonCels;
 	nDataSize = pFrameTable[0];
 #endif
-	nlevel_frames = nDataSize & 0xFFFF;
+	universe.nlevel_frames = nDataSize & 0xFFFF;
 
 #ifdef HELLFIRE
-	for (i = 0; i < nlevel_frames; i++) {
+	for (i = 0; i < universe.nlevel_frames; i++) {
 #else
-	for (i = 1; i < nlevel_frames; i++) {
+	for (i = 1; i < universe.nlevel_frames; i++) {
 #endif
 		z = i;
 #ifdef USE_ASM
@@ -220,23 +197,23 @@ void MakeSpeedCels(Universe& universe)
 #else
 		nDataSize = pFrameTable[i + 1] - pFrameTable[i];
 #endif
-		level_frame_sizes[i] = nDataSize & 0xFFFF;
+		universe.level_frame_sizes[i] = nDataSize & 0xFFFF;
 	}
 
-	level_frame_sizes[0] = 0;
+	universe.level_frame_sizes[0] = 0;
 
 	if (universe.leveltype == DTYPE_HELL) {
-		for (i = 0; i < nlevel_frames; i++) {
+		for (i = 0; i < universe.nlevel_frames; i++) {
 #ifndef HELLFIRE
 			if (i == 0)
-				level_frame_count[0] = 0;
+				universe.level_frame_count[0] = 0;
 #endif
 			z = i;
 			blood_flag = TRUE;
-			if (level_frame_count[i] != 0) {
-				if (level_frame_types[i] != 0x1000) {
+			if (universe.level_frame_count[i] != 0) {
+				if (universe.level_frame_types[i] != 0x1000) {
 #ifdef USE_ASM
-					t = level_frame_sizes[i];
+					t = universe.level_frame_sizes[i];
 					__asm {
 						mov		ebx, pDungeonCels
 						mov		eax, z
@@ -261,7 +238,7 @@ void MakeSpeedCels(Universe& universe)
 					}
 #else
 					src = &pDungeonCels[pFrameTable[i]];
-					for (j = level_frame_sizes[i]; j; j--) {
+					for (j = universe.level_frame_sizes[i]; j; j--) {
 						pix = *src++;
 						if (pix && pix < 32)
 							blood_flag = FALSE;
@@ -330,23 +307,23 @@ void MakeSpeedCels(Universe& universe)
 #endif
 				}
 				if (!blood_flag)
-					level_frame_count[i] = 0;
+					universe.level_frame_count[i] = 0;
 			}
 		}
 	}
 
-	SortTiles(MAXTILES - 1);
+	SortTiles(universe, MAXTILES - 1);
 	total_size = 0;
 	total_frames = 0;
 
 	if (universe.light4flag) {
 		while (total_size < 0x100000) {
-			total_size += level_frame_sizes[total_frames] << 1;
+			total_size += universe.level_frame_sizes[total_frames] << 1;
 			total_frames++;
 		}
 	} else {
 		while (total_size < 0x100000) {
-			total_size += (level_frame_sizes[total_frames] << 4) - (level_frame_sizes[total_frames] << 1);
+			total_size += (universe.level_frame_sizes[total_frames] << 4) - (universe.level_frame_sizes[total_frames] << 1);
 			total_frames++;
 		}
 	}
@@ -363,10 +340,10 @@ void MakeSpeedCels(Universe& universe)
 		blk_cnt = 15;
 
 	for (i = 0; i < total_frames; i++) {
-		z = tile_defs[i];
+		z = universe.tile_defs[i];
 		universe.SpeedFrameTbl[i][0] = z;
-		if (level_frame_types[i] != 0x1000) {
-			t = level_frame_sizes[i];
+		if (universe.level_frame_types[i] != 0x1000) {
+			t = universe.level_frame_sizes[i];
 			for (j = 1; j < blk_cnt; j++) {
 				universe.SpeedFrameTbl[i][j] = frameidx;
 #ifdef USE_ASM
@@ -467,7 +444,7 @@ void MakeSpeedCels(Universe& universe)
 					}
 				}
 #endif
-				frameidx += level_frame_sizes[i];
+				frameidx += universe.level_frame_sizes[i];
 			}
 		}
 	}
@@ -479,8 +456,8 @@ void MakeSpeedCels(Universe& universe)
 				for (i = 0; i < blocks; i++) {
 					if (pMap->mt[i]) {
 						for (m = 0; m < total_frames; m++) {
-							if ((pMap->mt[i] & 0xFFF) == tile_defs[m]) {
-								pMap->mt[i] = m + level_frame_types[m] + 0x8000;
+							if ((pMap->mt[i] & 0xFFF) == universe.tile_defs[m]) {
+								pMap->mt[i] = m + universe.level_frame_types[m] + 0x8000;
 								m = total_frames;
 							}
 						}
