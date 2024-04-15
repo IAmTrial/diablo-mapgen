@@ -298,4 +298,7 @@ struct Universe {
 	int visionid;
 	BYTE pLightTbl[LIGHTSIZE];
 	BOOL lightflag;
+
+	// lighting.cpp
+	BYTE lightblock[64][16][16];
 };

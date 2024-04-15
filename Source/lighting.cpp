@@ -13,8 +13,6 @@
 #include "Source/gendung.h"
 #include "Source/universe/universe.h"
 
-BYTE lightblock[64][16][16];
-
 /**
  * CrawlTable specifies X- and Y-coordinate deltas from a missile target coordinate.
  *
@@ -869,7 +867,7 @@ void MakeLightTable(Universe& universe)
 					fs = (BYTE)sqrt((8 * l - j) * (8 * l - j) + (8 * k - i) * (8 * k - i));
 					fs += fs < 0 ? -0.5 : 0.5;
 
-					lightblock[j * 8 + i][k][l] = fs;
+					universe.lightblock[j * 8 + i][k][l] = fs;
 				}
 			}
 		}
