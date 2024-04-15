@@ -261,4 +261,20 @@ struct Universe {
 	int level_frame_sizes[MAXTILES];
 	/** Specifies the number of frames in the level cel (e.g. "levels/l1data/l1.cel"). */
 	int nlevel_frames;
+
+	// items.h
+	int itemactive[MAXITEMS];
+	BOOL uitemflag;
+	int itemavail[MAXITEMS];
+	ItemGetRecordStruct itemrecord[MAXITEMS];
+	/** Contains the items on ground in the current game. */
+	ItemStruct item[MAXITEMS + 1];
+	#ifdef HELLFIRE
+	CornerStoneStruct CornerStone;
+	#endif
+	BOOL UniqueItemFlag[128];
+	#ifdef HELLFIRE
+	int auricGold = GOLD_MAX_LIMIT * 2;
+	#endif
+	int numitems;
 };

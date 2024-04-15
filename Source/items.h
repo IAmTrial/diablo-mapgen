@@ -11,20 +11,6 @@
 #include "types.h"
 #include "Source/universe/universe.h"
 
-extern int itemactive[MAXITEMS];
-extern BOOL uitemflag;
-extern int itemavail[MAXITEMS];
-extern ItemGetRecordStruct itemrecord[MAXITEMS];
-extern ItemStruct item[MAXITEMS + 1];
-#ifdef HELLFIRE
-extern CornerStoneStruct CornerStone;
-#endif
-extern BOOL UniqueItemFlag[128];
-#ifdef HELLFIRE
-extern int auricGold;
-#endif
-extern int numitems;
-
 #ifdef HELLFIRE
 int get_ring_max_value(int i);
 int get_bow_max_value(int i);
@@ -106,7 +92,7 @@ void SpawnHealer(int lvl);
 void SpawnStoreGold();
 void RecreateTownItem(int ii, int idx, WORD icreateinfo, int iseed, int ivalue);
 void RecalcStoreStats();
-int ItemNoFlippy();
+int ItemNoFlippy(Universe& universe);
 void CreateSpellBook(Universe& universe, int x, int y, int ispell, BOOL sendmsg, BOOL delta);
 void CreateMagicArmor(Universe& universe, int x, int y, int imisc, int icurs, BOOL sendmsg, BOOL delta);
 #ifdef HELLFIRE
@@ -120,7 +106,7 @@ void PutItemRecord(int nSeed, WORD wCI, int nIndex);
 /* data */
 
 #ifdef HELLFIRE
-extern int MaxGold;
+extern const int MaxGold;
 #endif
 
 extern const BYTE ItemCAnimTbl[];

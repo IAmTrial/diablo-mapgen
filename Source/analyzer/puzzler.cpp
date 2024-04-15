@@ -108,7 +108,7 @@ void CreateItemsFromObject(Universe& universe, int oid)
 
 void DropAllItems(Universe& universe)
 {
-	MonsterItems = numitems;
+	MonsterItems = universe.numitems;
 	for (int i = 0; i < nummonsters; i++) {
 		int mid = monstactive[i];
 		if (monster[mid].MType->mtype == MT_GOLEM)
@@ -117,7 +117,7 @@ void DropAllItems(Universe& universe)
 		SpawnItem(universe, mid, monster[mid]._mx, monster[mid]._my, TRUE);
 	}
 
-	ObjectItems = numitems;
+	ObjectItems = universe.numitems;
 	for (int i = 0; i < nobjects; i++) {
 		int oid = objectactive[i];
 		CreateItemsFromObject(universe, oid);
@@ -136,10 +136,10 @@ void LocatePuzzler(Universe& universe)
 	DropAllItems(universe);
 
 	POI = { -1, -1 };
-	for (int i = 0; i < numitems; i++) {
-		int ii = itemactive[i];
-		if (item[ii]._iMagical == ITEM_QUALITY_UNIQUE && item[ii]._iUid == 60) {
-			POI = { item[ii]._ix, item[ii]._iy };
+	for (int i = 0; i < universe.numitems; i++) {
+		int ii = universe.itemactive[i];
+		if (universe.item[ii]._iMagical == ITEM_QUALITY_UNIQUE && universe.item[ii]._iUid == 60) {
+			POI = { universe.item[ii]._ix, universe.item[ii]._iy };
 			break;
 		}
 	}
@@ -165,14 +165,14 @@ bool ScannerPuzzler::levelMatches(std::optional<uint32_t> levelSeed)
 			std::cerr << "Object " << i << ": " << objstr << " (" << object[oid]._oRndSeed << ")" << std::endl;
 		}
 		std::cerr << std::endl;
-		std::cerr << "Item Count: " << numitems << std::endl;
-		for (int i = 0; i < numitems; i++) {
+		std::cerr << "Item Count: " << universe.numitems << std::endl;
+		for (int i = 0; i < universe.numitems; i++) {
 			std::string prefix = "";
 			if (i >= ObjectItems)
 				prefix = "Object ";
 			else if (i >= MonsterItems)
 				prefix = "Monster ";
-			std::cerr << prefix << "Item " << i << ": " << item[itemactive[i]]._iIName << " (" << item[itemactive[i]]._iSeed << ")" << std::endl;
+			std::cerr << prefix << "Item " << i << ": " << universe.item[universe.itemactive[i]]._iIName << " (" << universe.item[universe.itemactive[i]]._iSeed << ")" << std::endl;
 		}
 	}
 

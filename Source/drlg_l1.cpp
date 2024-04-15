@@ -2879,8 +2879,8 @@ std::optional<uint32_t> CreateL5Dungeon(Universe& universe, DWORD rseed, int ent
 				universe.UberCol = j;
 			}
 			if (universe.dPiece[i][j] == 317) {
-				CornerStone.x = i;
-				CornerStone.y = j;
+				universe.CornerStone.x = i;
+				universe.CornerStone.y = j;
 			}
 		}
 	}

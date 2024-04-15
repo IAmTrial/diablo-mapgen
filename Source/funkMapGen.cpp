@@ -209,7 +209,7 @@ void SetGameSeed(Universe& universe, uint32_t seed)
 	}
 
 	InitQuests(universe);
-	memset(UniqueItemFlag, 0, sizeof(UniqueItemFlag));
+	memset(universe.UniqueItemFlag, 0, sizeof(universe.UniqueItemFlag));
 }
 
 std::vector<uint32_t> SeedsFromFile = {};

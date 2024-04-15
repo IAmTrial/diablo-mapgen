@@ -614,7 +614,7 @@ void Theme_MonstPit(Universe& universe, int t)
 		}
 	}
 	CreateRndItem(universe, ixp, iyp, TRUE, FALSE, TRUE);
-	ItemNoFlippy();
+	ItemNoFlippy(universe);
 	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
@@ -708,11 +708,11 @@ void Theme_Treasure(Universe& universe, int t)
 				// BUGFIX: the `2*` in `2*random_(universe, 0, treasrnd...) == 0` has no effect, should probably be `random_(universe, 0, 2*treasrnd...) == 0`
 				if ((2 * random_(universe, 0, treasrnd[universe.leveltype - 1])) == 0) {
 					CreateTypeItem(universe, xp, yp, FALSE, ITYPE_GOLD, IMISC_NONE, FALSE, TRUE);
-					ItemNoFlippy();
+					ItemNoFlippy(universe);
 				}
 				if (rv == 0) {
 					CreateRndItem(universe, xp, yp, FALSE, FALSE, TRUE);
-					ItemNoFlippy();
+					ItemNoFlippy(universe);
 				}
 				// BUGFIX: the following code is likely not working as intended.
 				//
@@ -722,9 +722,9 @@ void Theme_Treasure(Universe& universe, int t)
 				//    of the item creation branches above, thus the last (unrelated)
 				//    item spawned/dropped on ground would be halved in value.
 				if (rv == 0 || rv >= treasrnd[universe.leveltype - 1] - 2) {
-					i = ItemNoFlippy();
+					i = ItemNoFlippy(universe);
 					if (rv >= treasrnd[universe.leveltype - 1] - 2 && universe.leveltype != DTYPE_CATHEDRAL) {
-						item[i]._ivalue >>= 1;
+						universe.item[i]._ivalue >>= 1;
 					}
 				}
 			}
