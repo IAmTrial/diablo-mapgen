@@ -21,12 +21,6 @@
 #include "../3rdParty/Storm/Source/storm.h"
 #endif
 
-ItemStruct curruitem;
-BOOL itemhold[3][3];
-BYTE *itemanims[ITEMTYPES];
-int gnNumGetRecords;
-ItemStruct golditem;
-
 /* data */
 
 #ifdef HELLFIRE
@@ -397,8 +391,8 @@ void InitItems(Universe& universe)
 	long s;
 
 	GetItemAttrs(universe, 0, IDI_GOLD, 1);
-	golditem = universe.item[0];
-	golditem._iStatFlag = TRUE;
+	universe.golditem = universe.item[0];
+	universe.golditem._iStatFlag = TRUE;
 	universe.numitems = 0;
 
 	for (i = 0; i < MAXITEMS; i++) {
@@ -533,7 +527,7 @@ BOOL GetItemSpace(Universe& universe, int x, int y, char inum)
 	for (j = y - 1; j <= y + 1; j++) {
 		xx = 0;
 		for (i = x - 1; i <= x + 1; i++) {
-			itemhold[xx][yy] = ItemSpaceOk(universe, i, j);
+			universe.itemhold[xx][yy] = ItemSpaceOk(universe, i, j);
 			xx++;
 		}
 		yy++;
@@ -542,7 +536,7 @@ BOOL GetItemSpace(Universe& universe, int x, int y, char inum)
 	savail = FALSE;
 	for (j = 0; j < 3; j++) {
 		for (i = 0; i < 3; i++) {
-			if (itemhold[i][j])
+			if (universe.itemhold[i][j])
 				savail = TRUE;
 		}
 	}
@@ -555,7 +549,7 @@ BOOL GetItemSpace(Universe& universe, int x, int y, char inum)
 	xx = 0;
 	yy = 0;
 	while (rs > 0) {
-		if (itemhold[xx][yy])
+		if (universe.itemhold[xx][yy])
 			rs--;
 		if (rs > 0) {
 			xx++;
@@ -1464,7 +1458,7 @@ void SetupItem(Universe& universe, int i)
 	int it;
 
 	it = ItemCAnimTbl[universe.item[i]._iCurs];
-	universe.item[i]._iAnimData = itemanims[it];
+	universe.item[i]._iAnimData = universe.itemanims[it];
 	universe.item[i]._iAnimLen = ItemAnimLs[it];
 	universe.item[i]._iAnimWidth = 96;
 	universe.item[i]._iAnimWidth2 = 16;

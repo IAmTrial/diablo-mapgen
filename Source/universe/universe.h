@@ -277,4 +277,11 @@ struct Universe {
 	int auricGold = GOLD_MAX_LIMIT * 2;
 	#endif
 	int numitems;
+
+	// items.cpp
+	ItemStruct curruitem;
+	BOOL itemhold[3][3];
+	BYTE *itemanims[ITEMTYPES];
+	int gnNumGetRecords;
+	ItemStruct golditem;
 };
