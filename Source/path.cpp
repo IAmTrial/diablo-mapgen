@@ -10,6 +10,7 @@
 #include "structs.h"
 #include "types.h"
 #include "Source/engine.h"
+#include "Source/universe/universe.h"
 
 /** Notes visisted by the path finding algorithm. */
 PATHNODE path_nodes[MAXPATHNODES];
@@ -52,7 +53,7 @@ const char path_directions[9] = { 5, 1, 6, 2, 0, 3, 8, 4, 7 };
  * check that each step is a valid position. Store the step directions (see
  * path_directions) in path, which must have room for 24 steps
  */
-int FindPath(BOOL (*PosOk)(int, int, int), int PosOkArg, int sx, int sy, int dx, int dy, char *path)
+int FindPath(Universe& universe, BOOL (*PosOk)(Universe&, int, int, int), int PosOkArg, int sx, int sy, int dx, int dy, char *path)
 {
 	PATHNODE *path_start, *next_node, *current;
 	int path_length, i;
@@ -89,7 +90,7 @@ int FindPath(BOOL (*PosOk)(int, int, int), int PosOkArg, int sx, int sy, int dx,
 			return 0;
 		}
 		// ran out of nodes, abort!
-		if (!path_get_path(PosOk, PosOkArg, next_node, dx, dy))
+		if (!path_get_path(universe, PosOk, PosOkArg, next_node, dx, dy))
 			return 0;
 	}
 	// frontier is empty, no path!
@@ -154,21 +155,21 @@ PATHNODE *GetNextPath()
  *
  *  @return true if step is allowed
  */
-BOOL path_solid_pieces(PATHNODE *pPath, int dx, int dy)
+BOOL path_solid_pieces(Universe& universe, PATHNODE *pPath, int dx, int dy)
 {
 	BOOL rv = TRUE;
 	switch (path_directions[3 * (dy - pPath->y) + 3 - pPath->x + 1 + dx]) {
 	case 5:
-		rv = !nSolidTable[dPiece[dx][dy + 1]] && !nSolidTable[dPiece[dx + 1][dy]];
+		rv = !universe.nSolidTable[universe.dPiece[dx][dy + 1]] && !universe.nSolidTable[universe.dPiece[dx + 1][dy]];
 		break;
 	case 6:
-		rv = !nSolidTable[dPiece[dx][dy + 1]] && !nSolidTable[dPiece[dx - 1][dy]];
+		rv = !universe.nSolidTable[universe.dPiece[dx][dy + 1]] && !universe.nSolidTable[universe.dPiece[dx - 1][dy]];
 		break;
 	case 7:
-		rv = !nSolidTable[dPiece[dx][dy - 1]] && !nSolidTable[dPiece[dx - 1][dy]];
+		rv = !universe.nSolidTable[universe.dPiece[dx][dy - 1]] && !universe.nSolidTable[universe.dPiece[dx - 1][dy]];
 		break;
 	case 8:
-		rv = !nSolidTable[dPiece[dx + 1][dy]] && !nSolidTable[dPiece[dx][dy - 1]];
+		rv = !universe.nSolidTable[universe.dPiece[dx + 1][dy]] && !universe.nSolidTable[universe.dPiece[dx][dy - 1]];
 		break;
 	}
 	return rv;
@@ -179,7 +180,7 @@ BOOL path_solid_pieces(PATHNODE *pPath, int dx, int dy)
  *
  * @return FALSE if we ran out of preallocated nodes to use, else TRUE
  */
-BOOL path_get_path(BOOL (*PosOk)(int, int, int), int PosOkArg, PATHNODE *pPath, int x, int y)
+BOOL path_get_path(Universe& universe, BOOL (*PosOk)(Universe&, int, int, int), int PosOkArg, PATHNODE *pPath, int x, int y)
 {
 	int dx, dy;
 	int i;
@@ -188,9 +189,9 @@ BOOL path_get_path(BOOL (*PosOk)(int, int, int), int PosOkArg, PATHNODE *pPath, 
 	for (i = 0; i < 8; i++) {
 		dx = pPath->x + pathxdir[i];
 		dy = pPath->y + pathydir[i];
-		ok = PosOk(PosOkArg, dx, dy);
-		if (ok && path_solid_pieces(pPath, dx, dy) || !ok && dx == x && dy == y) {
-			if (!path_parent_path(pPath, dx, dy, x, y))
+		ok = PosOk(universe, PosOkArg, dx, dy);
+		if (ok && path_solid_pieces(universe, pPath, dx, dy) || !ok && dx == x && dy == y) {
+			if (!path_parent_path(universe, pPath, dx, dy, x, y))
 				return FALSE;
 		}
 	}
@@ -203,7 +204,7 @@ BOOL path_get_path(BOOL (*PosOk)(int, int, int), int PosOkArg, PATHNODE *pPath, 
  *
  * @return TRUE if step successfully added, FALSE if we ran out of nodes to use
  */
-BOOL path_parent_path(PATHNODE *pPath, int dx, int dy, int sx, int sy)
+BOOL path_parent_path(Universe& universe, PATHNODE *pPath, int dx, int dy, int sx, int sy)
 {
 	int next_g;
 	PATHNODE *dxdy;
@@ -221,7 +222,7 @@ BOOL path_parent_path(PATHNODE *pPath, int dx, int dy, int sx, int sy)
 		}
 		pPath->Child[i] = dxdy;
 		if (next_g < dxdy->g) {
-			if (path_solid_pieces(pPath, dx, dy)) {
+			if (path_solid_pieces(universe, pPath, dx, dy)) {
 				// we'll explore it later, just update
 				dxdy->Parent = pPath;
 				dxdy->g = next_g;
@@ -237,13 +238,13 @@ BOOL path_parent_path(PATHNODE *pPath, int dx, int dy, int sx, int sy)
 					break;
 			}
 			pPath->Child[i] = dxdy;
-			if (next_g < dxdy->g && path_solid_pieces(pPath, dx, dy)) {
+			if (next_g < dxdy->g && path_solid_pieces(universe, pPath, dx, dy)) {
 				// update the node
 				dxdy->Parent = pPath;
 				dxdy->g = next_g;
 				dxdy->f = next_g + dxdy->h;
 				// already explored, so re-update others starting from that node
-				path_set_coords(dxdy);
+				path_set_coords(universe, dxdy);
 			}
 		} else {
 			// case 3: (dx,dy) is totally new
@@ -324,7 +325,7 @@ void path_next_node(PATHNODE *pPath)
 /**
  * @brief update all path costs using depth-first search starting at pPath
  */
-void path_set_coords(PATHNODE *pPath)
+void path_set_coords(Universe& universe, PATHNODE *pPath)
 {
 	PATHNODE *PathOld;
 	PATHNODE *PathAct;
@@ -339,7 +340,7 @@ void path_set_coords(PATHNODE *pPath)
 				break;
 
 			if (PathOld->g + path_check_equal(PathOld, PathAct->x, PathAct->y) < PathAct->g) {
-				if (path_solid_pieces(PathOld, PathAct->x, PathAct->y)) {
+				if (path_solid_pieces(universe, PathOld, PathAct->x, PathAct->y)) {
 					PathAct->Parent = PathOld;
 					PathAct->g = PathOld->g + path_check_equal(PathOld, PathAct->x, PathAct->y);
 					PathAct->f = PathAct->g + PathAct->h;

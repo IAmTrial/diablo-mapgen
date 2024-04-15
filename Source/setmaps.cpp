@@ -121,7 +121,7 @@ void AddVileObjs()
 	SetObjMapRange(ObjIndex(35, 36), 7, 11, 13, 18, 3);
 }
 
-void DRLG_SetMapTrans(const char *sFileName)
+void DRLG_SetMapTrans(Universe& universe, const char *sFileName)
 {
 	int x, y;
 	int i, j;
@@ -141,7 +141,7 @@ void DRLG_SetMapTrans(const char *sFileName)
 
 	for (j = 0; j < y; j++) {
 		for (i = 0; i < x; i++) {
-			dTransVal[16 + i][16 + j] = *d;
+			universe.dTransVal[16 + i][16 + j] = *d;
 			d += 2;
 		}
 	}
@@ -149,11 +149,11 @@ void DRLG_SetMapTrans(const char *sFileName)
 }
 
 /**
- * @brief Load a quest map, the given map is specified via the global setlvlnum
+ * @brief Load a quest map, the given map is specified via the global universe.setlvlnum
  */
 void LoadSetMap(Universe& universe)
 {
-	switch (setlvlnum) {
+	switch (universe.setlvlnum) {
 	case SL_SKELKING:
 		if (quests[Q_SKELKING]._qactive == QUEST_INIT) {
 			quests[Q_SKELKING]._qactive = QUEST_ACTIVE;
@@ -161,10 +161,10 @@ void LoadSetMap(Universe& universe)
 		}
 		LoadPreL1Dungeon(universe, "Levels\\L1Data\\SklKng1.DUN", 83, 45);
 		LoadL1Dungeon(universe, "Levels\\L1Data\\SklKng2.DUN", 83, 45);
-		DRLG_AreaTrans(sizeof(SkelKingTrans1) / 4, &SkelKingTrans1[0]);
-		DRLG_ListTrans(sizeof(SkelKingTrans2) / 4, &SkelKingTrans2[0]);
-		DRLG_AreaTrans(sizeof(SkelKingTrans3) / 4, &SkelKingTrans3[0]);
-		DRLG_ListTrans(sizeof(SkelKingTrans4) / 4, &SkelKingTrans4[0]);
+		DRLG_AreaTrans(universe, sizeof(SkelKingTrans1) / 4, &SkelKingTrans1[0]);
+		DRLG_ListTrans(universe, sizeof(SkelKingTrans2) / 4, &SkelKingTrans2[0]);
+		DRLG_AreaTrans(universe, sizeof(SkelKingTrans3) / 4, &SkelKingTrans3[0]);
+		DRLG_ListTrans(universe, sizeof(SkelKingTrans4) / 4, &SkelKingTrans4[0]);
 		AddL1Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
 		AddSKingObjs();
 		InitSKingTriggers();
@@ -172,9 +172,9 @@ void LoadSetMap(Universe& universe)
 	case SL_BONECHAMB:
 		LoadPreL2Dungeon(universe, "Levels\\L2Data\\Bonecha2.DUN", 69, 39);
 		LoadL2Dungeon(universe, "Levels\\L2Data\\Bonecha1.DUN", 69, 39);
-		DRLG_ListTrans(sizeof(SkelChamTrans1) / 4, &SkelChamTrans1[0]);
-		DRLG_AreaTrans(sizeof(SkelChamTrans2) / 4, &SkelChamTrans2[0]);
-		DRLG_ListTrans(sizeof(SkelChamTrans3) / 4, &SkelChamTrans3[0]);
+		DRLG_ListTrans(universe, sizeof(SkelChamTrans1) / 4, &SkelChamTrans1[0]);
+		DRLG_AreaTrans(universe, sizeof(SkelChamTrans2) / 4, &SkelChamTrans2[0]);
+		DRLG_ListTrans(universe, sizeof(SkelChamTrans3) / 4, &SkelChamTrans3[0]);
 		AddL2Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
 		AddSChamObjs();
 		InitSChambTriggers();
@@ -183,7 +183,7 @@ void LoadSetMap(Universe& universe)
 		LoadPreL1Dungeon(universe, "Levels\\L1Data\\Lv1MazeA.DUN", 20, 50);
 		LoadL1Dungeon(universe, "Levels\\L1Data\\Lv1MazeB.DUN", 20, 50);
 		AddL1Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
-		DRLG_SetMapTrans("Levels\\L1Data\\Lv1MazeA.DUN");
+		DRLG_SetMapTrans(universe, "Levels\\L1Data\\Lv1MazeA.DUN");
 		break;
 	case SL_POISONWATER:
 		if (quests[Q_PWATER]._qactive == QUEST_INIT)
@@ -202,7 +202,7 @@ void LoadSetMap(Universe& universe)
 		LoadL1Dungeon(universe, "Levels\\L1Data\\Vile2.DUN", 35, 36);
 		AddL1Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
 		AddVileObjs();
-		DRLG_SetMapTrans("Levels\\L1Data\\Vile1.DUN");
+		DRLG_SetMapTrans(universe, "Levels\\L1Data\\Vile1.DUN");
 		InitNoTriggers();
 		break;
 	}

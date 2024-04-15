@@ -11,6 +11,7 @@
 #include "types.h"
 #include "Source/gendung.h"
 #include "Source/quests.h"
+#include "Source/universe/universe.h"
 
 BOOL townwarps[3];
 BOOL trigflag;
@@ -65,7 +66,7 @@ void InitNoTriggers()
 	trigflag = FALSE;
 }
 
-void InitL1Triggers()
+void InitL1Triggers(Universe& universe)
 {
 	int i, j;
 
@@ -75,13 +76,13 @@ void InitL1Triggers()
 #endif
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
-				if (dPiece[i][j] == 129) {
+				if (universe.dPiece[i][j] == 129) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
 					numtrigs++;
 				}
-				if (dPiece[i][j] == 115) {
+				if (universe.dPiece[i][j] == 115) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
@@ -93,20 +94,20 @@ void InitL1Triggers()
 	} else {
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
-				if (dPiece[i][j] == 184) {
+				if (universe.dPiece[i][j] == 184) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABTWARPUP;
 					trigs[numtrigs]._tlvl = 0;
 					numtrigs++;
 				}
-				if (dPiece[i][j] == 158) {
+				if (universe.dPiece[i][j] == 158) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
 					numtrigs++;
 				}
-				if (dPiece[i][j] == 126) {
+				if (universe.dPiece[i][j] == 126) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
@@ -119,21 +120,21 @@ void InitL1Triggers()
 	trigflag = FALSE;
 }
 
-void InitL2Triggers()
+void InitL2Triggers(Universe& universe)
 {
 	int i, j;
 
 	numtrigs = 0;
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dPiece[i][j] == 267 && (i != quests[Q_SCHAMB]._qtx || j != quests[Q_SCHAMB]._qty)) {
+			if (universe.dPiece[i][j] == 267 && (i != quests[Q_SCHAMB]._qtx || j != quests[Q_SCHAMB]._qty)) {
 				trigs[numtrigs]._tx = i;
 				trigs[numtrigs]._ty = j;
 				trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
 				numtrigs++;
 			}
 
-			if (dPiece[i][j] == 559) {
+			if (universe.dPiece[i][j] == 559) {
 				trigs[numtrigs]._tx = i;
 				trigs[numtrigs]._ty = j;
 				trigs[numtrigs]._tmsg = WM_DIABTWARPUP;
@@ -141,7 +142,7 @@ void InitL2Triggers()
 				numtrigs++;
 			}
 
-			if (dPiece[i][j] == 271) {
+			if (universe.dPiece[i][j] == 271) {
 				trigs[numtrigs]._tx = i;
 				trigs[numtrigs]._ty = j;
 				trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
@@ -152,7 +153,7 @@ void InitL2Triggers()
 	trigflag = FALSE;
 }
 
-void InitL3Triggers()
+void InitL3Triggers(Universe& universe)
 {
 	int i, j;
 
@@ -162,21 +163,21 @@ void InitL3Triggers()
 		numtrigs = 0;
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
-				if (dPiece[i][j] == 171) {
+				if (universe.dPiece[i][j] == 171) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
 					numtrigs++;
 				}
 
-				if (dPiece[i][j] == 168) {
+				if (universe.dPiece[i][j] == 168) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
 					numtrigs++;
 				}
 
-				if (dPiece[i][j] == 549) {
+				if (universe.dPiece[i][j] == 549) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABTWARPUP;
@@ -189,21 +190,21 @@ void InitL3Triggers()
 		numtrigs = 0;
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
-				if (dPiece[i][j] == 66) {
+				if (universe.dPiece[i][j] == 66) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
 					numtrigs++;
 				}
 
-				if (dPiece[i][j] == 63) {
+				if (universe.dPiece[i][j] == 63) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
 					numtrigs++;
 				}
 
-				if (dPiece[i][j] == 80) {
+				if (universe.dPiece[i][j] == 80) {
 					trigs[numtrigs]._tx = i;
 					trigs[numtrigs]._ty = j;
 					trigs[numtrigs]._tmsg = WM_DIABTWARPUP;
@@ -216,21 +217,21 @@ void InitL3Triggers()
 	trigflag = FALSE;
 }
 
-void InitL4Triggers()
+void InitL4Triggers(Universe& universe)
 {
 	int i, j;
 
 	numtrigs = 0;
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dPiece[i][j] == 83) {
+			if (universe.dPiece[i][j] == 83) {
 				trigs[numtrigs]._tx = i;
 				trigs[numtrigs]._ty = j;
 				trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
 				numtrigs++;
 			}
 
-			if (dPiece[i][j] == 422) {
+			if (universe.dPiece[i][j] == 422) {
 				trigs[numtrigs]._tx = i;
 				trigs[numtrigs]._ty = j;
 				trigs[numtrigs]._tmsg = WM_DIABTWARPUP;
@@ -238,13 +239,13 @@ void InitL4Triggers()
 				numtrigs++;
 			}
 
-			if (dPiece[i][j] == 120) {
+			if (universe.dPiece[i][j] == 120) {
 				trigs[numtrigs]._tx = i;
 				trigs[numtrigs]._ty = j;
 				trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
 				numtrigs++;
 			}
-			if (dPiece[i][j] == 336 || dPiece[i][j] == 370) {
+			if (universe.dPiece[i][j] == 336 || universe.dPiece[i][j] == 370) {
 				trigs[numtrigs]._tx = i;
 				trigs[numtrigs]._ty = j;
 				trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
@@ -291,7 +292,7 @@ void InitVPTriggers()
 	trigs[0]._tmsg = WM_DIABRTNLVL;
 }
 
-void Freeupstairs()
+void Freeupstairs(Universe& universe)
 {
 	int i, tx, ty, xx, yy;
 
@@ -301,7 +302,7 @@ void Freeupstairs()
 
 		for (yy = -2; yy <= 2; yy++) {
 			for (xx = -2; xx <= 2; xx++) {
-				dFlags[tx + xx][ty + yy] |= BFLAG_POPULATED;
+				universe.dFlags[tx + xx][ty + yy] |= BFLAG_POPULATED;
 			}
 		}
 	}

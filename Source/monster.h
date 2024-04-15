@@ -117,7 +117,7 @@ void M_FallenFear(int x, int y);
 void PrintMonstHistory(int mt);
 void PrintUniqueHistory();
 void MissToMonst(int i, int x, int y);
-BOOL PosOkMonst(int i, int x, int y);
+BOOL PosOkMonst(Universe& universe, int i, int x, int y);
 #ifdef HELLFIRE
 BOOLEAN monster_posok(int i, int x, int y);
 #endif

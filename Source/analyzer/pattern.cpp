@@ -234,9 +234,9 @@ bool UseObjectScanner(int level)
 
 DungeonMode ScannerPattern::getDungeonMode()
 {
-	if (UseObjectScanner(currlevel))
+	if (UseObjectScanner(universe.currlevel))
 		return DungeonMode::Full;
-	if (UseSolidScanner(currlevel))
+	if (UseSolidScanner(universe.currlevel))
 		return DungeonMode::BreakOnFailureOrNoContent;
 
 	return DungeonMode::BreakOnFailure;
@@ -373,11 +373,11 @@ bool matchesSolidPattern(Universe& universe)
 	const uint8_t(*pattern)[SolidX][SolidY];
 	int xoffset;
 	int yoffset;
-	if (currlevel == 3) {
+	if (universe.currlevel == 3) {
 		pattern = &Dlvl3Solid;
 		xoffset = 11;
 		yoffset = 5;
-	} else if (currlevel == 4) {
+	} else if (universe.currlevel == 4) {
 		pattern = &Dlvl4Solid;
 		xoffset = -3;
 		yoffset = 18;
@@ -391,7 +391,7 @@ bool matchesSolidPattern(Universe& universe)
 			int x = Spawn.x + row - xoffset;
 			int y = Spawn.y + column - yoffset;
 
-			if (x < 0 || y < 0 || x >= MAXDUNX || y >= MAXDUNY || nSolidTable[dPiece[y][x]] != ((*pattern)[row][column] % 2)) {
+			if (x < 0 || y < 0 || x >= MAXDUNX || y >= MAXDUNY || universe.nSolidTable[universe.dPiece[y][x]] != ((*pattern)[row][column] % 2)) {
 				misses++;
 				if (misses > 4 || (*pattern)[row][column] > 1) {
 					return false;
@@ -400,115 +400,115 @@ bool matchesSolidPattern(Universe& universe)
 		}
 	}
 
-	std::cout << universe.sgGameInitInfo.dwSeed << " possible game Seed for dlvl " << (int)currlevel << std::endl;
+	std::cout << universe.sgGameInitInfo.dwSeed << " possible game Seed for dlvl " << (int)universe.currlevel << std::endl;
 
 	return true;
 }
 
 bool matchesObjectPattern(Universe& universe)
 {
-	if (currlevel == 3) {
+	if (universe.currlevel == 3) {
 		if (StairsDown != Point { Spawn.x + 6, Spawn.y + 2 })
 			return false;
-		if (!dObject[Spawn.x + 2][Spawn.y + 3] || dObject[Spawn.x + 2][Spawn.y + 3] != abs(dObject[Spawn.x + 2][Spawn.y + 2]))
+		if (!universe.dObject[Spawn.x + 2][Spawn.y + 3] || universe.dObject[Spawn.x + 2][Spawn.y + 3] != abs(universe.dObject[Spawn.x + 2][Spawn.y + 2]))
 			return false;
-		if (!dObject[Spawn.x + 3][Spawn.y + 3])
+		if (!universe.dObject[Spawn.x + 3][Spawn.y + 3])
 			return false;
 		return true;
 	}
-	if (currlevel == 4) {
+	if (universe.currlevel == 4) {
 		if (StairsDown != Point { Spawn.x + 6, Spawn.y + 2 })
 			return false;
-		if (!dObject[Spawn.x + 0][Spawn.y + 3] || dObject[Spawn.x + 0][Spawn.y + 3] != abs(dObject[Spawn.x + 0][Spawn.y + 2]))
+		if (!universe.dObject[Spawn.x + 0][Spawn.y + 3] || universe.dObject[Spawn.x + 0][Spawn.y + 3] != abs(universe.dObject[Spawn.x + 0][Spawn.y + 2]))
 			return false;
-		if (!dObject[Spawn.x + 2][Spawn.y + 5] || dObject[Spawn.x + 2][Spawn.y + 5] != abs(dObject[Spawn.x + 2][Spawn.y + 4]))
-			return false;
-	}
-	if (currlevel == 6) {
-		if (StairsDown != Point { Spawn.x + 5, Spawn.y + 1 })
-			return false;
-		if (!dObject[Spawn.x + 1][Spawn.y + 3])
-			return false;
-		if (!dObject[Spawn.x + 2][Spawn.y + 3])
-			return false;
-		if (!dObject[Spawn.x + 1][Spawn.y + 4])
-			return false;
-		if (!dObject[Spawn.x + 2][Spawn.y + 4])
-			return false;
-		if (!dObject[Spawn.x + 3][Spawn.y + 5])
+		if (!universe.dObject[Spawn.x + 2][Spawn.y + 5] || universe.dObject[Spawn.x + 2][Spawn.y + 5] != abs(universe.dObject[Spawn.x + 2][Spawn.y + 4]))
 			return false;
 	}
-	if (currlevel == 7) {
+	if (universe.currlevel == 6) {
 		if (StairsDown != Point { Spawn.x + 5, Spawn.y + 1 })
 			return false;
-		if (!dObject[Spawn.x - 3][Spawn.y + 1])
+		if (!universe.dObject[Spawn.x + 1][Spawn.y + 3])
 			return false;
-		if (!dObject[Spawn.x - 3][Spawn.y + 4])
+		if (!universe.dObject[Spawn.x + 2][Spawn.y + 3])
 			return false;
-		if (!dObject[Spawn.x - 2][Spawn.y + 4])
+		if (!universe.dObject[Spawn.x + 1][Spawn.y + 4])
 			return false;
-		if (!dObject[Spawn.x + 3][Spawn.y + 7])
+		if (!universe.dObject[Spawn.x + 2][Spawn.y + 4])
+			return false;
+		if (!universe.dObject[Spawn.x + 3][Spawn.y + 5])
+			return false;
+	}
+	if (universe.currlevel == 7) {
+		if (StairsDown != Point { Spawn.x + 5, Spawn.y + 1 })
+			return false;
+		if (!universe.dObject[Spawn.x - 3][Spawn.y + 1])
+			return false;
+		if (!universe.dObject[Spawn.x - 3][Spawn.y + 4])
+			return false;
+		if (!universe.dObject[Spawn.x - 2][Spawn.y + 4])
+			return false;
+		if (!universe.dObject[Spawn.x + 3][Spawn.y + 7])
 			return false;
 	}
 
-	std::cout << universe.sgGameInitInfo.dwSeed << " possible game Seed for dlvl " << (int)currlevel << std::endl;
+	std::cout << universe.sgGameInitInfo.dwSeed << " possible game Seed for dlvl " << (int)universe.currlevel << std::endl;
 
 	return true;
 }
 
-bool matchesTilePattern(std::optional<uint32_t> levelSeed)
+bool matchesTilePattern(Universe& universe, std::optional<uint32_t> levelSeed)
 {
 	int stairTile;
 	int xoffset = 3;
 	const uint8_t(*pattern)[TEMPLATEX][TEMPLATEY];
-	if (currlevel == 1) {
+	if (universe.currlevel == 1) {
 		stairTile = 204;
 		pattern = &GROOBO1;
-	} else if (currlevel == 2) {
+	} else if (universe.currlevel == 2) {
 		stairTile = 65;
 		pattern = &GROOBO2;
-	} else if (currlevel == 3) {
+	} else if (universe.currlevel == 3) {
 		stairTile = 65;
 		pattern = &GROOBO3;
-	} else if (currlevel == 4) {
+	} else if (universe.currlevel == 4) {
 		stairTile = 65;
 		pattern = &GROOBO4;
-	} else if (currlevel == 5) {
+	} else if (universe.currlevel == 5) {
 		stairTile = 77;
 		pattern = &GROOBO5;
-	} else if (currlevel == 6) {
+	} else if (universe.currlevel == 6) {
 		stairTile = 71;
 		pattern = &GROOBO6;
-	} else if (currlevel == 7) {
+	} else if (universe.currlevel == 7) {
 		stairTile = 71;
 		pattern = &GROOBO7;
 		xoffset = 6;
-	} else if (currlevel == 8) {
+	} else if (universe.currlevel == 8) {
 		stairTile = 71;
 		pattern = &GROOBO8;
 		xoffset = 6;
-	} else if (currlevel == 9) {
+	} else if (universe.currlevel == 9) {
 		stairTile = 51;
 		pattern = &GROOBO9;
-	} else if (currlevel == 10) {
+	} else if (universe.currlevel == 10) {
 		stairTile = 51;
 		pattern = &GROOBO10;
-	} else if (currlevel == 11) {
+	} else if (universe.currlevel == 11) {
 		stairTile = 51;
 		pattern = &GROOBO11;
-	} else if (currlevel == 12) {
+	} else if (universe.currlevel == 12) {
 		stairTile = 51;
 		pattern = &GROOBO12;
-	} else if (currlevel == 13) {
+	} else if (universe.currlevel == 13) {
 		stairTile = 35;
 		pattern = &GROOBO13;
-	} else if (currlevel == 14) {
+	} else if (universe.currlevel == 14) {
 		stairTile = 41;
 		pattern = &GROOBO14;
-	} else if (currlevel == 15) {
+	} else if (universe.currlevel == 15) {
 		stairTile = 34;
 		pattern = &GROOBO15;
-	} else if (currlevel == 16) {
+	} else if (universe.currlevel == 16) {
 		stairTile = 35;
 		pattern = &GROOBO16;
 	}
@@ -518,7 +518,7 @@ bool matchesTilePattern(std::optional<uint32_t> levelSeed)
 	int sy = -1;
 	for (int y = 0; y < DMAXX && !foundStairs; y++) {
 		for (int x = 0; x < DMAXY; x++) {
-			if (dungeon[x][y] == stairTile) {
+			if (universe.dungeon[x][y] == stairTile) {
 				sx = x - xoffset;
 				sy = y - 1;
 				foundStairs = true;
@@ -541,7 +541,7 @@ bool matchesTilePattern(std::optional<uint32_t> levelSeed)
 				continue;
 			int x = sx + column;
 			int y = sy + row;
-			if (x < 0 || y < 0 || x >= DMAXX || y >= DMAXY || dungeon[x][y] != (*pattern)[row][column]) {
+			if (x < 0 || y < 0 || x >= DMAXX || y >= DMAXY || universe.dungeon[x][y] != (*pattern)[row][column]) {
 				misses++;
 				if (misses > 0) {
 					found = false;
@@ -553,7 +553,7 @@ bool matchesTilePattern(std::optional<uint32_t> levelSeed)
 			return false;
 	}
 
-	std::cout << "Level Seed for dlvl " << (int)currlevel << ": " << *levelSeed << std::endl;
+	std::cout << "Level Seed for dlvl " << (int)universe.currlevel << ": " << *levelSeed << std::endl;
 
 	return true;
 }
@@ -562,9 +562,9 @@ bool ScannerPattern::levelMatches(std::optional<uint32_t> levelSeed)
 {
 	if (levelSeed == std::nullopt)
 		return false;
-	if (UseObjectScanner(currlevel))
+	if (UseObjectScanner(universe.currlevel))
 		return matchesObjectPattern(universe);
-	if (UseSolidScanner(currlevel))
+	if (UseSolidScanner(universe.currlevel))
 		return matchesSolidPattern(universe);
-	return matchesTilePattern(levelSeed);
+	return matchesTilePattern(universe, levelSeed);
 }

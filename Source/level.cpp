@@ -27,7 +27,7 @@ inline void WriteLE16(FILE *out, uint16_t val)
 void ExportDun(Universe& universe, uint32_t seed)
 {
 	char fileName[32];
-	sprintf(fileName, "%u-%u-%u.dun", seed, currlevel, universe.glSeedTbl[currlevel]);
+	sprintf(fileName, "%u-%u-%u.dun", seed, universe.currlevel, universe.glSeedTbl[universe.currlevel]);
 	FILE *dunFile = fopen(fileName, "wb");
 
 	WriteLE16(dunFile, DMAXX);
@@ -36,7 +36,7 @@ void ExportDun(Universe& universe, uint32_t seed)
 	/** Tiles. */
 	for (int y = 0; y < DMAXY; y++) {
 		for (int x = 0; x < DMAXX; x++) {
-			WriteLE16(dunFile, dungeon[x][y]);
+			WriteLE16(dunFile, universe.dungeon[x][y]);
 		}
 	}
 
@@ -51,9 +51,9 @@ void ExportDun(Universe& universe, uint32_t seed)
 	for (int y = 16; y < MAXDUNY - 16; y++) {
 		for (int x = 16; x < MAXDUNX - 16; x++) {
 			uint16_t monsterId = 0;
-			if (dMonster[x][y] > 0) {
+			if (universe.dMonster[x][y] > 0) {
 				for (int i = 0; i < 128; i++) {
-					if (MonstConvTbl[i] == monster[dMonster[x][y] - 1].MType->mtype) {
+					if (MonstConvTbl[i] == monster[universe.dMonster[x][y] - 1].MType->mtype) {
 						monsterId = i + 1;
 						break;
 					}
@@ -67,9 +67,9 @@ void ExportDun(Universe& universe, uint32_t seed)
 	for (int y = 16; y < MAXDUNY - 16; y++) {
 		for (int x = 16; x < MAXDUNX - 16; x++) {
 			uint16_t objectId = 0;
-			if (dObject[x][y] > 0) {
+			if (universe.dObject[x][y] > 0) {
 				for (int i = 0; i < 139; i++) {
-					if (ObjTypeConv[i] == object[dObject[x][y] - 1]._otype) {
+					if (ObjTypeConv[i] == object[universe.dObject[x][y] - 1]._otype) {
 						objectId = i;
 						break;
 					}
@@ -82,7 +82,7 @@ void ExportDun(Universe& universe, uint32_t seed)
 	/** Transparency */
 	for (int y = 16; y < MAXDUNY - 16; y++) {
 		for (int x = 16; x < MAXDUNX - 16; x++) {
-			WriteLE16(dunFile, dTransVal[x][y]);
+			WriteLE16(dunFile, universe.dTransVal[x][y]);
 		}
 	}
 	fclose(dunFile);
@@ -138,7 +138,7 @@ std::string cyan(std::string text)
 #endif
 }
 
-void printAsciiLevel()
+void printAsciiLevel(Universe& universe)
 {
 	bool steps[MAXDUNX][MAXDUNY];
 
@@ -168,17 +168,17 @@ void printAsciiLevel()
 				std::cout << red("^");
 			else if (Point { bobx, boby } == StairsDown)
 				std::cout << green("v");
-			else if (dObject[bobx][boby] && nSolidTable[dPiece[bobx][boby]])
+			else if (universe.dObject[bobx][boby] && universe.nSolidTable[universe.dPiece[bobx][boby]])
 				std::cout << yellow("#");
-			else if (dMonster[bobx][boby])
+			else if (universe.dMonster[bobx][boby])
 				std::cout << red("m");
-			else if (Point { bobx, boby } == POI && !nSolidTable[dPiece[bobx][boby]])
+			else if (Point { bobx, boby } == POI && !universe.nSolidTable[universe.dPiece[bobx][boby]])
 				std::cout << red("!");
-			else if (dObject[bobx][boby])
+			else if (universe.dObject[bobx][boby])
 				std::cout << yellow("*");
 			else if (steps[bobx][boby])
 				std::cout << cyan("=");
-			else if (nSolidTable[dPiece[bobx][boby]])
+			else if (universe.nSolidTable[universe.dPiece[bobx][boby]])
 				std::cout << gray("#");
 			else
 				std::cout << " ";

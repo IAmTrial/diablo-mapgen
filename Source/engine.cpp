@@ -142,12 +142,12 @@ BYTE *LoadFileInMem(std::string pszName, DWORD *pdwFileLen)
 	return buf;
 }
 
-void LoadLvlGFX()
+void LoadLvlGFX(Universe& universe)
 {
 	free(pMegaTiles);
 	free(pLevelPieces);
 
-	switch (leveltype) {
+	switch (universe.leveltype) {
 	case DTYPE_CATHEDRAL:
 		pMegaTiles = LoadFileInMem("Levels\\L1Data\\L1.TIL", NULL);
 		pLevelPieces = LoadFileInMem("Levels\\L1Data\\L1.MIN", NULL);

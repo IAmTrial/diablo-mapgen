@@ -36,7 +36,7 @@ void AddNakrulBook(int a1, int a2, int a3);
 void AddObject(Universe& universe, int ot, int ox, int oy);
 void Obj_Trap(int i);
 void ProcessObjects();
-void ObjSetMicro(int dx, int dy, int pn);
+void ObjSetMicro(Universe& universe, int dx, int dy, int pn);
 void RedoPlayerVision(Universe& universe);
 void MonstCheckDoors(int m);
 void ObjChangeMap(Universe& universe, int x1, int y1, int x2, int y2);

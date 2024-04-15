@@ -518,7 +518,7 @@ void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum)
 {
 }
 
-void DoUnLight(int nXPos, int nYPos, int nRadius)
+void DoUnLight(Universe& universe, int nXPos, int nYPos, int nRadius)
 {
 	int x, y, min_x, min_y, max_x, max_y;
 
@@ -546,12 +546,12 @@ void DoUnLight(int nXPos, int nYPos, int nRadius)
 #ifndef HELLFIRE
 			if (x >= 0 && x < MAXDUNX && y >= 0 && y < MAXDUNY)
 #endif
-				dLight[x][y] = dPreLight[x][y];
+				universe.dLight[x][y] = universe.dPreLight[x][y];
 		}
 	}
 }
 
-void DoUnVision(int nXPos, int nYPos, int nRadius)
+void DoUnVision(Universe& universe, int nXPos, int nYPos, int nRadius)
 {
 	int i, j, x1, y1, x2, y2;
 
@@ -576,12 +576,12 @@ void DoUnVision(int nXPos, int nYPos, int nRadius)
 
 	for (i = x1; i < x2; i++) {
 		for (j = y1; j < y2; j++) {
-			dFlags[i][j] &= ~(BFLAG_VISIBLE | BFLAG_LIT);
+			universe.dFlags[i][j] &= ~(BFLAG_VISIBLE | BFLAG_LIT);
 		}
 	}
 }
 
-void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible)
+void DoVision(Universe& universe, int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible)
 {
 	BOOL nBlockerFlag;
 	int nCrawlX, nCrawlY, nLineLen, nTrans;
@@ -589,15 +589,15 @@ void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible)
 
 	if (nXPos >= 0 && nXPos <= MAXDUNX && nYPos >= 0 && nYPos <= MAXDUNY) { // BUGFIX < MAXDUNX/MAXDUNY or OOB
 		if (doautomap) {
-			if (dFlags[nXPos][nYPos] >= 0) {
+			if (universe.dFlags[nXPos][nYPos] >= 0) {
 				SetAutomapView(nXPos, nXPos); // BUGFIX - second argument should be nYPos
 			}
-			dFlags[nXPos][nYPos] |= BFLAG_EXPLORED;
+			universe.dFlags[nXPos][nYPos] |= BFLAG_EXPLORED;
 		}
 		if (visible) {
-			dFlags[nXPos][nYPos] |= BFLAG_LIT;
+			universe.dFlags[nXPos][nYPos] |= BFLAG_LIT;
 		}
-		dFlags[nXPos][nYPos] |= BFLAG_VISIBLE;
+		universe.dFlags[nXPos][nYPos] |= BFLAG_VISIBLE;
 	}
 
 	for (v = 0; v < 4; v++) {
@@ -644,23 +644,23 @@ void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible)
 					break;
 				}
 				if (nCrawlX >= 0 && nCrawlX <= MAXDUNX && nCrawlY >= 0 && nCrawlY <= MAXDUNY) {
-					nBlockerFlag = nBlockTable[dPiece[nCrawlX][nCrawlY]];
-					if (!nBlockTable[dPiece[x1adj + nCrawlX][y1adj + nCrawlY]]
-					    || !nBlockTable[dPiece[x2adj + nCrawlX][y2adj + nCrawlY]]) {
+					nBlockerFlag = universe.nBlockTable[universe.dPiece[nCrawlX][nCrawlY]];
+					if (!universe.nBlockTable[universe.dPiece[x1adj + nCrawlX][y1adj + nCrawlY]]
+					    || !universe.nBlockTable[universe.dPiece[x2adj + nCrawlX][y2adj + nCrawlY]]) {
 						if (doautomap) {
-							if (dFlags[nCrawlX][nCrawlY] >= 0) {
+							if (universe.dFlags[nCrawlX][nCrawlY] >= 0) {
 								SetAutomapView(nCrawlX, nCrawlY);
 							}
-							dFlags[nCrawlX][nCrawlY] |= BFLAG_EXPLORED;
+							universe.dFlags[nCrawlX][nCrawlY] |= BFLAG_EXPLORED;
 						}
 						if (visible) {
-							dFlags[nCrawlX][nCrawlY] |= BFLAG_LIT;
+							universe.dFlags[nCrawlX][nCrawlY] |= BFLAG_LIT;
 						}
-						dFlags[nCrawlX][nCrawlY] |= BFLAG_VISIBLE;
+						universe.dFlags[nCrawlX][nCrawlY] |= BFLAG_VISIBLE;
 						if (!nBlockerFlag) {
-							nTrans = dTransVal[nCrawlX][nCrawlY];
+							nTrans = universe.dTransVal[nCrawlX][nCrawlY];
 							if (nTrans != 0) {
-								TransList[nTrans] = TRUE;
+								universe.TransList[nTrans] = TRUE;
 							}
 						}
 					}
@@ -756,7 +756,7 @@ void MakeLightTable(Universe& universe)
 		*tbl++ = 0;
 	}
 
-	if (leveltype == DTYPE_HELL) {
+	if (universe.leveltype == DTYPE_HELL) {
 		tbl = pLightTbl;
 		for (i = 0; i < lights; i++) {
 			l1 = lights - i;
@@ -897,9 +897,9 @@ void ToggleLighting_2()
 	int i;
 
 	if (lightflag) {
-		memset(dLight, 0, sizeof(dLight));
+		memset(universe.dLight, 0, sizeof(universe.dLight));
 	} else {
-		memset(dLight, lightmax, sizeof(dLight));
+		memset(universe.dLight, lightmax, sizeof(universe.dLight));
 		for (i = 0; i < MAX_PLRS; i++) {
 			if (plr[i].plractive && plr[i].plrlevel == currlevel) {
 				DoLighting(plr[i]._px, plr[i]._py, plr[i]._pLightRad, -1);
@@ -915,9 +915,9 @@ void ToggleLighting()
 	lightflag ^= TRUE;
 
 	if (lightflag) {
-		memset(dLight, 0, sizeof(dLight));
+		memset(universe.dLight, 0, sizeof(universe.dLight));
 	} else {
-		memcpy(dLight, dPreLight, sizeof(dLight));
+		memcpy(universe.dLight, universe.dPreLight, sizeof(universe.dLight));
 		for (i = 0; i < MAX_PLRS; i++) {
 			if (plr[i].plractive && plr[i].plrlevel == currlevel) {
 				DoLighting(plr[i]._px, plr[i]._py, plr[i]._pLightRad, -1);
@@ -1024,7 +1024,7 @@ void ChangeLight(int i, int x, int y, int r)
 	dolighting = TRUE;
 }
 
-void ProcessLightList()
+void ProcessLightList(Universe& universe)
 {
 	int i, j;
 	BYTE temp;
@@ -1037,10 +1037,10 @@ void ProcessLightList()
 		for (i = 0; i < numlights; i++) {
 			j = lightactive[i];
 			if (LightList[j]._ldel) {
-				DoUnLight(LightList[j]._lx, LightList[j]._ly, LightList[j]._lradius);
+				DoUnLight(universe, LightList[j]._lx, LightList[j]._ly, LightList[j]._lradius);
 			}
 			if (LightList[j]._lunflag) {
-				DoUnLight(LightList[j]._lunx, LightList[j]._luny, LightList[j]._lunr);
+				DoUnLight(universe, LightList[j]._lunx, LightList[j]._luny, LightList[j]._lunr);
 				LightList[j]._lunflag = FALSE;
 			}
 		}
@@ -1066,14 +1066,14 @@ void ProcessLightList()
 	dolighting = FALSE;
 }
 
-void SavePreLighting()
+void SavePreLighting(Universe& universe)
 {
-	memcpy(dPreLight, dLight, sizeof(dPreLight));
+	memcpy(universe.dPreLight, universe.dLight, sizeof(universe.dPreLight));
 }
 
-void InitVision()
+void InitVision(Universe& universe)
 {
-	memset(TransList, 0, sizeof(TransList));
+	memset(universe.TransList, 0, sizeof(universe.TransList));
 
 }
 
@@ -1117,7 +1117,7 @@ void ChangeVisionXY(int id, int x, int y)
 {
 }
 
-void ProcessVisionList()
+void ProcessVisionList(Universe& universe)
 {
 	int i;
 	BOOL delflag;
@@ -1125,19 +1125,20 @@ void ProcessVisionList()
 	if (dovision) {
 		for (i = 0; i < numvision; i++) {
 			if (VisionList[i]._ldel) {
-				DoUnVision(VisionList[i]._lx, VisionList[i]._ly, VisionList[i]._lradius);
+				DoUnVision(universe, VisionList[i]._lx, VisionList[i]._ly, VisionList[i]._lradius);
 			}
 			if (VisionList[i]._lunflag) {
-				DoUnVision(VisionList[i]._lunx, VisionList[i]._luny, VisionList[i]._lunr);
+				DoUnVision(universe, VisionList[i]._lunx, VisionList[i]._luny, VisionList[i]._lunr);
 				VisionList[i]._lunflag = FALSE;
 			}
 		}
-		for (i = 0; i < TransVal; i++) {
-			TransList[i] = FALSE;
+		for (i = 0; i < universe.TransVal; i++) {
+			universe.TransList[i] = FALSE;
 		}
 		for (i = 0; i < numvision; i++) {
 			if (!VisionList[i]._ldel) {
 				DoVision(
+				    universe,
 				    VisionList[i]._lx,
 				    VisionList[i]._ly,
 				    VisionList[i]._lradius,
@@ -1170,7 +1171,7 @@ void lighting_color_cycling(Universe& universe)
 
 	l = universe.light4flag ? 4 : 16;
 
-	if (leveltype != DTYPE_HELL) {
+	if (universe.leveltype != DTYPE_HELL) {
 		return;
 	}
 

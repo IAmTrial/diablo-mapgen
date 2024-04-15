@@ -54,7 +54,7 @@ inline int GetdPiece(Universe& universe, int x, int y)
 			return 0;
 		}
 	}
-	return dPiece[x][y];
+	return universe.dPiece[x][y];
 }
 
 inline BYTE GetDungeon(Universe& universe, int x, int y)
@@ -68,7 +68,7 @@ inline BYTE GetDungeon(Universe& universe, int x, int y)
 			return 0;
 		}
 	}
-	return dungeon[x][y];
+	return universe.dungeon[x][y];
 }
 
 inline void SetDungeon(Universe& universe, int x, int y, BYTE value)
@@ -82,7 +82,7 @@ inline void SetDungeon(Universe& universe, int x, int y, BYTE value)
 			return;
 		}
 	}
-	dungeon[x][y] = value;
+	universe.dungeon[x][y] = value;
 }
 
 inline void SetObjectSelFlag(Universe& universe, int id, int value)
@@ -106,6 +106,6 @@ inline void IncrementObjectFrame(Universe& universe, int id, int value)
 BYTE *DiabloAllocPtr(DWORD dwBytes);
 void mem_free_dbg(void *p);
 BYTE *LoadFileInMem(std::string pszName, DWORD *pdwFileLen);
-void LoadLvlGFX();
+void LoadLvlGFX(Universe& universe);
 
 #endif

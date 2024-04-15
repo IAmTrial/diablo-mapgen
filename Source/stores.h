@@ -6,6 +6,12 @@
 #ifndef __STORES_H__
 #define __STORES_H__
 
+#include "defs.h"
+#include "enums.h"
+#include "structs.h"
+#include "types.h"
+#include "Source/universe/universe.h"
+
 extern ItemStruct boyitem;
 extern ItemStruct premiumitem[SMITH_PREMIUM_ITEMS];
 extern BYTE *pSTextBoxCels;
@@ -39,7 +45,7 @@ void STextNext();
 void SetGoldCurs(int pnum, int i);
 void SetSpdbarGoldCurs(int pnum, int i);
 void TakePlrsMoney(int cost);
-void STextEnter();
+void STextEnter(Universe& universe);
 void CheckStoreBtn();
 void ReleaseStoreBtn();
 

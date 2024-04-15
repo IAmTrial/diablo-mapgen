@@ -18,7 +18,7 @@ extern int zharlib;
 extern ThemeStruct themes[MAXTHEMES];
 
 void InitThemes(Universe& universe);
-void HoldThemeRooms();
+void HoldThemeRooms(Universe& universe);
 void CreateThemeRooms(Universe& universe);
 
 #endif /* __THEMES_H__ */

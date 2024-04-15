@@ -24,8 +24,8 @@ extern BYTE *pLightTbl;
 extern BOOL lightflag;
 
 void DoLighting(int nXPos, int nYPos, int nRadius, int Lnum);
-void DoUnVision(int nXPos, int nYPos, int nRadius);
-void DoVision(int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible);
+void DoUnVision(Universe& universe, int nXPos, int nYPos, int nRadius);
+void DoVision(Universe& universe, int nXPos, int nYPos, int nRadius, BOOL doautomap, BOOL visible);
 void FreeLightTable();
 void InitLightTable();
 void MakeLightTable(Universe& universe);
@@ -41,13 +41,13 @@ void ChangeLightRadius(int i, int r);
 void ChangeLightXY(int i, int x, int y);
 void ChangeLightOff(int i, int x, int y);
 void ChangeLight(int i, int x, int y, int r);
-void ProcessLightList();
-void SavePreLighting();
-void InitVision();
+void ProcessLightList(Universe& universe);
+void SavePreLighting(Universe& universe);
+void InitVision(Universe& universe);
 int AddVision(int x, int y, int r, BOOL mine);
 void ChangeVisionRadius(int id, int r);
 void ChangeVisionXY(int id, int x, int y);
-void ProcessVisionList();
+void ProcessVisionList(Universe& universe);
 void lighting_color_cycling(Universe& universe);
 
 /* rdata */

@@ -12,39 +12,14 @@
 #include "Source/lighting.h"
 #include "Source/universe/universe.h"
 
-/** Contains the tile IDs of the map. */
-BYTE dungeon[DMAXX][DMAXY];
-/** Contains a backup of the tile IDs of the map. */
-BYTE pdungeon[DMAXX][DMAXY];
-char dflags[DMAXX][DMAXY];
-/** Specifies the active set level X-coordinate of the map. */
-int setpc_x;
-/** Specifies the active set level Y-coordinate of the map. */
-int setpc_y;
-/** Specifies the width of the active set level of the map. */
-int setpc_w;
-/** Specifies the height of the active set level of the map. */
-int setpc_h;
 /** Contains the contents of the single player quest DUN file. */
 BYTE *pSetPiece;
-/** Specifies whether a single player quest DUN has been loaded. */
-BOOL setloadflag;
 BYTE *pSpecialCels;
 /** Specifies the tile definitions of the active dungeon type; (e.g. levels/l1data/l1.til). */
 BYTE *pMegaTiles;
 BYTE *pLevelPieces;
 BYTE *pDungeonCels;
 BYTE *pSpeedCels;
-/**
- * Returns the frame number of the speed CEL, an in memory decoding
- * of level CEL frames, based on original frame number and light index.
- * Note, given light index 0, the original frame number is returned.
- */
-int SpeedFrameTbl[128][16];
-/**
- * List of transparancy masks to use for dPieces
- */
-char block_lvid[MAXTILES + 1];
 /** Specifies the CEL frame occurrence for each frame of the level CEL (e.g. "levels/l1data/l1.cel"). */
 int level_frame_count[MAXTILES];
 int tile_defs[MAXTILES];
@@ -68,112 +43,21 @@ WORD level_frame_types[MAXTILES];
 int level_frame_sizes[MAXTILES];
 /** Specifies the number of frames in the level cel (e.g. "levels/l1data/l1.cel"). */
 int nlevel_frames;
-/**
- * List of light blocking dPieces
- */
-BOOLEAN nBlockTable[MAXTILES + 1];
-/**
- * List of path blocking dPieces
- */
-BOOLEAN nSolidTable[MAXTILES + 1];
-/**
- * List of transparent dPieces
- */
-BOOLEAN nTransTable[MAXTILES + 1];
-/**
- * List of missile blocking dPieces
- */
-BOOLEAN nMissileTable[MAXTILES + 1];
-BOOLEAN nTrapTable[MAXTILES + 1];
-/** Specifies the minimum X-coordinate of the map. */
-int dminx;
-/** Specifies the minimum Y-coordinate of the map. */
-int dminy;
-/** Specifies the maximum X-coordinate of the map. */
-int dmaxx;
-/** Specifies the maximum Y-coordinate of the map. */
-int dmaxy;
-int gnDifficulty;
-/** Specifies the active dungeon type of the current game. */
-BYTE leveltype;
-/** Specifies the active dungeon level of the current game. */
-BYTE currlevel;
-BOOLEAN setlevel;
-/** Specifies the active quest level of the current game. */
-BYTE setlvlnum;
-char setlvltype;
-/** Specifies the player viewpoint X-coordinate of the map. */
-int ViewX;
-/** Specifies the player viewpoint Y-coordinate of the map. */
-int ViewY;
-int ViewBX;
-int ViewBY;
-int ViewDX;
-int ViewDY;
-ScrollStruct ScrollInfo;
-/** Specifies the level viewpoint X-coordinate of the map. */
-int LvlViewX;
-/** Specifies the level viewpoint Y-coordinate of the map. */
-int LvlViewY;
-int MicroTileLen;
-char TransVal;
-/** Specifies the active transparency indices. */
-BOOLEAN TransList[256];
-/** Contains the piece IDs of each tile on the map. */
-int dPiece[MAXDUNX][MAXDUNY];
-/** Specifies the dungeon piece information for a given coordinate and block number. */
-MICROS dpiece_defs_map_2[MAXDUNX][MAXDUNY];
-/** Specifies the dungeon piece information for a given coordinate and block number, optimized for diagonal access. */
-MICROS dpiece_defs_map_1[MAXDUNX * MAXDUNY];
-/** Specifies the transparency at each coordinate of the map. */
-char dTransVal[MAXDUNX][MAXDUNY];
-char dLight[MAXDUNX][MAXDUNY];
-char dPreLight[MAXDUNX][MAXDUNY];
-char dFlags[MAXDUNX][MAXDUNY];
-/** Contains the player numbers (players array indices) of the map. */
-char dPlayer[MAXDUNX][MAXDUNY];
-/**
- * Contains the NPC numbers of the map. The NPC number represents a
- * towner number (towners array index) in Tristram and a monster number
- * (monsters array index) in the dungeon.
- */
-int dMonster[MAXDUNX][MAXDUNY];
-/**
- * Contains the dead numbers (deads array indices) and dead direction of
- * the map, encoded as specified by the pseudo-code below.
- * dDead[x][y] & 0x1F - index of dead
- * dDead[x][y] >> 0x5 - direction
- */
-char dDead[MAXDUNX][MAXDUNY];
-/** Contains the object numbers (objects array indices) of the map. */
-char dObject[MAXDUNX][MAXDUNY];
-/** Contains the item numbers (items array indices) of the map. */
-char dItem[MAXDUNX][MAXDUNY];
-/** Contains the missile numbers (missiles array indices) of the map. */
-char dMissile[MAXDUNX][MAXDUNY];
-/**
- * Contains the arch frame numbers of the map from the special tileset
- * (e.g. "levels/l1data/l1s.cel"). Note, the special tileset of Tristram (i.e.
- * "levels/towndata/towns.cel") contains trees rather than arches.
- */
-char dSpecial[MAXDUNX][MAXDUNY];
-int themeCount;
-THEME_LOC themeLoc[MAXTHEMES];
 
-void FillSolidBlockTbls()
+void FillSolidBlockTbls(Universe& universe)
 {
 	BYTE bv;
 	DWORD dwTiles;
 	BYTE *pSBFile, *pTmp;
 	int i;
 
-	memset(nBlockTable, 0, sizeof(nBlockTable));
-	memset(nSolidTable, 0, sizeof(nSolidTable));
-	memset(nTransTable, 0, sizeof(nTransTable));
-	memset(nMissileTable, 0, sizeof(nMissileTable));
-	memset(nTrapTable, 0, sizeof(nTrapTable));
+	memset(universe.nBlockTable, 0, sizeof(universe.nBlockTable));
+	memset(universe.nSolidTable, 0, sizeof(universe.nSolidTable));
+	memset(universe.nTransTable, 0, sizeof(universe.nTransTable));
+	memset(universe.nMissileTable, 0, sizeof(universe.nMissileTable));
+	memset(universe.nTrapTable, 0, sizeof(universe.nTrapTable));
 
-	switch (leveltype) {
+	switch (universe.leveltype) {
 	case DTYPE_TOWN:
 #ifdef HELLFIRE
 		pSBFile = LoadFileInMem("NLevels\\TownData\\Town.SOL", &dwTiles);
@@ -216,16 +100,16 @@ void FillSolidBlockTbls()
 	for (i = 1; i <= dwTiles; i++) {
 		bv = *pTmp++;
 		if (bv & 1)
-			nSolidTable[i] = TRUE;
+			universe.nSolidTable[i] = TRUE;
 		if (bv & 2)
-			nBlockTable[i] = TRUE;
+			universe.nBlockTable[i] = TRUE;
 		if (bv & 4)
-			nMissileTable[i] = TRUE;
+			universe.nMissileTable[i] = TRUE;
 		if (bv & 8)
-			nTransTable[i] = TRUE;
+			universe.nTransTable[i] = TRUE;
 		if (bv & 0x80)
-			nTrapTable[i] = TRUE;
-		block_lvid[i] = (bv & 0x70) >> 4; /* beta: (bv >> 4) & 7 */
+			universe.nTrapTable[i] = TRUE;
+		universe.block_lvid[i] = (bv & 0x70) >> 4; /* beta: (bv >> 4) & 7 */
 	}
 
 	mem_free_dbg(pSBFile);
@@ -287,14 +171,14 @@ void MakeSpeedCels(Universe& universe)
 		level_frame_types[i] = 0;
 	}
 
-	if (leveltype != DTYPE_HELL)
+	if (universe.leveltype != DTYPE_HELL)
 		blocks = 10;
 	else
 		blocks = 12;
 
 	for (y = 0; y < MAXDUNY; y++) {
 		for (x = 0; x < MAXDUNX; x++) {
-			pMap = &dpiece_defs_map_2[x][y];
+			pMap = &universe.dpiece_defs_map_2[x][y];
 			for (j = 0; j < blocks; j++) {
 				mt = pMap->mt[j];
 				if (mt) {
@@ -341,7 +225,7 @@ void MakeSpeedCels(Universe& universe)
 
 	level_frame_sizes[0] = 0;
 
-	if (leveltype == DTYPE_HELL) {
+	if (universe.leveltype == DTYPE_HELL) {
 		for (i = 0; i < nlevel_frames; i++) {
 #ifndef HELLFIRE
 			if (i == 0)
@@ -480,11 +364,11 @@ void MakeSpeedCels(Universe& universe)
 
 	for (i = 0; i < total_frames; i++) {
 		z = tile_defs[i];
-		SpeedFrameTbl[i][0] = z;
+		universe.SpeedFrameTbl[i][0] = z;
 		if (level_frame_types[i] != 0x1000) {
 			t = level_frame_sizes[i];
 			for (j = 1; j < blk_cnt; j++) {
-				SpeedFrameTbl[i][j] = frameidx;
+				universe.SpeedFrameTbl[i][j] = frameidx;
 #ifdef USE_ASM
 				__asm {
 					mov		ebx, pDungeonCels
@@ -520,7 +404,7 @@ void MakeSpeedCels(Universe& universe)
 			}
 		} else {
 			for (j = 1; j < blk_cnt; j++) {
-				SpeedFrameTbl[i][j] = frameidx;
+				universe.SpeedFrameTbl[i][j] = frameidx;
 #ifdef USE_ASM
 				__asm {
 					mov		ebx, pDungeonCels
@@ -590,8 +474,8 @@ void MakeSpeedCels(Universe& universe)
 
 	for (y = 0; y < MAXDUNY; y++) {
 		for (x = 0; x < MAXDUNX; x++) {
-			if (dPiece[x][y] != 0) {
-				pMap = &dpiece_defs_map_2[x][y];
+			if (universe.dPiece[x][y] != 0) {
+				pMap = &universe.dpiece_defs_map_2[x][y];
 				for (i = 0; i < blocks; i++) {
 					if (pMap->mt[i]) {
 						for (m = 0; m < total_frames; m++) {
@@ -617,13 +501,13 @@ int IsometricCoord(int x, int y)
 	return MAXDUNX * MAXDUNY - ((y + y * y + x * (x + 2 * y + 3)) / 2) - 1;
 }
 
-void SetSpeedCels()
+void SetSpeedCels(Universe& universe)
 {
 	int x, y;
 
 	for (x = 0; x < MAXDUNX; x++) {
 		for (y = 0; y < MAXDUNY; y++) {
-			dpiece_defs_map_1[IsometricCoord(x, y)] = dpiece_defs_map_2[x][y];
+			universe.dpiece_defs_map_1[IsometricCoord(x, y)] = universe.dpiece_defs_map_2[x][y];
 		}
 	}
 }
@@ -634,21 +518,21 @@ void SetDungeonMicros(Universe& universe)
 	WORD *pPiece;
 	MICROS *pMap;
 
-	if (leveltype != DTYPE_HELL) {
-		MicroTileLen = 10;
+	if (universe.leveltype != DTYPE_HELL) {
+		universe.MicroTileLen = 10;
 		blocks = 10;
 	} else {
-		MicroTileLen = 12;
+		universe.MicroTileLen = 12;
 		blocks = 16;
 	}
 
 	for (y = 0; y < MAXDUNY; y++) {
 		for (x = 0; x < MAXDUNX; x++) {
-			lv = dPiece[x][y];
-			pMap = &dpiece_defs_map_2[x][y];
+			lv = universe.dPiece[x][y];
+			pMap = &universe.dpiece_defs_map_2[x][y];
 			if (lv != 0) {
 				lv--;
-				if (leveltype != DTYPE_HELL)
+				if (universe.leveltype != DTYPE_HELL)
 					pPiece = (WORD *)&pLevelPieces[20 * lv];
 				else
 					pPiece = (WORD *)&pLevelPieces[32 * lv];
@@ -662,29 +546,29 @@ void SetDungeonMicros(Universe& universe)
 	}
 
 	MakeSpeedCels(universe);
-	SetSpeedCels();
+	SetSpeedCels(universe);
 
 	if (universe.zoomflag) {
-		ViewDX = SCREEN_WIDTH;
-		ViewDY = VIEWPORT_HEIGHT;
-		ViewBX = SCREEN_WIDTH / TILE_WIDTH;
-		ViewBY = VIEWPORT_HEIGHT / TILE_HEIGHT;
+		universe.ViewDX = SCREEN_WIDTH;
+		universe.ViewDY = VIEWPORT_HEIGHT;
+		universe.ViewBX = SCREEN_WIDTH / TILE_WIDTH;
+		universe.ViewBY = VIEWPORT_HEIGHT / TILE_HEIGHT;
 	} else {
-		ViewDX = ZOOM_WIDTH;
-		ViewDY = ZOOM_HEIGHT;
-		ViewBX = ZOOM_WIDTH / TILE_WIDTH;
-		ViewBY = ZOOM_HEIGHT / TILE_HEIGHT;
+		universe.ViewDX = ZOOM_WIDTH;
+		universe.ViewDY = ZOOM_HEIGHT;
+		universe.ViewBX = ZOOM_WIDTH / TILE_WIDTH;
+		universe.ViewBY = ZOOM_HEIGHT / TILE_HEIGHT;
 	}
 }
 
-void DRLG_InitTrans()
+void DRLG_InitTrans(Universe& universe)
 {
-	memset(dTransVal, 0, sizeof(dTransVal));
-	memset(TransList, 0, sizeof(TransList));
-	TransVal = 1;
+	memset(universe.dTransVal, 0, sizeof(universe.dTransVal));
+	memset(universe.TransList, 0, sizeof(universe.TransList));
+	universe.TransVal = 1;
 }
 
-void DRLG_MRectTrans(int x1, int y1, int x2, int y2)
+void DRLG_MRectTrans(Universe& universe, int x1, int y1, int x2, int y2)
 {
 	int i, j;
 
@@ -695,32 +579,32 @@ void DRLG_MRectTrans(int x1, int y1, int x2, int y2)
 
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
-			dTransVal[i][j] = TransVal;
+			universe.dTransVal[i][j] = universe.TransVal;
 		}
 	}
 
-	TransVal++;
+	universe.TransVal++;
 }
 
-void DRLG_RectTrans(int x1, int y1, int x2, int y2)
+void DRLG_RectTrans(Universe& universe, int x1, int y1, int x2, int y2)
 {
 	int i, j;
 
 	for (j = y1; j <= y2; j++) {
 		for (i = x1; i <= x2; i++) {
-			dTransVal[i][j] = TransVal;
+			universe.dTransVal[i][j] = universe.TransVal;
 		}
 	}
-	TransVal++;
+	universe.TransVal++;
 }
 
-void DRLG_CopyTrans(int sx, int sy, int dx, int dy)
+void DRLG_CopyTrans(Universe& universe, int sx, int sy, int dx, int dy)
 {
-	dTransVal[dx][dy] = dTransVal[sx][sy];
+	universe.dTransVal[dx][dy] = universe.dTransVal[sx][sy];
 }
 
 #ifndef SPAWN
-void DRLG_ListTrans(int num, const BYTE *List)
+void DRLG_ListTrans(Universe& universe, int num, const BYTE *List)
 {
 	int i;
 	BYTE x1, y1, x2, y2;
@@ -730,11 +614,11 @@ void DRLG_ListTrans(int num, const BYTE *List)
 		y1 = *List++;
 		x2 = *List++;
 		y2 = *List++;
-		DRLG_RectTrans(x1, y1, x2, y2);
+		DRLG_RectTrans(universe, x1, y1, x2, y2);
 	}
 }
 
-void DRLG_AreaTrans(int num, const BYTE *List)
+void DRLG_AreaTrans(Universe& universe, int num, const BYTE *List)
 {
 	int i;
 	BYTE x1, y1, x2, y2;
@@ -744,39 +628,39 @@ void DRLG_AreaTrans(int num, const BYTE *List)
 		y1 = *List++;
 		x2 = *List++;
 		y2 = *List++;
-		DRLG_RectTrans(x1, y1, x2, y2);
-		TransVal--;
+		DRLG_RectTrans(universe, x1, y1, x2, y2);
+		universe.TransVal--;
 	}
-	TransVal++;
+	universe.TransVal++;
 }
 #endif
 
-void DRLG_InitSetPC()
+void DRLG_InitSetPC(Universe& universe)
 {
-	setpc_x = 0;
-	setpc_y = 0;
-	setpc_w = 0;
-	setpc_h = 0;
+	universe.setpc_x = 0;
+	universe.setpc_y = 0;
+	universe.setpc_w = 0;
+	universe.setpc_h = 0;
 }
 
-void DRLG_SetPC()
+void DRLG_SetPC(Universe& universe)
 {
 	int i, j, x, y, w, h;
 
-	w = 2 * setpc_w;
-	h = 2 * setpc_h;
-	x = 2 * setpc_x + 16;
-	y = 2 * setpc_y + 16;
+	w = 2 * universe.setpc_w;
+	h = 2 * universe.setpc_h;
+	x = 2 * universe.setpc_x + 16;
+	y = 2 * universe.setpc_y + 16;
 
 	for (j = 0; j < h; j++) {
 		for (i = 0; i < w; i++) {
-			dFlags[i + x][j + y] |= BFLAG_POPULATED;
+			universe.dFlags[i + x][j + y] |= BFLAG_POPULATED;
 		}
 	}
 }
 
 #ifndef SPAWN
-void Make_SetPC(int x, int y, int w, int h)
+void Make_SetPC(Universe& universe, int x, int y, int w, int h)
 {
 	int i, j, dx, dy, dh, dw;
 
@@ -787,7 +671,7 @@ void Make_SetPC(int x, int y, int w, int h)
 
 	for (j = 0; j < dh; j++) {
 		for (i = 0; i < dw; i++) {
-			dFlags[i + dx][j + dy] |= BFLAG_POPULATED;
+			universe.dFlags[i + dx][j + dy] |= BFLAG_POPULATED;
 		}
 	}
 }
@@ -805,11 +689,11 @@ BOOL DRLG_WillThemeRoomFit(Universe& universe, int floor, int x, int y, int minS
 	xCount = 0;
 	yCount = 0;
 
-	// BUGFIX: incorrect out-of-bounds check, should check that `dungeon[xx][y + ii]` is not out-of-bounds in loop.
+	// BUGFIX: incorrect out-of-bounds check, should check that `universe.dungeon[xx][y + ii]` is not out-of-bounds in loop.
 	if (x > DMAXX - maxSize && y > DMAXY - maxSize) {
 		return FALSE;
 	}
-	if (!SkipThemeRoom(x, y)) {
+	if (!SkipThemeRoom(universe, x, y)) {
 		return FALSE;
 	}
 
@@ -881,60 +765,60 @@ void DRLG_CreateThemeRoom(Universe& universe, int themeIndex)
 {
 	int xx, yy;
 
-	for (yy = themeLoc[themeIndex].y; yy < themeLoc[themeIndex].y + themeLoc[themeIndex].height; yy++) {
-		for (xx = themeLoc[themeIndex].x; xx < themeLoc[themeIndex].x + themeLoc[themeIndex].width; xx++) {
-			if (leveltype == DTYPE_CATACOMBS) {
-				if (yy == themeLoc[themeIndex].y
-				        && xx >= themeLoc[themeIndex].x
-				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width
-				    || yy == themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1
-				        && xx >= themeLoc[themeIndex].x
-				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width) {
+	for (yy = universe.themeLoc[themeIndex].y; yy < universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height; yy++) {
+		for (xx = universe.themeLoc[themeIndex].x; xx < universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width; xx++) {
+			if (universe.leveltype == DTYPE_CATACOMBS) {
+				if (yy == universe.themeLoc[themeIndex].y
+				        && xx >= universe.themeLoc[themeIndex].x
+				        && xx <= universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width
+				    || yy == universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1
+				        && xx >= universe.themeLoc[themeIndex].x
+				        && xx <= universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width) {
 					SetDungeon(universe, xx, yy, 2);
-				} else if (xx == themeLoc[themeIndex].x
-				        && yy >= themeLoc[themeIndex].y
-				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height
-				    || xx == themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1
-				        && yy >= themeLoc[themeIndex].y
-				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height) {
+				} else if (xx == universe.themeLoc[themeIndex].x
+				        && yy >= universe.themeLoc[themeIndex].y
+				        && yy <= universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height
+				    || xx == universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1
+				        && yy >= universe.themeLoc[themeIndex].y
+				        && yy <= universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height) {
 					SetDungeon(universe, xx, yy, 1);
 				} else {
 					SetDungeon(universe, xx, yy, 3);
 				}
 			}
-			if (leveltype == DTYPE_CAVES) {
-				if (yy == themeLoc[themeIndex].y
-				        && xx >= themeLoc[themeIndex].x
-				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width
-				    || yy == themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1
-				        && xx >= themeLoc[themeIndex].x
-				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width) {
+			if (universe.leveltype == DTYPE_CAVES) {
+				if (yy == universe.themeLoc[themeIndex].y
+				        && xx >= universe.themeLoc[themeIndex].x
+				        && xx <= universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width
+				    || yy == universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1
+				        && xx >= universe.themeLoc[themeIndex].x
+				        && xx <= universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width) {
 					SetDungeon(universe, xx, yy, 134);
-				} else if (xx == themeLoc[themeIndex].x
-				        && yy >= themeLoc[themeIndex].y
-				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height
-				    || xx == themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1
-				        && yy >= themeLoc[themeIndex].y
-				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height) {
+				} else if (xx == universe.themeLoc[themeIndex].x
+				        && yy >= universe.themeLoc[themeIndex].y
+				        && yy <= universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height
+				    || xx == universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1
+				        && yy >= universe.themeLoc[themeIndex].y
+				        && yy <= universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height) {
 					SetDungeon(universe, xx, yy, 137);
 				} else {
 					SetDungeon(universe, xx, yy, 7);
 				}
 			}
-			if (leveltype == DTYPE_HELL) {
-				if (yy == themeLoc[themeIndex].y
-				        && xx >= themeLoc[themeIndex].x
-				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width
-				    || yy == themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1
-				        && xx >= themeLoc[themeIndex].x
-				        && xx <= themeLoc[themeIndex].x + themeLoc[themeIndex].width) {
+			if (universe.leveltype == DTYPE_HELL) {
+				if (yy == universe.themeLoc[themeIndex].y
+				        && xx >= universe.themeLoc[themeIndex].x
+				        && xx <= universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width
+				    || yy == universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1
+				        && xx >= universe.themeLoc[themeIndex].x
+				        && xx <= universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width) {
 					SetDungeon(universe, xx, yy, 2);
-				} else if (xx == themeLoc[themeIndex].x
-				        && yy >= themeLoc[themeIndex].y
-				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height
-				    || xx == themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1
-				        && yy >= themeLoc[themeIndex].y
-				        && yy <= themeLoc[themeIndex].y + themeLoc[themeIndex].height) {
+				} else if (xx == universe.themeLoc[themeIndex].x
+				        && yy >= universe.themeLoc[themeIndex].y
+				        && yy <= universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height
+				    || xx == universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1
+				        && yy >= universe.themeLoc[themeIndex].y
+				        && yy <= universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height) {
 					SetDungeon(universe, xx, yy, 1);
 				} else {
 					SetDungeon(universe, xx, yy, 6);
@@ -943,59 +827,59 @@ void DRLG_CreateThemeRoom(Universe& universe, int themeIndex)
 		}
 	}
 
-	if (leveltype == DTYPE_CATACOMBS) {
-		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y, 8);
-		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y, 7);
-		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 9);
-		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 6);
+	if (universe.leveltype == DTYPE_CATACOMBS) {
+		SetDungeon(universe, universe.themeLoc[themeIndex].x, universe.themeLoc[themeIndex].y, 8);
+		SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1, universe.themeLoc[themeIndex].y, 7);
+		SetDungeon(universe, universe.themeLoc[themeIndex].x, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1, 9);
+		SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1, 6);
 	}
-	if (leveltype == DTYPE_CAVES) {
-		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y, 150);
-		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y, 151);
-		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 152);
-		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 138);
+	if (universe.leveltype == DTYPE_CAVES) {
+		SetDungeon(universe, universe.themeLoc[themeIndex].x, universe.themeLoc[themeIndex].y, 150);
+		SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1, universe.themeLoc[themeIndex].y, 151);
+		SetDungeon(universe, universe.themeLoc[themeIndex].x, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1, 152);
+		SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1, 138);
 	}
-	if (leveltype == DTYPE_HELL) {
-		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y, 9);
-		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y, 16);
-		SetDungeon(universe, themeLoc[themeIndex].x, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 15);
-		SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 12);
+	if (universe.leveltype == DTYPE_HELL) {
+		SetDungeon(universe, universe.themeLoc[themeIndex].x, universe.themeLoc[themeIndex].y, 9);
+		SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1, universe.themeLoc[themeIndex].y, 16);
+		SetDungeon(universe, universe.themeLoc[themeIndex].x, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1, 15);
+		SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1, 12);
 	}
 
-	if (leveltype == DTYPE_CATACOMBS) {
+	if (universe.leveltype == DTYPE_CATACOMBS) {
 		switch (random_(universe, 0, 2)) {
 		case 0:
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 4);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height / 2, 4);
 			break;
 		case 1:
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 5);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width / 2, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1, 5);
 			break;
 		}
 	}
-	if (leveltype == DTYPE_CAVES) {
+	if (universe.leveltype == DTYPE_CAVES) {
 		switch (random_(universe, 0, 2)) {
 		case 0:
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 147);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height / 2, 147);
 			break;
 		case 1:
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 146);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width / 2, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1, 146);
 			break;
 		}
 	}
-	if (leveltype == DTYPE_HELL) {
+	if (universe.leveltype == DTYPE_HELL) {
 		switch (random_(universe, 0, 2)) {
 		case 0:
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2 - 1, 53);
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2, 6);
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2 + 1, 52);
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width - 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height / 2 - 1, 54);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height / 2 - 1, 53);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height / 2, 6);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 1, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height / 2 + 1, 52);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width - 2, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height / 2 - 1, 54);
 			break;
 		case 1:
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2 - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 57);
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 6);
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2 + 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 1, 56);
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 2, 59);
-			SetDungeon(universe, themeLoc[themeIndex].x + themeLoc[themeIndex].width / 2 - 1, themeLoc[themeIndex].y + themeLoc[themeIndex].height - 2, 58);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width / 2 - 1, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1, 57);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width / 2, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1, 6);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width / 2 + 1, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 1, 56);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width / 2, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 2, 59);
+			SetDungeon(universe, universe.themeLoc[themeIndex].x + universe.themeLoc[themeIndex].width / 2 - 1, universe.themeLoc[themeIndex].y + universe.themeLoc[themeIndex].height - 2, 58);
 			break;
 		}
 	}
@@ -1007,11 +891,11 @@ void DRLG_PlaceThemeRooms(Universe& universe, int minSize, int maxSize, int floo
 	int themeW, themeH;
 	int rv2, min, max;
 
-	themeCount = 0;
-	memset(themeLoc, 0, sizeof(*themeLoc));
+	universe.themeCount = 0;
+	memset(universe.themeLoc, 0, sizeof(*universe.themeLoc));
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == floor && !random_(universe, 0, freq) && DRLG_WillThemeRoomFit(universe, floor, i, j, minSize, maxSize, &themeW, &themeH)) {
+			if (universe.dungeon[i][j] == floor && !random_(universe, 0, freq) && DRLG_WillThemeRoomFit(universe, floor, i, j, minSize, maxSize, &themeW, &themeH)) {
 				if (rndSize) {
 					min = minSize - 2;
 					max = maxSize - 2;
@@ -1026,48 +910,48 @@ void DRLG_PlaceThemeRooms(Universe& universe, int minSize, int maxSize, int floo
 					else
 						themeH = min;
 				}
-				themeLoc[themeCount].x = i + 1;
-				themeLoc[themeCount].y = j + 1;
-				themeLoc[themeCount].width = themeW;
-				themeLoc[themeCount].height = themeH;
-				if (leveltype == DTYPE_CAVES)
-					DRLG_RectTrans(2 * i + 20, 2 * j + 20, 2 * (i + themeW) + 15, 2 * (j + themeH) + 15);
+				universe.themeLoc[universe.themeCount].x = i + 1;
+				universe.themeLoc[universe.themeCount].y = j + 1;
+				universe.themeLoc[universe.themeCount].width = themeW;
+				universe.themeLoc[universe.themeCount].height = themeH;
+				if (universe.leveltype == DTYPE_CAVES)
+					DRLG_RectTrans(universe, 2 * i + 20, 2 * j + 20, 2 * (i + themeW) + 15, 2 * (j + themeH) + 15);
 				else
-					DRLG_MRectTrans(i + 1, j + 1, i + themeW, j + themeH);
-				themeLoc[themeCount].ttval = TransVal - 1;
-				DRLG_CreateThemeRoom(universe, themeCount);
-				themeCount++;
+					DRLG_MRectTrans(universe, i + 1, j + 1, i + themeW, j + themeH);
+				universe.themeLoc[universe.themeCount].ttval = universe.TransVal - 1;
+				DRLG_CreateThemeRoom(universe, universe.themeCount);
+				universe.themeCount++;
 			}
 		}
 	}
 }
 #endif
 
-void DRLG_HoldThemeRooms()
+void DRLG_HoldThemeRooms(Universe& universe)
 {
 	int i, x, y, xx, yy;
 
-	for (i = 0; i < themeCount; i++) {
-		for (y = themeLoc[i].y; y < themeLoc[i].y + themeLoc[i].height - 1; y++) {
-			for (x = themeLoc[i].x; x < themeLoc[i].x + themeLoc[i].width - 1; x++) {
+	for (i = 0; i < universe.themeCount; i++) {
+		for (y = universe.themeLoc[i].y; y < universe.themeLoc[i].y + universe.themeLoc[i].height - 1; y++) {
+			for (x = universe.themeLoc[i].x; x < universe.themeLoc[i].x + universe.themeLoc[i].width - 1; x++) {
 				xx = 2 * x + 16;
 				yy = 2 * y + 16;
-				dFlags[xx][yy] |= BFLAG_POPULATED;
-				dFlags[xx + 1][yy] |= BFLAG_POPULATED;
-				dFlags[xx][yy + 1] |= BFLAG_POPULATED;
-				dFlags[xx + 1][yy + 1] |= BFLAG_POPULATED;
+				universe.dFlags[xx][yy] |= BFLAG_POPULATED;
+				universe.dFlags[xx + 1][yy] |= BFLAG_POPULATED;
+				universe.dFlags[xx][yy + 1] |= BFLAG_POPULATED;
+				universe.dFlags[xx + 1][yy + 1] |= BFLAG_POPULATED;
 			}
 		}
 	}
 }
 
-BOOL SkipThemeRoom(int x, int y)
+BOOL SkipThemeRoom(Universe& universe, int x, int y)
 {
 	int i;
 
-	for (i = 0; i < themeCount; i++) {
-		if (x >= themeLoc[i].x - 2 && x <= themeLoc[i].x + themeLoc[i].width + 2
-		    && y >= themeLoc[i].y - 2 && y <= themeLoc[i].y + themeLoc[i].height + 2)
+	for (i = 0; i < universe.themeCount; i++) {
+		if (x >= universe.themeLoc[i].x - 2 && x <= universe.themeLoc[i].x + universe.themeLoc[i].width + 2
+		    && y >= universe.themeLoc[i].y - 2 && y <= universe.themeLoc[i].y + universe.themeLoc[i].height + 2)
 			return FALSE;
 	}
 
@@ -1077,8 +961,8 @@ BOOL SkipThemeRoom(int x, int y)
 void InitLevels(Universe& universe)
 {
 	if (!universe.leveldebug) {
-		currlevel = 0;
-		leveltype = DTYPE_TOWN;
-		setlevel = FALSE;
+		universe.currlevel = 0;
+		universe.leveltype = DTYPE_TOWN;
+		universe.setlevel = FALSE;
 	}
 }

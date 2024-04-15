@@ -179,22 +179,22 @@ void InitQuests(Universe& universe)
 		quests[Q_BETRAYER]._qvar1 = 2;
 }
 
-BOOL QuestStatus(int i)
+BOOL QuestStatus(Universe& universe, int i)
 {
-	if (currlevel != quests[i]._qlevel)
+	if (universe.currlevel != quests[i]._qlevel)
 		return FALSE;
 	if (quests[i]._qactive == QUEST_NOTAVAIL)
 		return FALSE;
 	return TRUE;
 }
 
-void DrawButcher()
+void DrawButcher(Universe& universe)
 {
 	int x, y;
 
-	x = 2 * setpc_x + 16;
-	y = 2 * setpc_y + 16;
-	DRLG_RectTrans(x + 3, y + 3, x + 10, y + 10);
+	x = 2 * universe.setpc_x + 16;
+	y = 2 * universe.setpc_y + 16;
+	DRLG_RectTrans(universe, x + 3, y + 3, x + 10, y + 10);
 }
 
 void DrawSkelKing(int q, int x, int y)
@@ -215,10 +215,10 @@ void DrawWarLord(Universe& universe, int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc_w = rw;
-	setpc_h = rh;
-	setpc_x = x;
-	setpc_y = y;
+	universe.setpc_w = rw;
+	universe.setpc_h = rh;
+	universe.setpc_x = x;
+	universe.setpc_y = y;
 	for (j = y; j < y + rh; j++) {
 		for (i = x; i < x + rw; i++) {
 			if (*sp != 0) {
@@ -246,10 +246,10 @@ void DrawSChamber(Universe& universe, int q, int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc_w = rw;
-	setpc_h = rh;
-	setpc_x = x;
-	setpc_y = y;
+	universe.setpc_w = rw;
+	universe.setpc_h = rh;
+	universe.setpc_x = x;
+	universe.setpc_y = y;
 	for (j = y; j < y + rh; j++) {
 		for (i = x; i < x + rw; i++) {
 			if (*sp != 0) {
@@ -268,7 +268,7 @@ void DrawSChamber(Universe& universe, int q, int x, int y)
 	mem_free_dbg(setp);
 }
 
-void DrawLTBanner(int x, int y)
+void DrawLTBanner(Universe& universe, int x, int y)
 {
 	int rw, rh;
 	int i, j;
@@ -279,14 +279,14 @@ void DrawLTBanner(int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc_w = rw;
-	setpc_h = rh;
-	setpc_x = x;
-	setpc_y = y;
+	universe.setpc_w = rw;
+	universe.setpc_h = rh;
+	universe.setpc_x = x;
+	universe.setpc_y = y;
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
-				pdungeon[x + i][y + j] = *sp;
+				universe.pdungeon[x + i][y + j] = *sp;
 			}
 			sp += 2;
 		}
@@ -294,7 +294,7 @@ void DrawLTBanner(int x, int y)
 	mem_free_dbg(setp);
 }
 
-void DrawBlind(int x, int y)
+void DrawBlind(Universe& universe, int x, int y)
 {
 	int rw, rh;
 	int i, j;
@@ -305,14 +305,14 @@ void DrawBlind(int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc_x = x;
-	setpc_y = y;
-	setpc_w = rw;
-	setpc_h = rh;
+	universe.setpc_x = x;
+	universe.setpc_y = y;
+	universe.setpc_w = rw;
+	universe.setpc_h = rh;
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
-				pdungeon[x + i][y + j] = *sp;
+				universe.pdungeon[x + i][y + j] = *sp;
 			}
 			sp += 2;
 		}
@@ -331,10 +331,10 @@ void DrawBlood(Universe& universe, int x, int y)
 	sp = setp + 2;
 	rh = *sp;
 	sp += 2;
-	setpc_x = x;
-	setpc_y = y;
-	setpc_w = rw;
-	setpc_h = rh;
+	universe.setpc_x = x;
+	universe.setpc_y = y;
+	universe.setpc_w = rw;
+	universe.setpc_h = rh;
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
@@ -351,16 +351,16 @@ void DRLG_CheckQuests(Universe& universe, int x, int y)
 	int i;
 
 	for (i = 0; i < MAXQUESTS; i++) {
-		if (QuestStatus(i)) {
+		if (QuestStatus(universe, i)) {
 			switch (quests[i]._qtype) {
 			case Q_BUTCHER:
-				DrawButcher();
+				DrawButcher(universe);
 				break;
 			case Q_LTBANNER:
-				DrawLTBanner(x, y);
+				DrawLTBanner(universe, x, y);
 				break;
 			case Q_BLIND:
-				DrawBlind(x, y);
+				DrawBlind(universe, x, y);
 				break;
 			case Q_BLOOD:
 				DrawBlood(universe, x, y);
@@ -379,9 +379,9 @@ void DRLG_CheckQuests(Universe& universe, int x, int y)
 	}
 }
 
-void SetReturnLvlPos()
+void SetReturnLvlPos(Universe& universe)
 {
-	switch (setlvlnum) {
+	switch (universe.setlvlnum) {
 	case SL_SKELKING:
 		ReturnLvlX = quests[Q_SKELKING]._qtx + 1;
 		ReturnLvlY = quests[Q_SKELKING]._qty;
@@ -409,12 +409,12 @@ void SetReturnLvlPos()
 	}
 }
 
-void GetReturnLvlPos()
+void GetReturnLvlPos(Universe& universe)
 {
 	if (quests[Q_BETRAYER]._qactive == QUEST_DONE)
 		quests[Q_BETRAYER]._qvar2 = 2;
-	ViewX = ReturnLvlX;
-	ViewY = ReturnLvlY;
-	currlevel = ReturnLvl;
-	leveltype = ReturnLvlT;
+	universe.ViewX = ReturnLvlX;
+	universe.ViewY = ReturnLvlY;
+	universe.currlevel = ReturnLvl;
+	universe.leveltype = ReturnLvlT;
 }

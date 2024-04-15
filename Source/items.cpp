@@ -343,19 +343,19 @@ const int premiumlvladd[SMITH_PREMIUM_ITEMS] = {
 	// clang-format on
 };
 
-BOOL ItemPlace(int xp, int yp)
+BOOL ItemPlace(Universe& universe, int xp, int yp)
 {
-	if (dMonster[xp][yp] != 0)
+	if (universe.dMonster[xp][yp] != 0)
 		return FALSE;
-	if (dPlayer[xp][yp] != 0)
+	if (universe.dPlayer[xp][yp] != 0)
 		return FALSE;
-	if (dItem[xp][yp] != 0)
+	if (universe.dItem[xp][yp] != 0)
 		return FALSE;
-	if (dObject[xp][yp] != 0)
+	if (universe.dObject[xp][yp] != 0)
 		return FALSE;
-	if (dFlags[xp][yp] & BFLAG_POPULATED)
+	if (universe.dFlags[xp][yp] & BFLAG_POPULATED)
 		return FALSE;
-	if (nSolidTable[dPiece[xp][yp]])
+	if (universe.nSolidTable[universe.dPiece[xp][yp]])
 		return FALSE;
 
 	return TRUE;
@@ -375,13 +375,13 @@ void AddInitItems(Universe& universe)
 		itemactive[numitems] = i;
 		x = random_(universe, 12, 80) + 16;
 		y = random_(universe, 12, 80) + 16;
-		while (!ItemPlace(x, y)) {
+		while (!ItemPlace(universe, x, y)) {
 			x = random_(universe, 12, 80) + 16;
 			y = random_(universe, 12, 80) + 16;
 		}
 		item[i]._ix = x;
 		item[i]._iy = y;
-		dItem[x][y] = i + 1;
+		universe.dItem[x][y] = i + 1;
 		item[i]._iSeed = GetRndSeed(universe);
 		SetRndSeed(universe, item[i]._iSeed);
 #ifdef HELLFIRE
@@ -392,10 +392,10 @@ void AddInitItems(Universe& universe)
 		item[i]._iCreateInfo = curlv + CF_PREGEN;
 #else
 		if (random_(universe, 12, 2) != 0)
-			GetItemAttrs(universe, i, IDI_HEAL, currlevel);
+			GetItemAttrs(universe, i, IDI_HEAL, universe.currlevel);
 		else
-			GetItemAttrs(universe, i, IDI_MANA, currlevel);
-		item[i]._iCreateInfo = currlevel + CF_PREGEN;
+			GetItemAttrs(universe, i, IDI_MANA, universe.currlevel);
+		item[i]._iCreateInfo = universe.currlevel + CF_PREGEN;
 #endif
 		SetupItem(universe, i);
 		item[i]._iAnimFrame = item[i]._iAnimLen;
@@ -430,22 +430,22 @@ void InitItems(Universe& universe)
 		itemactive[i] = 0;
 	}
 
-	if (!setlevel) {
+	if (!universe.setlevel) {
 		s = GetRndSeed(universe); /* unused */
-		if (QuestStatus(Q_ROCK))
+		if (QuestStatus(universe, Q_ROCK))
 			SpawnRock(universe);
-		if (QuestStatus(Q_ANVIL))
-			SpawnQuestItem(universe, IDI_ANVIL, 2 * setpc_x + 27, 2 * setpc_y + 27, 0, 1);
+		if (QuestStatus(universe, Q_ANVIL))
+			SpawnQuestItem(universe, IDI_ANVIL, 2 * universe.setpc_x + 27, 2 * universe.setpc_y + 27, 0, 1);
 #ifdef HELLFIRE
-		if (UseCowFarmer && currlevel == 20)
+		if (UseCowFarmer && universe.currlevel == 20)
 			SpawnQuestItem(universe, IDI_BROWNSUIT, 25, 25, 3, 1);
-		if (UseCowFarmer && currlevel == 19)
+		if (UseCowFarmer && universe.currlevel == 19)
 			SpawnQuestItem(universe, IDI_GREYSUIT, 25, 25, 3, 1);
 #endif
-		if (currlevel > 0 && currlevel < 16)
+		if (universe.currlevel > 0 && universe.currlevel < 16)
 			AddInitItems(universe);
 #ifdef HELLFIRE
-		if (currlevel >= 21 && currlevel <= 23)
+		if (universe.currlevel >= 21 && universe.currlevel <= 23)
 			SpawnNote();
 #endif
 	}
@@ -499,42 +499,42 @@ void SetPlrHandGoldCurs(ItemStruct *h)
 		h->_iCurs = ICURS_GOLD_MEDIUM;
 }
 
-BOOL ItemSpaceOk(int i, int j)
+BOOL ItemSpaceOk(Universe& universe, int i, int j)
 {
 	int oi;
 
 	if (i < 0 || i >= MAXDUNX || j < 0 || j >= MAXDUNY)
 		return FALSE;
 
-	if (dMonster[i][j] != 0)
+	if (universe.dMonster[i][j] != 0)
 		return FALSE;
 
-	if (dPlayer[i][j] != 0)
+	if (universe.dPlayer[i][j] != 0)
 		return FALSE;
 
-	if (dItem[i][j] != 0)
+	if (universe.dItem[i][j] != 0)
 		return FALSE;
 
-	if (dObject[i][j] != 0) {
-		oi = dObject[i][j] > 0 ? dObject[i][j] - 1 : -(dObject[i][j] + 1);
+	if (universe.dObject[i][j] != 0) {
+		oi = universe.dObject[i][j] > 0 ? universe.dObject[i][j] - 1 : -(universe.dObject[i][j] + 1);
 		if (object[oi]._oSolidFlag)
 			return FALSE;
 	}
 
-	if (dObject[i + 1][j + 1] > 0 && object[dObject[i + 1][j + 1] - 1]._oSelFlag != 0) /// BUGFIX: check for dObject OOB
+	if (universe.dObject[i + 1][j + 1] > 0 && object[universe.dObject[i + 1][j + 1] - 1]._oSelFlag != 0) /// BUGFIX: check for universe.dObject OOB
 		return FALSE;
 
-	if (dObject[i + 1][j + 1] < 0 && object[-(dObject[i + 1][j + 1] + 1)]._oSelFlag != 0) /// BUGFIX: check for dObject OOB
+	if (universe.dObject[i + 1][j + 1] < 0 && object[-(universe.dObject[i + 1][j + 1] + 1)]._oSelFlag != 0) /// BUGFIX: check for universe.dObject OOB
 		return FALSE;
 
-	if (dObject[i + 1][j] > 0 /// BUGFIX: check for dObject OOB
-	    && dObject[i][j + 1] > 0 /// BUGFIX: check for dObject OOB
-	    && object[dObject[i + 1][j] - 1]._oSelFlag != 0
-	    && object[dObject[i][j + 1] - 1]._oSelFlag != 0) {
+	if (universe.dObject[i + 1][j] > 0 /// BUGFIX: check for universe.dObject OOB
+	    && universe.dObject[i][j + 1] > 0 /// BUGFIX: check for universe.dObject OOB
+	    && object[universe.dObject[i + 1][j] - 1]._oSelFlag != 0
+	    && object[universe.dObject[i][j + 1] - 1]._oSelFlag != 0) {
 		return FALSE;
 	}
 
-	return !nSolidTable[dPiece[i][j]];
+	return !universe.nSolidTable[universe.dPiece[i][j]];
 }
 
 BOOL GetItemSpace(Universe& universe, int x, int y, char inum)
@@ -547,7 +547,7 @@ BOOL GetItemSpace(Universe& universe, int x, int y, char inum)
 	for (j = y - 1; j <= y + 1; j++) {
 		xx = 0;
 		for (i = x - 1; i <= x + 1; i++) {
-			itemhold[xx][yy] = ItemSpaceOk(i, j);
+			itemhold[xx][yy] = ItemSpaceOk(universe, i, j);
 			xx++;
 		}
 		yy++;
@@ -586,7 +586,7 @@ BOOL GetItemSpace(Universe& universe, int x, int y, char inum)
 	yy += y - 1;
 	item[inum]._ix = xx;
 	item[inum]._iy = yy;
-	dItem[xx][yy] = inum + 1;
+	universe.dItem[xx][yy] = inum + 1;
 
 	return TRUE;
 }
@@ -602,10 +602,10 @@ void GetSuperItemSpace(Universe& universe, int x, int y, char inum)
 				yy = y + j;
 				for (i = -k; i <= k; i++) {
 					xx = i + x;
-					if (ItemSpaceOk(xx, yy)) {
+					if (ItemSpaceOk(universe, xx, yy)) {
 						item[inum]._ix = xx;
 						item[inum]._iy = yy;
-						dItem[xx][yy] = inum + 1;
+						universe.dItem[xx][yy] = inum + 1;
 						return;
 					}
 				}
@@ -614,7 +614,7 @@ void GetSuperItemSpace(Universe& universe, int x, int y, char inum)
 	}
 }
 
-void GetSuperItemLoc(int x, int y, int &xx, int &yy)
+void GetSuperItemLoc(Universe& universe, int x, int y, int &xx, int &yy)
 {
 	int i, j, k;
 
@@ -623,7 +623,7 @@ void GetSuperItemLoc(int x, int y, int &xx, int &yy)
 			yy = y + j;
 			for (i = -k; i <= k; i++) {
 				xx = i + x;
-				if (ItemSpaceOk(xx, yy)) {
+				if (ItemSpaceOk(universe, xx, yy)) {
 					return;
 				}
 			}
@@ -866,11 +866,11 @@ void GetItemAttrs(Universe& universe, int i, int idata, int lvl)
 
 	if (item[i]._itype == ITYPE_GOLD) {
 		if (universe.gnDifficulty == DIFF_NORMAL)
-			rndv = 5 * currlevel + random_(universe, 21, 10 * currlevel);
+			rndv = 5 * universe.currlevel + random_(universe, 21, 10 * universe.currlevel);
 		if (universe.gnDifficulty == DIFF_NIGHTMARE)
-			rndv = 5 * (currlevel + 16) + random_(universe, 21, 10 * (currlevel + 16));
+			rndv = 5 * (universe.currlevel + 16) + random_(universe, 21, 10 * (universe.currlevel + 16));
 		if (universe.gnDifficulty == DIFF_HELL)
-			rndv = 5 * (currlevel + 32) + random_(universe, 21, 10 * (currlevel + 32));
+			rndv = 5 * (universe.currlevel + 32) + random_(universe, 21, 10 * (universe.currlevel + 32));
 #else
 	item[i]._iFlags = 0;
 	item[i]._iDamAcFlags = 0;
@@ -890,7 +890,7 @@ void GetItemAttrs(Universe& universe, int i, int idata, int lvl)
 		else if (universe.gnDifficulty == DIFF_HELL)
 			rndv = 5 * (itemlevel + 32) + random_(universe, 21, 10 * (itemlevel + 32));
 #endif
-		if (leveltype == DTYPE_HELL)
+		if (universe.leveltype == DTYPE_HELL)
 			rndv += rndv >> 3;
 		if (rndv > GOLD_MAX_LIMIT)
 			rndv = GOLD_MAX_LIMIT;
@@ -1568,7 +1568,7 @@ int RndUItem(Universe& universe, int m)
 #ifdef HELLFIRE
 			if (2 * curlv < AllItemsList[i].iMinMLvl)
 #else
-			if (2 * currlevel < AllItemsList[i].iMinMLvl)
+			if (2 * universe.currlevel < AllItemsList[i].iMinMLvl)
 #endif
 				okflag = FALSE;
 		}
@@ -1613,7 +1613,7 @@ int RndAllItems(Universe& universe)
 #ifdef HELLFIRE
 		if (AllItemsList[i].iRnd != IDROP_NEVER && 2 * curlv >= AllItemsList[i].iMinMLvl && ri < 512) {
 #else
-		if (AllItemsList[i].iRnd != IDROP_NEVER && 2 * currlevel >= AllItemsList[i].iMinMLvl) {
+		if (AllItemsList[i].iRnd != IDROP_NEVER && 2 * universe.currlevel >= AllItemsList[i].iMinMLvl) {
 #endif
 			ril[ri] = i;
 			ri++;
@@ -1645,7 +1645,7 @@ int RndTypeItems(Universe& universe, int itype, int imid)
 #ifdef HELLFIRE
 		if (lvl << 1 < AllItemsList[i].iMinMLvl)
 #else
-		if (currlevel << 1 < AllItemsList[i].iMinMLvl)
+		if (universe.currlevel << 1 < AllItemsList[i].iMinMLvl)
 #endif
 			okflag = FALSE;
 		if (AllItemsList[i].itype != itype)
@@ -1752,7 +1752,7 @@ void SpawnUnique(Universe& universe, int uid, int x, int y)
 #ifdef HELLFIRE
 	GetItemAttrs(universe, ii, itype, curlv);
 #else
-	GetItemAttrs(universe, ii, itype, currlevel);
+	GetItemAttrs(universe, ii, itype, universe.currlevel);
 #endif
 	GetUniqueItem(universe, ii, uid);
 	SetupItem(universe, ii);
@@ -1893,7 +1893,7 @@ void CreateItem(Universe& universe, int uid, int x, int y)
 #ifdef HELLFIRE
 		GetItemAttrs(universe, ii, idx, curlv);
 #else
-		GetItemAttrs(universe, ii, idx, currlevel);
+		GetItemAttrs(universe, ii, idx, universe.currlevel);
 #endif
 		GetUniqueItem(universe, ii, uid);
 		SetupItem(universe, ii);
@@ -1922,7 +1922,7 @@ void CreateRndItem(Universe& universe, int x, int y, BOOL onlygood, BOOL sendmsg
 #ifdef HELLFIRE
 		SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * curlv, 1, onlygood, FALSE, delta);
 #else
-		SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * currlevel, 1, onlygood, FALSE, delta);
+		SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * universe.currlevel, 1, onlygood, FALSE, delta);
 #endif
 		numitems++;
 	}
@@ -1993,7 +1993,7 @@ void CreateRndUseful(Universe& universe, int pnum, int x, int y, BOOL sendmsg)
 #ifdef HELLFIRE
 		SetupAllUseful(ii, GetRndSeed(universe), curlv);
 #else
-		SetupAllUseful(universe, ii, GetRndSeed(universe), currlevel);
+		SetupAllUseful(universe, ii, GetRndSeed(universe), universe.currlevel);
 #endif
 		numitems++;
 	}
@@ -2022,7 +2022,7 @@ void CreateTypeItem(Universe& universe, int x, int y, BOOL onlygood, int itype, 
 #ifdef HELLFIRE
 		SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * curlv, 1, onlygood, FALSE, delta);
 #else
-		SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * currlevel, 1, onlygood, FALSE, delta);
+		SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * universe.currlevel, 1, onlygood, FALSE, delta);
 #endif
 
 		numitems++;
@@ -2048,7 +2048,7 @@ void SpawnQuestItem(Universe& universe, int itemid, int x, int y, int randarea, 
 			failed = FALSE;
 			for (i = 0; i < randarea && !failed; i++) {
 				for (j = 0; j < randarea && !failed; j++) {
-					failed = !ItemSpaceOk(i + x, j + y);
+					failed = !ItemSpaceOk(universe, i + x, j + y);
 				}
 			}
 			if (!failed)
@@ -2062,11 +2062,11 @@ void SpawnQuestItem(Universe& universe, int itemid, int x, int y, int randarea, 
 		itemactive[numitems] = i;
 		item[i]._ix = x;
 		item[i]._iy = y;
-		dItem[x][y] = i + 1;
+		universe.dItem[x][y] = i + 1;
 #ifdef HELLFIRE
 		GetItemAttrs(universe, i, itemid, curlv);
 #else
-		GetItemAttrs(universe, i, itemid, currlevel);
+		GetItemAttrs(universe, i, itemid, universe.currlevel);
 #endif
 		SetupItem(universe, i);
 		item[i]._iPostDraw = TRUE;
@@ -2101,11 +2101,11 @@ void SpawnRock(Universe& universe)
 		yy = object[ii]._oy;
 		item[i]._ix = xx;
 		item[i]._iy = yy;
-		dItem[xx][item[i]._iy] = i + 1;
+		universe.dItem[xx][item[i]._iy] = i + 1;
 #ifdef HELLFIRE
 		GetItemAttrs(universe, i, IDI_ROCK, curlv);
 #else
-		GetItemAttrs(universe, i, IDI_ROCK, currlevel);
+		GetItemAttrs(universe, i, IDI_ROCK, universe.currlevel);
 #endif
 		SetupItem(universe, i);
 		item[i]._iSelFlag = 2;
@@ -2251,7 +2251,7 @@ void CreateSpellBook(Universe& universe, int x, int y, int ispell, BOOL sendmsg,
 #ifdef HELLFIRE
 			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * lvl, 1, TRUE, FALSE, delta);
 #else
-			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * currlevel, 1, TRUE, FALSE, delta);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * universe.currlevel, 1, TRUE, FALSE, delta);
 #endif
 			if (item[ii]._iMiscId == IMISC_BOOK && item[ii]._iSpell == ispell)
 				done = TRUE;
@@ -2283,7 +2283,7 @@ void CreateMagicArmor(Universe& universe, int x, int y, int imisc, int icurs, BO
 #ifdef HELLFIRE
 			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * curlv, 1, TRUE, FALSE, delta);
 #else
-			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * currlevel, 1, TRUE, FALSE, delta);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * universe.currlevel, 1, TRUE, FALSE, delta);
 #endif
 			if (item[ii]._iCurs == icurs)
 				done = TRUE;
@@ -2326,7 +2326,7 @@ void CreateMagicWeapon(Universe& universe, int x, int y, int imisc, int icurs, B
 #ifdef HELLFIRE
 			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * curlv, 1, TRUE, FALSE, delta);
 #else
-			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * currlevel, 1, TRUE, FALSE, delta);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), 2 * universe.currlevel, 1, TRUE, FALSE, delta);
 #endif
 			if (item[ii]._iCurs == icurs)
 				done = TRUE;

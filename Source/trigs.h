@@ -8,6 +8,7 @@
 
 #include "structs.h"
 #include "types.h"
+#include "Source/universe/universe.h"
 
 extern BOOL trigflag;
 extern int numtrigs;
@@ -15,14 +16,14 @@ extern TriggerStruct trigs[MAXTRIGGERS];
 extern int TWarpFrom;
 
 void InitNoTriggers();
-void InitL1Triggers();
-void InitL2Triggers();
-void InitL3Triggers();
-void InitL4Triggers();
+void InitL1Triggers(Universe& universe);
+void InitL2Triggers(Universe& universe);
+void InitL3Triggers(Universe& universe);
+void InitL4Triggers(Universe& universe);
 void InitSKingTriggers();
 void InitSChambTriggers();
 void InitPWaterTriggers();
 void InitVPTriggers();
-void Freeupstairs();
+void Freeupstairs(Universe& universe);
 
 #endif /* __TRIGS_H__ */

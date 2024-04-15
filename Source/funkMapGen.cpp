@@ -50,7 +50,7 @@ Scanner *scanner;
 void InitEngine(Universe& universe)
 {
 	universe.gnDifficulty = DIFF_NORMAL;
-	leveltype = DTYPE_NONE;
+	universe.leveltype = DTYPE_NONE;
 
 	DRLG_PreLoadL2SP();
 	DRLG_PreLoadDiabQuads();
@@ -84,44 +84,44 @@ void ShutDownEngine()
 void InitiateLevel(Universe& universe, int level)
 {
 	POI = { -1, -1 };
-	currlevel = level;
+	universe.currlevel = level;
 
 	universe.oobread = false;
 	universe.oobwrite = false;
 
 	if (level > 12)
-		leveltype = DTYPE_HELL;
+		universe.leveltype = DTYPE_HELL;
 	else if (level > 8)
-		leveltype = DTYPE_CAVES;
+		universe.leveltype = DTYPE_CAVES;
 	else if (level > 4)
-		leveltype = DTYPE_CATACOMBS;
+		universe.leveltype = DTYPE_CATACOMBS;
 	else if (level > 0)
-		leveltype = DTYPE_CATHEDRAL;
+		universe.leveltype = DTYPE_CATHEDRAL;
 
-	InitVision();
+	InitVision(universe);
 
-	if (leveltype == previousLevelType)
+	if (universe.leveltype == previousLevelType)
 		return;
-	previousLevelType = leveltype;
+	previousLevelType = universe.leveltype;
 
-	LoadLvlGFX();
-	FillSolidBlockTbls();
+	LoadLvlGFX(universe);
+	FillSolidBlockTbls(universe);
 }
 
-void InitTriggers()
+void InitTriggers(Universe& universe)
 {
-	if (leveltype == DTYPE_CATHEDRAL)
-		InitL1Triggers();
-	else if (leveltype == DTYPE_CATACOMBS)
-		InitL2Triggers();
-	else if (leveltype == DTYPE_CAVES)
-		InitL3Triggers();
-	else if (leveltype == DTYPE_HELL)
-		InitL4Triggers();
-	Freeupstairs();
+	if (universe.leveltype == DTYPE_CATHEDRAL)
+		InitL1Triggers(universe);
+	else if (universe.leveltype == DTYPE_CATACOMBS)
+		InitL2Triggers(universe);
+	else if (universe.leveltype == DTYPE_CAVES)
+		InitL3Triggers(universe);
+	else if (universe.leveltype == DTYPE_HELL)
+		InitL4Triggers(universe);
+	Freeupstairs(universe);
 }
 
-void FindStairCordinates()
+void FindStairCordinates(Universe& universe)
 {
 	Spawn = { -1, -1 };
 	StairsDown = { -1, -1 };
@@ -130,13 +130,13 @@ void FindStairCordinates()
 		if (trigs[i]._tmsg == WM_DIABNEXTLVL) {
 			StairsDown = { trigs[i]._tx, trigs[i]._ty };
 		} else if (trigs[i]._tmsg == WM_DIABPREVLVL) {
-			if (leveltype == DTYPE_CATHEDRAL)
+			if (universe.leveltype == DTYPE_CATHEDRAL)
 				Spawn = { trigs[i]._tx + 1, trigs[i]._ty + 2 };
-			else if (leveltype == DTYPE_CATACOMBS)
+			else if (universe.leveltype == DTYPE_CATACOMBS)
 				Spawn = { trigs[i]._tx + 1, trigs[i]._ty + 1 };
-			else if (leveltype == DTYPE_CAVES)
+			else if (universe.leveltype == DTYPE_CAVES)
 				Spawn = { trigs[i]._tx, trigs[i]._ty + 1 };
-			else if (leveltype == DTYPE_HELL)
+			else if (universe.leveltype == DTYPE_HELL)
 				Spawn = { trigs[i]._tx + 1, trigs[i]._ty };
 		}
 	}
@@ -147,8 +147,8 @@ void CreateDungeonContent(Universe& universe)
 	InitDungeonMonsters(universe);
 
 	InitThemes(universe);
-	SetRndSeed(universe, universe.glSeedTbl[currlevel]);
-	HoldThemeRooms();
+	SetRndSeed(universe, universe.glSeedTbl[universe.currlevel]);
+	HoldThemeRooms(universe);
 	GetRndSeed(universe);
 
 	InitMonsters(universe);
@@ -162,31 +162,31 @@ void CreateDungeonContent(Universe& universe)
 
 std::optional<uint32_t> CreateDungeon(Universe& universe, DungeonMode mode)
 {
-	uint32_t lseed = universe.glSeedTbl[currlevel];
+	uint32_t lseed = universe.glSeedTbl[universe.currlevel];
 	std::optional<uint32_t> levelSeed = std::nullopt;
-	if (leveltype == DTYPE_CATHEDRAL)
+	if (universe.leveltype == DTYPE_CATHEDRAL)
 		levelSeed = CreateL5Dungeon(universe, lseed, 0, mode);
-	if (leveltype == DTYPE_CATACOMBS)
+	if (universe.leveltype == DTYPE_CATACOMBS)
 		levelSeed = CreateL2Dungeon(universe, lseed, 0, mode);
-	if (leveltype == DTYPE_CAVES)
+	if (universe.leveltype == DTYPE_CAVES)
 		levelSeed = CreateL3Dungeon(universe, lseed, 0, mode);
-	if (leveltype == DTYPE_HELL)
+	if (universe.leveltype == DTYPE_HELL)
 		levelSeed = CreateL4Dungeon(universe, lseed, 0, mode);
 
 	if (mode == DungeonMode::Full || mode == DungeonMode::NoContent || mode == DungeonMode::BreakOnFailureOrNoContent) {
-		InitTriggers();
+		InitTriggers(universe);
 
 		if (mode != DungeonMode::NoContent && mode != DungeonMode::BreakOnFailureOrNoContent)
 			CreateDungeonContent(universe);
 
-		if (currlevel == 15) {
+		if (universe.currlevel == 15) {
 			// Locate Lazarus warp point
 			Point point = { quests[Q_BETRAYER]._qtx, quests[Q_BETRAYER]._qty };
-			if (!nSolidTable[dPiece[point.x][point.y]])
+			if (!universe.nSolidTable[universe.dPiece[point.x][point.y]])
 				POI = point;
 		}
 
-		FindStairCordinates();
+		FindStairCordinates(universe);
 	}
 
 	if (Config.verbose && universe.oobwrite)
@@ -390,7 +390,7 @@ void ParseArguments(int argc, char **argv)
 void InitDungeonMonsters(Universe& universe)
 {
 	InitLevelMonsters(universe);
-	SetRndSeed(universe, universe.glSeedTbl[currlevel]);
+	SetRndSeed(universe, universe.glSeedTbl[universe.currlevel]);
 	GetLevelMTypes(universe);
 }
 
@@ -425,7 +425,7 @@ int main(int argc, char **argv)
 				continue;
 
 			if (Config.asciiLevels)
-				printAsciiLevel();
+				printAsciiLevel(universe);
 			if (Config.exportLevels)
 				ExportDun(universe, seed);
 		}

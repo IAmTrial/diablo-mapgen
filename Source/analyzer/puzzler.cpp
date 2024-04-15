@@ -20,7 +20,7 @@ void CreateItemsFromObject(Universe& universe, int oid)
 	case OBJ_TCHEST2:
 	case OBJ_TCHEST3:
 		SetRndSeed(universe, object[oid]._oRndSeed);
-		if (setlevel) {
+		if (universe.setlevel) {
 			for (int j = 0; j < object[oid]._oVar1; j++) {
 				CreateRndItem(universe, object[oid]._ox, object[oid]._oy, TRUE, TRUE, FALSE);
 			}
@@ -68,13 +68,13 @@ void CreateItemsFromObject(Universe& universe, int oid)
 	case OBJ_WARARMOR: {
 		SetRndSeed(universe, object[oid]._oRndSeed);
 		BOOL uniqueRnd = random_(universe, 0, 2);
-		if (currlevel <= 5) {
+		if (universe.currlevel <= 5) {
 			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, TRUE, ITYPE_LARMOR, IMISC_NONE, TRUE, FALSE);
-		} else if (currlevel >= 6 && currlevel <= 9) {
+		} else if (universe.currlevel >= 6 && universe.currlevel <= 9) {
 			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, uniqueRnd, ITYPE_MARMOR, IMISC_NONE, TRUE, FALSE);
-		} else if (currlevel >= 10 && currlevel <= 12) {
+		} else if (universe.currlevel >= 10 && universe.currlevel <= 12) {
 			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, FALSE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
-		} else if (currlevel >= 13 && currlevel <= 16) {
+		} else if (universe.currlevel >= 13 && universe.currlevel <= 16) {
 			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, TRUE, ITYPE_HARMOR, IMISC_NONE, TRUE, FALSE);
 		}
 	} break;
@@ -98,7 +98,7 @@ void CreateItemsFromObject(Universe& universe, int oid)
 			break;
 		}
 
-		if (leveltype > 1)
+		if (universe.leveltype > 1)
 			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, TRUE, weaponType, IMISC_NONE, TRUE, FALSE);
 		else
 			CreateTypeItem(universe, object[oid]._ox, object[oid]._oy, FALSE, weaponType, IMISC_NONE, TRUE, FALSE);

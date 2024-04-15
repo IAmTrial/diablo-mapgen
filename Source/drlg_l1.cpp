@@ -491,14 +491,14 @@ void DRLG_InitL5Vals()
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dPiece[i][j] == 77) {
+			if (universe.dPiece[i][j] == 77) {
 				pc = 1;
-			} else if (dPiece[i][j] == 80) {
+			} else if (universe.dPiece[i][j] == 80) {
 				pc = 2;
 			} else {
 				continue;
 			}
-			dSpecial[i][j] = pc;
+			universe.dSpecial[i][j] = pc;
 		}
 	}
 }
@@ -1030,23 +1030,23 @@ static int DRLG_PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmin, 
 	}
 
 	if (miniset == PWATERIN) {
-		t = TransVal;
-		TransVal = 0;
-		DRLG_MRectTrans(sx, sy + 2, sx + 5, sy + 4);
-		TransVal = t;
+		t = universe.TransVal;
+		universe.TransVal = 0;
+		DRLG_MRectTrans(universe, sx, sy + 2, sx + 5, sy + 4);
+		universe.TransVal = t;
 
 		quests[Q_PWATER]._qtx = 2 * sx + 21;
 		quests[Q_PWATER]._qty = 2 * sy + 22;
 	}
 
 	if (setview == TRUE) {
-		ViewX = 2 * sx + 19;
-		ViewY = 2 * sy + 20;
+		universe.ViewX = 2 * sx + 19;
+		universe.ViewY = 2 * sy + 20;
 	}
 
 	if (ldir == 0) {
-		LvlViewX = 2 * sx + 19;
-		LvlViewY = 2 * sy + 20;
+		universe.LvlViewX = 2 * sx + 19;
+		universe.LvlViewY = 2 * sy + 20;
 	}
 
 	if (sx < cx && sy < cy)
@@ -1115,10 +1115,10 @@ static void DRLG_L1Pass3(Universe& universe)
 	for (j = 0; j < MAXDUNY; j += 2)
 	{
 		for (i = 0; i < MAXDUNX; i += 2) {
-			dPiece[i][j] = v1;
-			dPiece[i + 1][j] = v2;
-			dPiece[i][j + 1] = v3;
-			dPiece[i + 1][j + 1] = v4;
+			universe.dPiece[i][j] = v1;
+			universe.dPiece[i + 1][j] = v2;
+			universe.dPiece[i][j + 1] = v3;
+			universe.dPiece[i + 1][j + 1] = v4;
 		}
 	}
 
@@ -1154,10 +1154,10 @@ static void DRLG_L1Pass3(Universe& universe)
 			v3 = *((WORD *)&pMegaTiles[lv * 8] + 2) + 1;
 			v4 = *((WORD *)&pMegaTiles[lv * 8] + 3) + 1;
 #endif
-			dPiece[xx][yy] = v1;
-			dPiece[xx + 1][yy] = v2;
-			dPiece[xx][yy + 1] = v3;
-			dPiece[xx + 1][yy + 1] = v4;
+			universe.dPiece[xx][yy] = v1;
+			universe.dPiece[xx + 1][yy] = v2;
+			universe.dPiece[xx][yy + 1] = v3;
+			universe.dPiece[xx + 1][yy + 1] = v4;
 			xx += 2;
 		}
 		yy += 2;
@@ -1167,15 +1167,15 @@ static void DRLG_L1Pass3(Universe& universe)
 static void DRLG_LoadL1SP(Universe& universe)
 {
 	universe.L5setloadflag = FALSE;
-	if (QuestStatus(Q_BUTCHER)) {
+	if (QuestStatus(universe, Q_BUTCHER)) {
 		universe.L5pSetPiece = LoadFileInMem("Levels\\L1Data\\rnd6.DUN", NULL);
 		universe.L5setloadflag = TRUE;
 	}
-	if (QuestStatus(Q_SKELKING) && universe.gbMaxPlayers == 1) {
+	if (QuestStatus(universe, Q_SKELKING) && universe.gbMaxPlayers == 1) {
 		universe.L5pSetPiece = LoadFileInMem("Levels\\L1Data\\SKngDO.DUN", NULL);
 		universe.L5setloadflag = TRUE;
 	}
-	if (QuestStatus(Q_LTBANNER)) {
+	if (QuestStatus(universe, Q_LTBANNER)) {
 		universe.L5pSetPiece = LoadFileInMem("Levels\\L1Data\\Banner2.DUN", NULL);
 		universe.L5setloadflag = TRUE;
 	}
@@ -1190,13 +1190,13 @@ void DRLG_Init_Globals(Universe& universe)
 {
 	char c;
 
-	memset(dFlags, 0, sizeof(dFlags));
-	memset(dPlayer, 0, sizeof(dPlayer));
-	memset(dMonster, 0, sizeof(dMonster));
-	memset(dDead, 0, sizeof(dDead));
-	memset(dObject, 0, sizeof(dObject));
-	memset(dItem, 0, sizeof(dItem));
-	memset(dMissile, 0, sizeof(dMissile));
+	memset(universe.dFlags, 0, sizeof(universe.dFlags));
+	memset(universe.dPlayer, 0, sizeof(universe.dPlayer));
+	memset(universe.dMonster, 0, sizeof(universe.dMonster));
+	memset(universe.dDead, 0, sizeof(universe.dDead));
+	memset(universe.dObject, 0, sizeof(universe.dObject));
+	memset(universe.dItem, 0, sizeof(universe.dItem));
+	memset(universe.dMissile, 0, sizeof(universe.dMissile));
 	if (!lightflag) {
 		if (universe.light4flag)
 			c = 3;
@@ -1205,47 +1205,47 @@ void DRLG_Init_Globals(Universe& universe)
 	} else {
 		c = 0;
 	}
-	memset(dLight, c, sizeof(dLight));
+	memset(universe.dLight, c, sizeof(universe.dLight));
 }
 
-static void DRLG_InitL1Vals()
+static void DRLG_InitL1Vals(Universe& universe)
 {
 	int i, j, pc;
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dPiece[i][j] == 12) {
+			if (universe.dPiece[i][j] == 12) {
 				pc = 1;
-			} else if (dPiece[i][j] == 11) {
+			} else if (universe.dPiece[i][j] == 11) {
 				pc = 2;
-			} else if (dPiece[i][j] == 71) {
+			} else if (universe.dPiece[i][j] == 71) {
 				pc = 1;
-			} else if (dPiece[i][j] == 259) {
+			} else if (universe.dPiece[i][j] == 259) {
 				pc = 5;
-			} else if (dPiece[i][j] == 249) {
+			} else if (universe.dPiece[i][j] == 249) {
 				pc = 2;
-			} else if (dPiece[i][j] == 325) {
+			} else if (universe.dPiece[i][j] == 325) {
 				pc = 2;
-			} else if (dPiece[i][j] == 321) {
+			} else if (universe.dPiece[i][j] == 321) {
 				pc = 1;
-			} else if (dPiece[i][j] == 255) {
+			} else if (universe.dPiece[i][j] == 255) {
 				pc = 4;
-			} else if (dPiece[i][j] == 211) {
+			} else if (universe.dPiece[i][j] == 211) {
 				pc = 1;
-			} else if (dPiece[i][j] == 344) {
+			} else if (universe.dPiece[i][j] == 344) {
 				pc = 2;
-			} else if (dPiece[i][j] == 341) {
+			} else if (universe.dPiece[i][j] == 341) {
 				pc = 1;
-			} else if (dPiece[i][j] == 331) {
+			} else if (universe.dPiece[i][j] == 331) {
 				pc = 2;
-			} else if (dPiece[i][j] == 418) {
+			} else if (universe.dPiece[i][j] == 418) {
 				pc = 1;
-			} else if (dPiece[i][j] == 421) {
+			} else if (universe.dPiece[i][j] == 421) {
 				pc = 2;
 			} else {
 				continue;
 			}
-			dSpecial[i][j] = pc;
+			universe.dSpecial[i][j] = pc;
 		}
 	}
 }
@@ -1256,12 +1256,12 @@ void LoadL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
 
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	universe.dminx = 16;
+	universe.dminy = 16;
+	universe.dmaxx = 96;
+	universe.dmaxy = 96;
 
-	DRLG_InitTrans();
+	DRLG_InitTrans(universe);
 	pLevelMap = LoadFileInMem(sFileName, NULL);
 
 	for (j = 0; j < DMAXY; j++) {
@@ -1290,8 +1290,8 @@ void LoadL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 	}
 
 	DRLG_L1Floor(universe);
-	ViewX = vx;
-	ViewY = vy;
+	universe.ViewX = vx;
+	universe.ViewY = vy;
 	DRLG_L1Pass3(universe);
 	DRLG_Init_Globals(universe);
 	SetMapMonsters(universe, pLevelMap, 0, 0);
@@ -1304,10 +1304,10 @@ void LoadPreL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 	int i, j, rw, rh;
 	BYTE *pLevelMap, *lm;
 
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	universe.dminx = 16;
+	universe.dminy = 16;
+	universe.dmaxx = 96;
+	universe.dmaxy = 96;
 
 	pLevelMap = LoadFileInMem(sFileName, NULL);
 
@@ -1340,7 +1340,7 @@ void LoadPreL1Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			pdungeon[i][j] = GetDungeon(universe, i, j);
+			universe.pdungeon[i][j] = GetDungeon(universe, i, j);
 		}
 	}
 
@@ -2082,10 +2082,10 @@ static void DRLG_L5SetRoom(Universe& universe, int rx1, int ry1)
 	rw = *universe.L5pSetPiece;
 	rh = *(universe.L5pSetPiece + 2);
 
-	setpc_x = rx1;
-	setpc_y = ry1;
-	setpc_w = rw;
-	setpc_h = rh;
+	universe.setpc_x = rx1;
+	universe.setpc_y = ry1;
+	universe.setpc_w = rw;
+	universe.setpc_h = rh;
 
 	sp = universe.L5pSetPiece + 4;
 
@@ -2152,7 +2152,7 @@ static void L5FillChambers(Universe& universe)
 		DRLG_L5GHall(universe, 18, 12, 18, 28);
 
 #ifdef HELLFIRE
-	if (currlevel == 24) {
+	if (universe.currlevel == 24) {
 		if (universe.VR1 || universe.VR2 || universe.VR3) {
 			c = 1;
 			if (!universe.VR1 && universe.VR2 && universe.VR3 && random_(universe, 0, 2) != 0)
@@ -2211,7 +2211,7 @@ static void L5FillChambers(Universe& universe)
 			}
 		}
 	}
-	if (currlevel == 21) {
+	if (universe.currlevel == 21) {
 		if (universe.VR1 || universe.VR2 || universe.VR3) {
 			c = 1;
 			if (!universe.VR1 && universe.VR2 && universe.VR3 && random_(universe, 0, 2) != 0)
@@ -2342,10 +2342,10 @@ void drlg_l1_set_crypt_room(Universe& universe, int rx1, int ry1)
 
 	universe.UberRow = 2 * rx1 + 6;
 	universe.UberCol = 2 * ry1 + 8;
-	setpc_x = rx1;
-	setpc_y = ry1;
-	setpc_w = rw;
-	setpc_h = rh;
+	universe.setpc_x = rx1;
+	universe.setpc_y = ry1;
+	universe.setpc_w = rw;
+	universe.setpc_h = rh;
 	universe.IsUberRoomOpened = 0;
 	universe.dword_577368 = 0;
 	universe.IsUberLeverActivated = 0;
@@ -2372,10 +2372,10 @@ void drlg_l1_set_corner_room(int rx1, int ry1)
 	rw = CornerstoneRoomPattern[0];
 	rh = CornerstoneRoomPattern[1];
 
-	setpc_x = rx1;
-	setpc_y = ry1;
-	setpc_w = rw;
-	setpc_h = rh;
+	universe.setpc_x = rx1;
+	universe.setpc_y = ry1;
+	universe.setpc_w = rw;
+	universe.setpc_h = rh;
 
 	sp = 2;
 
@@ -2395,36 +2395,36 @@ void drlg_l1_set_corner_room(int rx1, int ry1)
 
 static void DRLG_L5FTVR(Universe& universe, int i, int j, int x, int y, int d)
 {
-	if (dTransVal[x][y] || GetDungeon(universe, i, j) != 13) {
+	if (universe.dTransVal[x][y] || GetDungeon(universe, i, j) != 13) {
 		if (d == 1) {
-			dTransVal[x][y] = TransVal;
-			dTransVal[x][y + 1] = TransVal;
+			universe.dTransVal[x][y] = universe.TransVal;
+			universe.dTransVal[x][y + 1] = universe.TransVal;
 		}
 		if (d == 2) {
-			dTransVal[x + 1][y] = TransVal;
-			dTransVal[x + 1][y + 1] = TransVal;
+			universe.dTransVal[x + 1][y] = universe.TransVal;
+			universe.dTransVal[x + 1][y + 1] = universe.TransVal;
 		}
 		if (d == 3) {
-			dTransVal[x][y] = TransVal;
-			dTransVal[x + 1][y] = TransVal;
+			universe.dTransVal[x][y] = universe.TransVal;
+			universe.dTransVal[x + 1][y] = universe.TransVal;
 		}
 		if (d == 4) {
-			dTransVal[x][y + 1] = TransVal;
-			dTransVal[x + 1][y + 1] = TransVal;
+			universe.dTransVal[x][y + 1] = universe.TransVal;
+			universe.dTransVal[x + 1][y + 1] = universe.TransVal;
 		}
 		if (d == 5)
-			dTransVal[x + 1][y + 1] = TransVal;
+			universe.dTransVal[x + 1][y + 1] = universe.TransVal;
 		if (d == 6)
-			dTransVal[x][y + 1] = TransVal;
+			universe.dTransVal[x][y + 1] = universe.TransVal;
 		if (d == 7)
-			dTransVal[x + 1][y] = TransVal;
+			universe.dTransVal[x + 1][y] = universe.TransVal;
 		if (d == 8)
-			dTransVal[x][y] = TransVal;
+			universe.dTransVal[x][y] = universe.TransVal;
 	} else {
-		dTransVal[x][y] = TransVal;
-		dTransVal[x + 1][y] = TransVal;
-		dTransVal[x][y + 1] = TransVal;
-		dTransVal[x + 1][y + 1] = TransVal;
+		universe.dTransVal[x][y] = universe.TransVal;
+		universe.dTransVal[x + 1][y] = universe.TransVal;
+		universe.dTransVal[x][y + 1] = universe.TransVal;
+		universe.dTransVal[x + 1][y + 1] = universe.TransVal;
 		DRLG_L5FTVR(universe, i + 1, j, x + 2, y, 1);
 		DRLG_L5FTVR(universe, i - 1, j, x - 2, y, 2);
 		DRLG_L5FTVR(universe, i, j + 1, x, y + 2, 3);
@@ -2446,9 +2446,9 @@ static void DRLG_L5FloodTVal(Universe& universe)
 		xx = 16;
 
 		for (i = 0; i < DMAXX; i++) {
-			if (GetDungeon(universe, i, j) == 13 && !dTransVal[xx][yy]) {
+			if (GetDungeon(universe, i, j) == 13 && !universe.dTransVal[xx][yy]) {
 				DRLG_L5FTVR(universe, i, j, xx, yy, 0);
-				TransVal++;
+				universe.TransVal++;
 			}
 			xx += 2;
 		}
@@ -2468,26 +2468,26 @@ static void DRLG_L5TransFix(Universe& universe)
 		for (i = 0; i < DMAXX; i++) {
 			// BUGFIX: Should check for `j > 0` first.
 			if (GetDungeon(universe, i, j) == 23 && GetDungeon(universe, i, j - 1) == 18) {
-				dTransVal[xx + 1][yy] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy + 1] = universe.dTransVal[xx][yy];
 			}
 			// BUGFIX: Should check for `i + 1 < DMAXY` first.
 			if (GetDungeon(universe, i, j) == 24 && GetDungeon(universe, i + 1, j) == 19) {
-				dTransVal[xx][yy + 1] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+				universe.dTransVal[xx][yy + 1] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy + 1] = universe.dTransVal[xx][yy];
 			}
 			if (GetDungeon(universe, i, j) == 18) {
-				dTransVal[xx + 1][yy] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy + 1] = universe.dTransVal[xx][yy];
 			}
 			if (GetDungeon(universe, i, j) == 19) {
-				dTransVal[xx][yy + 1] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+				universe.dTransVal[xx][yy + 1] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy + 1] = universe.dTransVal[xx][yy];
 			}
 			if (GetDungeon(universe, i, j) == 20) {
-				dTransVal[xx + 1][yy] = dTransVal[xx][yy];
-				dTransVal[xx][yy + 1] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx][yy + 1] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy + 1] = universe.dTransVal[xx][yy];
 			}
 			xx += 2;
 		}
@@ -2500,7 +2500,7 @@ static void DRLG_L5DirtFix(Universe& universe)
 	int i, j;
 
 #ifdef HELLFIRE
-	if (currlevel < 21) {
+	if (universe.currlevel < 21) {
 		for (j = 0; j < DMAXY - 1; j++) {
 			for (i = 0; i < DMAXX - 1; i++) {
 				if (GetDungeon(universe, i, j) == 21 && GetDungeon(universe, i + 1, j) != 19)
@@ -2576,7 +2576,7 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 	LONG minarea;
 	BOOL doneflag;
 
-	switch (currlevel) {
+	switch (universe.currlevel) {
 	case 1:
 		minarea = 533;
 		break;
@@ -2597,7 +2597,7 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 	std::optional<uint32_t> levelSeed = std::nullopt;
 
 	do {
-		DRLG_InitTrans();
+		DRLG_InitTrans(universe);
 
 		bool failed;
 		do {
@@ -2619,17 +2619,17 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 
 		doneflag = TRUE;
 
-		if (QuestStatus(Q_PWATER)) {
+		if (QuestStatus(universe, Q_PWATER)) {
 			if (entry == ENTRY_MAIN) {
 				if (DRLG_PlaceMiniSet(universe, PWATERIN, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
 			} else {
 				if (DRLG_PlaceMiniSet(universe, PWATERIN, 1, 1, 0, 0, FALSE, -1, 0) < 0)
 					doneflag = FALSE;
-				ViewY--;
+				universe.ViewY--;
 			}
 		}
-		if (QuestStatus(Q_LTBANNER)) {
+		if (QuestStatus(universe, Q_LTBANNER)) {
 			if (entry == ENTRY_MAIN) {
 				if (DRLG_PlaceMiniSet(universe, STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
@@ -2637,63 +2637,63 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 				if (DRLG_PlaceMiniSet(universe, STAIRSUP, 1, 1, 0, 0, FALSE, -1, 0) < 0)
 					doneflag = FALSE;
 				if (entry == ENTRY_PREV) {
-					ViewX = 2 * setpc_x + 20;
-					ViewY = 2 * setpc_y + 28;
+					universe.ViewX = 2 * universe.setpc_x + 20;
+					universe.ViewY = 2 * universe.setpc_y + 28;
 				} else {
-					ViewY--;
+					universe.ViewY--;
 				}
 			}
 #ifdef HELLFIRE
 		} else if (entry == ENTRY_MAIN) {
-			if (currlevel < 21) {
+			if (universe.currlevel < 21) {
 				if (DRLG_PlaceMiniSet(universe, STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
 				if (DRLG_PlaceMiniSet(universe, STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 					doneflag = FALSE;
-			} else if (currlevel == 21) {
+			} else if (universe.currlevel == 21) {
 				if (DRLG_PlaceMiniSet(universe, L5STAIRSTOWN, 1, 1, 0, 0, FALSE, -1, 6) < 0)
 					doneflag = FALSE;
 				if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 					doneflag = FALSE;
-				ViewY++;
+				universe.ViewY++;
 			} else {
 				if (DRLG_PlaceMiniSet(universe, L5STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
-				if (currlevel != 24) {
+				if (universe.currlevel != 24) {
 					if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 						doneflag = FALSE;
 				}
-				ViewY++;
+				universe.ViewY++;
 			}
 		} else if (entry == ENTRY_PREV) {
-			if (currlevel < 21) {
+			if (universe.currlevel < 21) {
 				if (DRLG_PlaceMiniSet(universe, STAIRSUP, 1, 1, 0, 0, FALSE, -1, 0) < 0)
 					doneflag = FALSE;
 				if (DRLG_PlaceMiniSet(universe, STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
 					doneflag = FALSE;
-				ViewY--;
-			} else if (currlevel == 21) {
+				universe.ViewY--;
+			} else if (universe.currlevel == 21) {
 				if (DRLG_PlaceMiniSet(universe, L5STAIRSTOWN, 1, 1, 0, 0, FALSE, -1, 6) < 0)
 					doneflag = FALSE;
 				if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
 					doneflag = FALSE;
-				ViewY += 3;
+				universe.ViewY += 3;
 			} else {
 				if (DRLG_PlaceMiniSet(universe, L5STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
-				if (currlevel != 24) {
+				if (universe.currlevel != 24) {
 					if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
 						doneflag = FALSE;
 				}
-				ViewY += 3;
+				universe.ViewY += 3;
 			}
 		} else {
-			if (currlevel < 21) {
+			if (universe.currlevel < 21) {
 				if (DRLG_PlaceMiniSet(universe, STAIRSUP, 1, 1, 0, 0, FALSE, -1, 0) < 0)
 					doneflag = FALSE;
 				if (DRLG_PlaceMiniSet(universe, STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 					doneflag = FALSE;
-			} else if (currlevel == 21) {
+			} else if (universe.currlevel == 21) {
 				if (DRLG_PlaceMiniSet(universe, L5STAIRSTOWN, 1, 1, 0, 0, TRUE, -1, 6) < 0)
 					doneflag = FALSE;
 				if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
@@ -2701,7 +2701,7 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 			} else {
 				if (DRLG_PlaceMiniSet(universe, L5STAIRSUP, 1, 1, 0, 0, TRUE, -1, 0) < 0)
 					doneflag = FALSE;
-				if (currlevel != 24) {
+				if (universe.currlevel != 24) {
 					if (DRLG_PlaceMiniSet(universe, L5STAIRSDOWN, 1, 1, 0, 0, FALSE, -1, 1) < 0)
 						doneflag = FALSE;
 				}
@@ -2717,7 +2717,7 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 				doneflag = FALSE;
 			else if (DRLG_PlaceMiniSet(universe, STAIRSDOWN, 1, 1, 0, 0, TRUE, -1, 1) < 0)
 				doneflag = FALSE;
-			ViewY--;
+			universe.ViewY--;
 #endif
 		}
 		if ((mode == DungeonMode::BreakOnFailure || mode == DungeonMode::BreakOnFailureOrNoContent) && doneflag == FALSE)
@@ -2732,8 +2732,8 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 			if (GetDungeon(universe, i, j) == 64) {
 				int xx = 2 * i + 16; /* todo: fix loop */
 				int yy = 2 * j + 16;
-				DRLG_CopyTrans(xx, yy + 1, xx, yy);
-				DRLG_CopyTrans(xx + 1, yy + 1, xx + 1, yy);
+				DRLG_CopyTrans(universe, xx, yy + 1, xx, yy);
+				DRLG_CopyTrans(universe, xx + 1, yy + 1, xx + 1, yy);
 			}
 		}
 	}
@@ -2750,7 +2750,7 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 	}
 
 #ifdef HELLFIRE
-	if (currlevel < 21) {
+	if (universe.currlevel < 21) {
 		DRLG_L5Subs();
 	} else {
 		drlg_l1_crypt_pattern1(10);
@@ -2760,7 +2760,7 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 		drlg_l1_crypt_rndset(byte_48A1C8, 100);
 		drlg_l1_crypt_rndset(byte_48A1E0, 60);
 		drlg_l1_crypt_lavafloor();
-		switch (currlevel) {
+		switch (universe.currlevel) {
 		case 21:
 			drlg_l1_crypt_pattern2(30);
 			drlg_l1_crypt_pattern3(15);
@@ -2804,26 +2804,26 @@ static std::optional<uint32_t> DRLG_L5(Universe& universe, int entry, DungeonMod
 #endif
 
 #ifdef HELLFIRE
-	if (currlevel < 21)
+	if (universe.currlevel < 21)
 #endif
 		DRLG_L1Shadows(universe);
 #ifdef HELLFIRE
-	if (currlevel < 21)
+	if (universe.currlevel < 21)
 #endif
 		DRLG_PlaceMiniSet(universe, LAMPS, 5, 10, 0, 0, FALSE, -1, 4);
 #ifdef HELLFIRE
-	if (currlevel < 21)
+	if (universe.currlevel < 21)
 #endif
 		DRLG_L1Floor(universe);
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			pdungeon[i][j] = GetDungeon(universe, i, j);
+			universe.pdungeon[i][j] = GetDungeon(universe, i, j);
 		}
 	}
 
 	DRLG_Init_Globals(universe);
-	DRLG_CheckQuests(universe, setpc_x, setpc_y);
+	DRLG_CheckQuests(universe, universe.setpc_x, universe.setpc_y);
 
 	return levelSeed;
 }
@@ -2836,10 +2836,10 @@ std::optional<uint32_t> CreateL5Dungeon(Universe& universe, DWORD rseed, int ent
 
 	SetRndSeed(universe, rseed);
 
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	universe.dminx = 16;
+	universe.dminy = 16;
+	universe.dmaxx = 96;
+	universe.dmaxy = 96;
 
 #ifdef HELLFIRE
 	universe.UberRow = 0;
@@ -2852,8 +2852,8 @@ std::optional<uint32_t> CreateL5Dungeon(Universe& universe, DWORD rseed, int ent
 	universe.UberDiabloMonsterIndex = 0;
 #endif
 
-	DRLG_InitTrans();
-	DRLG_InitSetPC();
+	DRLG_InitTrans(universe);
+	DRLG_InitSetPC(universe);
 	DRLG_LoadL1SP(universe);
 	std::optional<uint32_t> levelSeed = DRLG_L5(universe, entry, mode);
 	if (mode == DungeonMode::BreakOnFailure || mode == DungeonMode::BreakOnSuccess) {
@@ -2865,28 +2865,28 @@ std::optional<uint32_t> CreateL5Dungeon(Universe& universe, DWORD rseed, int ent
 	DRLG_FreeL1SP(universe);
 
 #ifdef HELLFIRE
-	if (currlevel < 17)
+	if (universe.currlevel < 17)
 		DRLG_InitL1Vals();
 	else
 		DRLG_InitL5Vals();
 
-	DRLG_SetPC();
+	DRLG_SetPC(universe);
 
-	for (j = dminy; j < dmaxy; j++) {
-		for (i = dminx; i < dmaxx; i++) {
-			if (dPiece[i][j] == 290) {
+	for (j = universe.dminy; j < dmaxy; j++) {
+		for (i = universe.dminx; i < dmaxx; i++) {
+			if (universe.dPiece[i][j] == 290) {
 				universe.UberRow = i;
 				universe.UberCol = j;
 			}
-			if (dPiece[i][j] == 317) {
+			if (universe.dPiece[i][j] == 317) {
 				CornerStone.x = i;
 				CornerStone.y = j;
 			}
 		}
 	}
 #else
-	DRLG_InitL1Vals();
-	DRLG_SetPC();
+	DRLG_InitL1Vals(universe);
+	DRLG_SetPC(universe);
 #endif
 
 	return levelSeed;

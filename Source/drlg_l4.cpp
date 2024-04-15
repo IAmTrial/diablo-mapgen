@@ -209,21 +209,21 @@ static void InitL4Dungeon(Universe& universe)
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
 			SetDungeon(universe, i, j, 30);
-			dflags[i][j] = 0;
+			universe.dflags[i][j] = 0;
 		}
 	}
 }
 
 void DRLG_LoadL4SP(Universe& universe)
 {
-	setloadflag = FALSE;
-	if (QuestStatus(Q_WARLORD)) {
+	universe.setloadflag = FALSE;
+	if (QuestStatus(universe, Q_WARLORD)) {
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
-		setloadflag = TRUE;
+		universe.setloadflag = TRUE;
 	}
-	if (currlevel == 15 && universe.gbMaxPlayers != 1) {
+	if (universe.currlevel == 15 && universe.gbMaxPlayers != 1) {
 		pSetPiece = LoadFileInMem("Levels\\L4Data\\Vile1.DUN", NULL);
-		setloadflag = TRUE;
+		universe.setloadflag = TRUE;
 	}
 }
 
@@ -240,10 +240,10 @@ void DRLG_L4SetSPRoom(Universe& universe, int rx1, int ry1)
 	rw = pSetPiece[0];
 	rh = pSetPiece[2];
 
-	setpc_x = rx1;
-	setpc_y = ry1;
-	setpc_w = rw;
-	setpc_h = rh;
+	universe.setpc_x = rx1;
+	universe.setpc_y = ry1;
+	universe.setpc_w = rw;
+	universe.setpc_h = rh;
 
 	sp = &pSetPiece[4];
 
@@ -251,7 +251,7 @@ void DRLG_L4SetSPRoom(Universe& universe, int rx1, int ry1)
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
 				SetDungeon(universe, i + rx1, j + ry1, *sp);
-				dflags[i + rx1][j + ry1] |= DLRG_PROTECTED;
+				universe.dflags[i + rx1][j + ry1] |= DLRG_PROTECTED;
 			} else {
 				SetDungeon(universe, i + rx1, j + ry1, 6);
 			}
@@ -282,7 +282,7 @@ static int L4HWallOk(Universe& universe, int i, int j)
 	BOOL wallok;
 
 	for (x = 1; GetDungeon(universe, i + x, j) == 6; x++) {
-		if (dflags[i + x][j] != 0) {
+		if (universe.dflags[i + x][j] != 0) {
 			break;
 		}
 		if (GetDungeon(universe, i + x, j - 1) != 6) {
@@ -333,7 +333,7 @@ static int L4VWallOk(Universe& universe, int i, int j)
 	BOOL wallok;
 
 	for (y = 1; GetDungeon(universe, i, j + y) == 6; y++) {
-		if (dflags[i][j + y] != 0) {
+		if (universe.dflags[i][j + y] != 0) {
 			break;
 		}
 		if (GetDungeon(universe, i - 1, j + y) != 6) {
@@ -478,7 +478,7 @@ static void L4AddWall(Universe& universe)
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dflags[i][j] != 0) {
+			if (universe.dflags[i][j] != 0) {
 				continue;
 			}
 			if (GetDungeon(universe, i, j) == 10 && random_(universe, 0, 100) < 100) {
@@ -575,348 +575,348 @@ static void L4AddWall(Universe& universe)
 	}
 }
 
-static void L4tileFix()
+static void L4tileFix(Universe& universe)
 {
 	int i, j;
 
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 6)
-				dungeon[i + 1][j] = 5;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 13;
-			if (dungeon[i][j] == 1 && dungeon[i][j + 1] == 2)
-				dungeon[i][j + 1] = 14;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 6)
+				universe.dungeon[i + 1][j] = 5;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 13;
+			if (universe.dungeon[i][j] == 1 && universe.dungeon[i][j + 1] == 2)
+				universe.dungeon[i][j + 1] = 14;
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 6)
-				dungeon[i + 1][j] = 2;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 9)
-				dungeon[i + 1][j] = 11;
-			if (dungeon[i][j] == 9 && dungeon[i + 1][j] == 6)
-				dungeon[i + 1][j] = 12;
-			if (dungeon[i][j] == 14 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 13;
-			if (dungeon[i][j] == 6 && dungeon[i + 1][j] == 14)
-				dungeon[i + 1][j] = 15;
-			if (dungeon[i][j] == 6 && dungeon[i][j + 1] == 13)
-				dungeon[i][j + 1] = 16;
-			if (dungeon[i][j] == 1 && dungeon[i][j + 1] == 9)
-				dungeon[i][j + 1] = 10;
-			if (dungeon[i][j] == 6 && dungeon[i][j - 1] == 1)
-				dungeon[i][j - 1] = 1;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 6)
+				universe.dungeon[i + 1][j] = 2;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 9)
+				universe.dungeon[i + 1][j] = 11;
+			if (universe.dungeon[i][j] == 9 && universe.dungeon[i + 1][j] == 6)
+				universe.dungeon[i + 1][j] = 12;
+			if (universe.dungeon[i][j] == 14 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 13;
+			if (universe.dungeon[i][j] == 6 && universe.dungeon[i + 1][j] == 14)
+				universe.dungeon[i + 1][j] = 15;
+			if (universe.dungeon[i][j] == 6 && universe.dungeon[i][j + 1] == 13)
+				universe.dungeon[i][j + 1] = 16;
+			if (universe.dungeon[i][j] == 1 && universe.dungeon[i][j + 1] == 9)
+				universe.dungeon[i][j + 1] = 10;
+			if (universe.dungeon[i][j] == 6 && universe.dungeon[i][j - 1] == 1)
+				universe.dungeon[i][j - 1] = 1;
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 13 && dungeon[i][j + 1] == 30)
-				dungeon[i][j + 1] = 27;
-			if (dungeon[i][j] == 27 && dungeon[i + 1][j] == 30)
-				dungeon[i + 1][j] = 19;
-			if (dungeon[i][j] == 1 && dungeon[i][j + 1] == 30)
-				dungeon[i][j + 1] = 27;
-			if (dungeon[i][j] == 27 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 16;
-			if (dungeon[i][j] == 19 && dungeon[i + 1][j] == 27)
-				dungeon[i + 1][j] = 26;
-			if (dungeon[i][j] == 27 && dungeon[i + 1][j] == 30)
-				dungeon[i + 1][j] = 19;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 15)
-				dungeon[i + 1][j] = 14;
-			if (dungeon[i][j] == 14 && dungeon[i + 1][j] == 15)
-				dungeon[i + 1][j] = 14;
-			if (dungeon[i][j] == 22 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 16;
-			if (dungeon[i][j] == 27 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 16;
-			if (dungeon[i][j] == 6 && dungeon[i + 1][j] == 27 && dungeon[i + 1][j + 1] != 0) /* check */
-				dungeon[i + 1][j] = 22;
-			if (dungeon[i][j] == 22 && dungeon[i + 1][j] == 30)
-				dungeon[i + 1][j] = 19;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j] == 1 && dungeon[i + 1][j - 1] == 1)
-				dungeon[i + 1][j] = 13;
-			if (dungeon[i][j] == 14 && dungeon[i + 1][j] == 30 && dungeon[i][j + 1] == 6)
-				dungeon[i + 1][j] = 28;
-			if (dungeon[i][j] == 16 && dungeon[i + 1][j] == 6 && dungeon[i][j + 1] == 30)
-				dungeon[i][j + 1] = 27;
-			if (dungeon[i][j] == 16 && dungeon[i][j + 1] == 30 && dungeon[i + 1][j + 1] == 30)
-				dungeon[i][j + 1] = 27;
-			if (dungeon[i][j] == 6 && dungeon[i + 1][j] == 30 && dungeon[i + 1][j - 1] == 6)
-				dungeon[i + 1][j] = 21;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 27 && dungeon[i + 1][j + 1] == 9)
-				dungeon[i + 1][j] = 29;
-			if (dungeon[i][j] == 9 && dungeon[i + 1][j] == 15)
-				dungeon[i + 1][j] = 14;
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] == 27 && dungeon[i + 1][j + 1] == 2)
-				dungeon[i + 1][j] = 29;
-			if (dungeon[i][j] == 19 && dungeon[i + 1][j] == 18)
-				dungeon[i + 1][j] = 24;
-			if (dungeon[i][j] == 9 && dungeon[i + 1][j] == 15)
-				dungeon[i + 1][j] = 14;
-			if (dungeon[i][j] == 19 && dungeon[i + 1][j] == 19 && dungeon[i + 1][j - 1] == 30)
-				dungeon[i + 1][j] = 24;
-			if (dungeon[i][j] == 24 && dungeon[i][j - 1] == 30 && dungeon[i][j - 2] == 6)
-				dungeon[i][j - 1] = 21;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 30)
-				dungeon[i + 1][j] = 28;
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] == 30)
-				dungeon[i + 1][j] = 28;
-			if (dungeon[i][j] == 28 && dungeon[i][j + 1] == 30)
-				dungeon[i][j + 1] = 18;
-			if (dungeon[i][j] == 28 && dungeon[i][j + 1] == 2)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 19 && dungeon[i + 2][j] == 2 && dungeon[i + 1][j - 1] == 18 && dungeon[i + 1][j + 1] == 1)
-				dungeon[i + 1][j] = 17;
-			if (dungeon[i][j] == 19 && dungeon[i + 2][j] == 2 && dungeon[i + 1][j - 1] == 22 && dungeon[i + 1][j + 1] == 1)
-				dungeon[i + 1][j] = 17;
-			if (dungeon[i][j] == 19 && dungeon[i + 2][j] == 2 && dungeon[i + 1][j - 1] == 18 && dungeon[i + 1][j + 1] == 13)
-				dungeon[i + 1][j] = 17;
-			if (dungeon[i][j] == 21 && dungeon[i + 2][j] == 2 && dungeon[i + 1][j - 1] == 18 && dungeon[i + 1][j + 1] == 1)
-				dungeon[i + 1][j] = 17;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j + 1] == 1 && dungeon[i + 1][j - 1] == 22 && dungeon[i + 2][j] == 3)
-				dungeon[i + 1][j] = 17;
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] == 28 && dungeon[i + 2][j] == 30 && dungeon[i + 1][j - 1] == 6)
-				dungeon[i + 1][j] = 23;
-			if (dungeon[i][j] == 14 && dungeon[i + 1][j] == 28 && dungeon[i + 2][j] == 1)
-				dungeon[i + 1][j] = 23;
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] == 27 && dungeon[i + 1][j + 1] == 30)
-				dungeon[i + 1][j] = 29;
-			if (dungeon[i][j] == 28 && dungeon[i][j + 1] == 9)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j - 1] == 21)
-				dungeon[i + 1][j] = 24;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 27 && dungeon[i + 1][j + 1] == 30)
-				dungeon[i + 1][j] = 29;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 18)
-				dungeon[i + 1][j] = 25;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j] == 9 && dungeon[i + 2][j] == 2)
-				dungeon[i + 1][j] = 11;
-			if (dungeon[i][j] == 19 && dungeon[i + 1][j] == 10)
-				dungeon[i + 1][j] = 17;
-			if (dungeon[i][j] == 15 && dungeon[i][j + 1] == 3)
-				dungeon[i][j + 1] = 4;
-			if (dungeon[i][j] == 22 && dungeon[i][j + 1] == 9)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 18 && dungeon[i][j + 1] == 30)
-				dungeon[i][j + 1] = 18;
-			if (dungeon[i][j] == 24 && dungeon[i - 1][j] == 30)
-				dungeon[i - 1][j] = 19;
-			if (dungeon[i][j] == 21 && dungeon[i][j + 1] == 2)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 21 && dungeon[i][j + 1] == 9)
-				dungeon[i][j + 1] = 10;
-			if (dungeon[i][j] == 22 && dungeon[i][j + 1] == 30)
-				dungeon[i][j + 1] = 18;
-			if (dungeon[i][j] == 21 && dungeon[i][j + 1] == 30)
-				dungeon[i][j + 1] = 18;
-			if (dungeon[i][j] == 16 && dungeon[i][j + 1] == 2)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 13 && dungeon[i][j + 1] == 2)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 22 && dungeon[i][j + 1] == 2)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j] == 18 && dungeon[i + 2][j] == 30)
-				dungeon[i + 1][j] = 24;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j] == 9 && dungeon[i + 1][j + 1] == 1)
-				dungeon[i + 1][j] = 16;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 27 && dungeon[i + 1][j + 1] == 2)
-				dungeon[i + 1][j] = 29;
-			if (dungeon[i][j] == 23 && dungeon[i][j + 1] == 2)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 23 && dungeon[i][j + 1] == 9)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 25 && dungeon[i][j + 1] == 2)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 22 && dungeon[i + 1][j] == 9)
-				dungeon[i + 1][j] = 11;
-			if (dungeon[i][j] == 23 && dungeon[i + 1][j] == 9)
-				dungeon[i + 1][j] = 11;
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 16;
-			if (dungeon[i][j] == 11 && dungeon[i + 1][j] == 15)
-				dungeon[i + 1][j] = 14;
-			if (dungeon[i][j] == 23 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 16;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j] == 27)
-				dungeon[i + 1][j] = 26;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j] == 18)
-				dungeon[i + 1][j] = 24;
-			if (dungeon[i][j] == 26 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 16;
-			if (dungeon[i][j] == 29 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 16;
-			if (dungeon[i][j] == 29 && dungeon[i][j + 1] == 2)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 1 && dungeon[i][j - 1] == 15)
-				dungeon[i][j - 1] = 10;
-			if (dungeon[i][j] == 18 && dungeon[i][j + 1] == 2)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 23 && dungeon[i][j + 1] == 30)
-				dungeon[i][j + 1] = 18;
-			if (dungeon[i][j] == 18 && dungeon[i][j + 1] == 9)
-				dungeon[i][j + 1] = 10;
-			if (dungeon[i][j] == 14 && dungeon[i + 1][j] == 30 && dungeon[i + 1][j + 1] == 30)
-				dungeon[i + 1][j] = 23;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 28 && dungeon[i + 1][j - 1] == 6)
-				dungeon[i + 1][j] = 23;
-			if (dungeon[i][j] == 23 && dungeon[i + 1][j] == 18 && dungeon[i][j - 1] == 6)
-				dungeon[i + 1][j] = 24;
-			if (dungeon[i][j] == 14 && dungeon[i + 1][j] == 23 && dungeon[i + 2][j] == 30)
-				dungeon[i + 1][j] = 28;
-			if (dungeon[i][j] == 14 && dungeon[i + 1][j] == 28 && dungeon[i + 2][j] == 30 && dungeon[i + 1][j - 1] == 6)
-				dungeon[i + 1][j] = 23;
-			if (dungeon[i][j] == 23 && dungeon[i + 1][j] == 30)
-				dungeon[i + 1][j] = 19;
-			if (dungeon[i][j] == 29 && dungeon[i + 1][j] == 30)
-				dungeon[i + 1][j] = 19;
-			if (dungeon[i][j] == 29 && dungeon[i][j + 1] == 30)
-				dungeon[i][j + 1] = 18;
-			if (dungeon[i][j] == 19 && dungeon[i + 1][j] == 30)
-				dungeon[i + 1][j] = 19;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j] == 30)
-				dungeon[i + 1][j] = 19;
-			if (dungeon[i][j] == 26 && dungeon[i + 1][j] == 30)
-				dungeon[i + 1][j] = 19;
-			if (dungeon[i][j] == 16 && dungeon[i][j + 1] == 30)
-				dungeon[i][j + 1] = 18;
-			if (dungeon[i][j] == 13 && dungeon[i][j + 1] == 9)
-				dungeon[i][j + 1] = 10;
-			if (dungeon[i][j] == 25 && dungeon[i][j + 1] == 30)
-				dungeon[i][j + 1] = 18;
-			if (dungeon[i][j] == 18 && dungeon[i][j + 1] == 2)
-				dungeon[i][j + 1] = 15;
-			if (dungeon[i][j] == 11 && dungeon[i + 1][j] == 3)
-				dungeon[i + 1][j] = 5;
-			if (dungeon[i][j] == 19 && dungeon[i + 1][j] == 9)
-				dungeon[i + 1][j] = 11;
-			if (dungeon[i][j] == 19 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 13;
-			if (dungeon[i][j] == 19 && dungeon[i + 1][j] == 13 && dungeon[i + 1][j - 1] == 6)
-				dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 13 && universe.dungeon[i][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 27;
+			if (universe.dungeon[i][j] == 27 && universe.dungeon[i + 1][j] == 30)
+				universe.dungeon[i + 1][j] = 19;
+			if (universe.dungeon[i][j] == 1 && universe.dungeon[i][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 27;
+			if (universe.dungeon[i][j] == 27 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 1][j] == 27)
+				universe.dungeon[i + 1][j] = 26;
+			if (universe.dungeon[i][j] == 27 && universe.dungeon[i + 1][j] == 30)
+				universe.dungeon[i + 1][j] = 19;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 15)
+				universe.dungeon[i + 1][j] = 14;
+			if (universe.dungeon[i][j] == 14 && universe.dungeon[i + 1][j] == 15)
+				universe.dungeon[i + 1][j] = 14;
+			if (universe.dungeon[i][j] == 22 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 27 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 6 && universe.dungeon[i + 1][j] == 27 && universe.dungeon[i + 1][j + 1] != 0) /* check */
+				universe.dungeon[i + 1][j] = 22;
+			if (universe.dungeon[i][j] == 22 && universe.dungeon[i + 1][j] == 30)
+				universe.dungeon[i + 1][j] = 19;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j] == 1 && universe.dungeon[i + 1][j - 1] == 1)
+				universe.dungeon[i + 1][j] = 13;
+			if (universe.dungeon[i][j] == 14 && universe.dungeon[i + 1][j] == 30 && universe.dungeon[i][j + 1] == 6)
+				universe.dungeon[i + 1][j] = 28;
+			if (universe.dungeon[i][j] == 16 && universe.dungeon[i + 1][j] == 6 && universe.dungeon[i][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 27;
+			if (universe.dungeon[i][j] == 16 && universe.dungeon[i][j + 1] == 30 && universe.dungeon[i + 1][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 27;
+			if (universe.dungeon[i][j] == 6 && universe.dungeon[i + 1][j] == 30 && universe.dungeon[i + 1][j - 1] == 6)
+				universe.dungeon[i + 1][j] = 21;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 27 && universe.dungeon[i + 1][j + 1] == 9)
+				universe.dungeon[i + 1][j] = 29;
+			if (universe.dungeon[i][j] == 9 && universe.dungeon[i + 1][j] == 15)
+				universe.dungeon[i + 1][j] = 14;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i + 1][j] == 27 && universe.dungeon[i + 1][j + 1] == 2)
+				universe.dungeon[i + 1][j] = 29;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 1][j] == 18)
+				universe.dungeon[i + 1][j] = 24;
+			if (universe.dungeon[i][j] == 9 && universe.dungeon[i + 1][j] == 15)
+				universe.dungeon[i + 1][j] = 14;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 1][j] == 19 && universe.dungeon[i + 1][j - 1] == 30)
+				universe.dungeon[i + 1][j] = 24;
+			if (universe.dungeon[i][j] == 24 && universe.dungeon[i][j - 1] == 30 && universe.dungeon[i][j - 2] == 6)
+				universe.dungeon[i][j - 1] = 21;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 30)
+				universe.dungeon[i + 1][j] = 28;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i + 1][j] == 30)
+				universe.dungeon[i + 1][j] = 28;
+			if (universe.dungeon[i][j] == 28 && universe.dungeon[i][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 18;
+			if (universe.dungeon[i][j] == 28 && universe.dungeon[i][j + 1] == 2)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 2][j] == 2 && universe.dungeon[i + 1][j - 1] == 18 && universe.dungeon[i + 1][j + 1] == 1)
+				universe.dungeon[i + 1][j] = 17;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 2][j] == 2 && universe.dungeon[i + 1][j - 1] == 22 && universe.dungeon[i + 1][j + 1] == 1)
+				universe.dungeon[i + 1][j] = 17;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 2][j] == 2 && universe.dungeon[i + 1][j - 1] == 18 && universe.dungeon[i + 1][j + 1] == 13)
+				universe.dungeon[i + 1][j] = 17;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 2][j] == 2 && universe.dungeon[i + 1][j - 1] == 18 && universe.dungeon[i + 1][j + 1] == 1)
+				universe.dungeon[i + 1][j] = 17;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j + 1] == 1 && universe.dungeon[i + 1][j - 1] == 22 && universe.dungeon[i + 2][j] == 3)
+				universe.dungeon[i + 1][j] = 17;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i + 1][j] == 28 && universe.dungeon[i + 2][j] == 30 && universe.dungeon[i + 1][j - 1] == 6)
+				universe.dungeon[i + 1][j] = 23;
+			if (universe.dungeon[i][j] == 14 && universe.dungeon[i + 1][j] == 28 && universe.dungeon[i + 2][j] == 1)
+				universe.dungeon[i + 1][j] = 23;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i + 1][j] == 27 && universe.dungeon[i + 1][j + 1] == 30)
+				universe.dungeon[i + 1][j] = 29;
+			if (universe.dungeon[i][j] == 28 && universe.dungeon[i][j + 1] == 9)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j - 1] == 21)
+				universe.dungeon[i + 1][j] = 24;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 27 && universe.dungeon[i + 1][j + 1] == 30)
+				universe.dungeon[i + 1][j] = 29;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 18)
+				universe.dungeon[i + 1][j] = 25;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j] == 9 && universe.dungeon[i + 2][j] == 2)
+				universe.dungeon[i + 1][j] = 11;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 1][j] == 10)
+				universe.dungeon[i + 1][j] = 17;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i][j + 1] == 3)
+				universe.dungeon[i][j + 1] = 4;
+			if (universe.dungeon[i][j] == 22 && universe.dungeon[i][j + 1] == 9)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 18 && universe.dungeon[i][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 18;
+			if (universe.dungeon[i][j] == 24 && universe.dungeon[i - 1][j] == 30)
+				universe.dungeon[i - 1][j] = 19;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i][j + 1] == 2)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i][j + 1] == 9)
+				universe.dungeon[i][j + 1] = 10;
+			if (universe.dungeon[i][j] == 22 && universe.dungeon[i][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 18;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 18;
+			if (universe.dungeon[i][j] == 16 && universe.dungeon[i][j + 1] == 2)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 13 && universe.dungeon[i][j + 1] == 2)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 22 && universe.dungeon[i][j + 1] == 2)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j] == 18 && universe.dungeon[i + 2][j] == 30)
+				universe.dungeon[i + 1][j] = 24;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j] == 9 && universe.dungeon[i + 1][j + 1] == 1)
+				universe.dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 27 && universe.dungeon[i + 1][j + 1] == 2)
+				universe.dungeon[i + 1][j] = 29;
+			if (universe.dungeon[i][j] == 23 && universe.dungeon[i][j + 1] == 2)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 23 && universe.dungeon[i][j + 1] == 9)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 25 && universe.dungeon[i][j + 1] == 2)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 22 && universe.dungeon[i + 1][j] == 9)
+				universe.dungeon[i + 1][j] = 11;
+			if (universe.dungeon[i][j] == 23 && universe.dungeon[i + 1][j] == 9)
+				universe.dungeon[i + 1][j] = 11;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 11 && universe.dungeon[i + 1][j] == 15)
+				universe.dungeon[i + 1][j] = 14;
+			if (universe.dungeon[i][j] == 23 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j] == 27)
+				universe.dungeon[i + 1][j] = 26;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j] == 18)
+				universe.dungeon[i + 1][j] = 24;
+			if (universe.dungeon[i][j] == 26 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 29 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 29 && universe.dungeon[i][j + 1] == 2)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 1 && universe.dungeon[i][j - 1] == 15)
+				universe.dungeon[i][j - 1] = 10;
+			if (universe.dungeon[i][j] == 18 && universe.dungeon[i][j + 1] == 2)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 23 && universe.dungeon[i][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 18;
+			if (universe.dungeon[i][j] == 18 && universe.dungeon[i][j + 1] == 9)
+				universe.dungeon[i][j + 1] = 10;
+			if (universe.dungeon[i][j] == 14 && universe.dungeon[i + 1][j] == 30 && universe.dungeon[i + 1][j + 1] == 30)
+				universe.dungeon[i + 1][j] = 23;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 28 && universe.dungeon[i + 1][j - 1] == 6)
+				universe.dungeon[i + 1][j] = 23;
+			if (universe.dungeon[i][j] == 23 && universe.dungeon[i + 1][j] == 18 && universe.dungeon[i][j - 1] == 6)
+				universe.dungeon[i + 1][j] = 24;
+			if (universe.dungeon[i][j] == 14 && universe.dungeon[i + 1][j] == 23 && universe.dungeon[i + 2][j] == 30)
+				universe.dungeon[i + 1][j] = 28;
+			if (universe.dungeon[i][j] == 14 && universe.dungeon[i + 1][j] == 28 && universe.dungeon[i + 2][j] == 30 && universe.dungeon[i + 1][j - 1] == 6)
+				universe.dungeon[i + 1][j] = 23;
+			if (universe.dungeon[i][j] == 23 && universe.dungeon[i + 1][j] == 30)
+				universe.dungeon[i + 1][j] = 19;
+			if (universe.dungeon[i][j] == 29 && universe.dungeon[i + 1][j] == 30)
+				universe.dungeon[i + 1][j] = 19;
+			if (universe.dungeon[i][j] == 29 && universe.dungeon[i][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 18;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 1][j] == 30)
+				universe.dungeon[i + 1][j] = 19;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j] == 30)
+				universe.dungeon[i + 1][j] = 19;
+			if (universe.dungeon[i][j] == 26 && universe.dungeon[i + 1][j] == 30)
+				universe.dungeon[i + 1][j] = 19;
+			if (universe.dungeon[i][j] == 16 && universe.dungeon[i][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 18;
+			if (universe.dungeon[i][j] == 13 && universe.dungeon[i][j + 1] == 9)
+				universe.dungeon[i][j + 1] = 10;
+			if (universe.dungeon[i][j] == 25 && universe.dungeon[i][j + 1] == 30)
+				universe.dungeon[i][j + 1] = 18;
+			if (universe.dungeon[i][j] == 18 && universe.dungeon[i][j + 1] == 2)
+				universe.dungeon[i][j + 1] = 15;
+			if (universe.dungeon[i][j] == 11 && universe.dungeon[i + 1][j] == 3)
+				universe.dungeon[i + 1][j] = 5;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 1][j] == 9)
+				universe.dungeon[i + 1][j] = 11;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 13;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 1][j] == 13 && universe.dungeon[i + 1][j - 1] == 6)
+				universe.dungeon[i + 1][j] = 16;
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 21 && dungeon[i][j + 1] == 24 && dungeon[i][j + 2] == 1)
-				dungeon[i][j + 1] = 17;
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j + 1] == 9 && dungeon[i + 1][j - 1] == 1 && dungeon[i + 2][j] == 16)
-				dungeon[i + 1][j] = 29;
-			if (dungeon[i][j] == 2 && dungeon[i - 1][j] == 6)
-				dungeon[i - 1][j] = 8;
-			if (dungeon[i][j] == 1 && dungeon[i][j - 1] == 6)
-				dungeon[i][j - 1] = 7;
-			if (dungeon[i][j] == 6 && dungeon[i + 1][j] == 15 && dungeon[i + 1][j + 1] == 4)
-				dungeon[i + 1][j] = 10;
-			if (dungeon[i][j] == 1 && dungeon[i][j + 1] == 3)
-				dungeon[i][j + 1] = 4;
-			if (dungeon[i][j] == 1 && dungeon[i][j + 1] == 6)
-				dungeon[i][j + 1] = 4;
-			if (dungeon[i][j] == 9 && dungeon[i][j + 1] == 3)
-				dungeon[i][j + 1] = 4;
-			if (dungeon[i][j] == 10 && dungeon[i][j + 1] == 3)
-				dungeon[i][j + 1] = 4;
-			if (dungeon[i][j] == 13 && dungeon[i][j + 1] == 3)
-				dungeon[i][j + 1] = 4;
-			if (dungeon[i][j] == 1 && dungeon[i][j + 1] == 5)
-				dungeon[i][j + 1] = 12;
-			if (dungeon[i][j] == 1 && dungeon[i][j + 1] == 16)
-				dungeon[i][j + 1] = 13;
-			if (dungeon[i][j] == 6 && dungeon[i][j + 1] == 13)
-				dungeon[i][j + 1] = 16;
-			if (dungeon[i][j] == 25 && dungeon[i][j + 1] == 9)
-				dungeon[i][j + 1] = 10;
-			if (dungeon[i][j] == 13 && dungeon[i][j + 1] == 5)
-				dungeon[i][j + 1] = 12;
-			if (dungeon[i][j] == 28 && dungeon[i][j - 1] == 6 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 23;
-			if (dungeon[i][j] == 19 && dungeon[i + 1][j] == 10)
-				dungeon[i + 1][j] = 17;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j] == 9)
-				dungeon[i + 1][j] = 11;
-			if (dungeon[i][j] == 11 && dungeon[i + 1][j] == 3)
-				dungeon[i + 1][j] = 5;
-			if (dungeon[i][j] == 10 && dungeon[i + 1][j] == 4)
-				dungeon[i + 1][j] = 12;
-			if (dungeon[i][j] == 14 && dungeon[i + 1][j] == 4)
-				dungeon[i + 1][j] = 12;
-			if (dungeon[i][j] == 27 && dungeon[i + 1][j] == 9)
-				dungeon[i + 1][j] = 11;
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] == 4)
-				dungeon[i + 1][j] = 12;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j] == 1)
-				dungeon[i + 1][j] = 16;
-			if (dungeon[i][j] == 11 && dungeon[i + 1][j] == 4)
-				dungeon[i + 1][j] = 12;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 3)
-				dungeon[i + 1][j] = 5;
-			if (dungeon[i][j] == 9 && dungeon[i + 1][j] == 3)
-				dungeon[i + 1][j] = 5;
-			if (dungeon[i][j] == 14 && dungeon[i + 1][j] == 3)
-				dungeon[i + 1][j] = 5;
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] == 3)
-				dungeon[i + 1][j] = 5;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 5 && dungeon[i + 1][j - 1] == 16)
-				dungeon[i + 1][j] = 12;
-			if (dungeon[i][j] == 2 && dungeon[i + 1][j] == 4)
-				dungeon[i + 1][j] = 12;
-			if (dungeon[i][j] == 9 && dungeon[i + 1][j] == 4)
-				dungeon[i + 1][j] = 12;
-			if (dungeon[i][j] == 1 && dungeon[i][j - 1] == 8)
-				dungeon[i][j - 1] = 9;
-			if (dungeon[i][j] == 28 && dungeon[i + 1][j] == 23 && dungeon[i + 1][j + 1] == 3)
-				dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i][j + 1] == 24 && universe.dungeon[i][j + 2] == 1)
+				universe.dungeon[i][j + 1] = 17;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i + 1][j + 1] == 9 && universe.dungeon[i + 1][j - 1] == 1 && universe.dungeon[i + 2][j] == 16)
+				universe.dungeon[i + 1][j] = 29;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i - 1][j] == 6)
+				universe.dungeon[i - 1][j] = 8;
+			if (universe.dungeon[i][j] == 1 && universe.dungeon[i][j - 1] == 6)
+				universe.dungeon[i][j - 1] = 7;
+			if (universe.dungeon[i][j] == 6 && universe.dungeon[i + 1][j] == 15 && universe.dungeon[i + 1][j + 1] == 4)
+				universe.dungeon[i + 1][j] = 10;
+			if (universe.dungeon[i][j] == 1 && universe.dungeon[i][j + 1] == 3)
+				universe.dungeon[i][j + 1] = 4;
+			if (universe.dungeon[i][j] == 1 && universe.dungeon[i][j + 1] == 6)
+				universe.dungeon[i][j + 1] = 4;
+			if (universe.dungeon[i][j] == 9 && universe.dungeon[i][j + 1] == 3)
+				universe.dungeon[i][j + 1] = 4;
+			if (universe.dungeon[i][j] == 10 && universe.dungeon[i][j + 1] == 3)
+				universe.dungeon[i][j + 1] = 4;
+			if (universe.dungeon[i][j] == 13 && universe.dungeon[i][j + 1] == 3)
+				universe.dungeon[i][j + 1] = 4;
+			if (universe.dungeon[i][j] == 1 && universe.dungeon[i][j + 1] == 5)
+				universe.dungeon[i][j + 1] = 12;
+			if (universe.dungeon[i][j] == 1 && universe.dungeon[i][j + 1] == 16)
+				universe.dungeon[i][j + 1] = 13;
+			if (universe.dungeon[i][j] == 6 && universe.dungeon[i][j + 1] == 13)
+				universe.dungeon[i][j + 1] = 16;
+			if (universe.dungeon[i][j] == 25 && universe.dungeon[i][j + 1] == 9)
+				universe.dungeon[i][j + 1] = 10;
+			if (universe.dungeon[i][j] == 13 && universe.dungeon[i][j + 1] == 5)
+				universe.dungeon[i][j + 1] = 12;
+			if (universe.dungeon[i][j] == 28 && universe.dungeon[i][j - 1] == 6 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 23;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 1][j] == 10)
+				universe.dungeon[i + 1][j] = 17;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j] == 9)
+				universe.dungeon[i + 1][j] = 11;
+			if (universe.dungeon[i][j] == 11 && universe.dungeon[i + 1][j] == 3)
+				universe.dungeon[i + 1][j] = 5;
+			if (universe.dungeon[i][j] == 10 && universe.dungeon[i + 1][j] == 4)
+				universe.dungeon[i + 1][j] = 12;
+			if (universe.dungeon[i][j] == 14 && universe.dungeon[i + 1][j] == 4)
+				universe.dungeon[i + 1][j] = 12;
+			if (universe.dungeon[i][j] == 27 && universe.dungeon[i + 1][j] == 9)
+				universe.dungeon[i + 1][j] = 11;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i + 1][j] == 4)
+				universe.dungeon[i + 1][j] = 12;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j] == 1)
+				universe.dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 11 && universe.dungeon[i + 1][j] == 4)
+				universe.dungeon[i + 1][j] = 12;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 3)
+				universe.dungeon[i + 1][j] = 5;
+			if (universe.dungeon[i][j] == 9 && universe.dungeon[i + 1][j] == 3)
+				universe.dungeon[i + 1][j] = 5;
+			if (universe.dungeon[i][j] == 14 && universe.dungeon[i + 1][j] == 3)
+				universe.dungeon[i + 1][j] = 5;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i + 1][j] == 3)
+				universe.dungeon[i + 1][j] = 5;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 5 && universe.dungeon[i + 1][j - 1] == 16)
+				universe.dungeon[i + 1][j] = 12;
+			if (universe.dungeon[i][j] == 2 && universe.dungeon[i + 1][j] == 4)
+				universe.dungeon[i + 1][j] = 12;
+			if (universe.dungeon[i][j] == 9 && universe.dungeon[i + 1][j] == 4)
+				universe.dungeon[i + 1][j] = 12;
+			if (universe.dungeon[i][j] == 1 && universe.dungeon[i][j - 1] == 8)
+				universe.dungeon[i][j - 1] = 9;
+			if (universe.dungeon[i][j] == 28 && universe.dungeon[i + 1][j] == 23 && universe.dungeon[i + 1][j + 1] == 3)
+				universe.dungeon[i + 1][j] = 16;
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j] == 10)
-				dungeon[i + 1][j] = 17;
-			if (dungeon[i][j] == 17 && dungeon[i + 1][j] == 4)
-				dungeon[i + 1][j] = 12;
-			if (dungeon[i][j] == 10 && dungeon[i + 1][j] == 4)
-				dungeon[i + 1][j] = 12;
-			if (dungeon[i][j] == 17 && dungeon[i][j + 1] == 5)
-				dungeon[i][j + 1] = 12;
-			if (dungeon[i][j] == 29 && dungeon[i][j + 1] == 9)
-				dungeon[i][j + 1] = 10;
-			if (dungeon[i][j] == 13 && dungeon[i][j + 1] == 5)
-				dungeon[i][j + 1] = 12;
-			if (dungeon[i][j] == 9 && dungeon[i][j + 1] == 16)
-				dungeon[i][j + 1] = 13;
-			if (dungeon[i][j] == 10 && dungeon[i][j + 1] == 16)
-				dungeon[i][j + 1] = 13;
-			if (dungeon[i][j] == 16 && dungeon[i][j + 1] == 3)
-				dungeon[i][j + 1] = 4;
-			if (dungeon[i][j] == 11 && dungeon[i][j + 1] == 5)
-				dungeon[i][j + 1] = 12;
-			if (dungeon[i][j] == 10 && dungeon[i + 1][j] == 3 && dungeon[i + 1][j - 1] == 16)
-				dungeon[i + 1][j] = 12;
-			if (dungeon[i][j] == 16 && dungeon[i][j + 1] == 5)
-				dungeon[i][j + 1] = 12;
-			if (dungeon[i][j] == 1 && dungeon[i][j + 1] == 6)
-				dungeon[i][j + 1] = 4;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j] == 13 && dungeon[i][j + 1] == 10)
-				dungeon[i + 1][j + 1] = 12;
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] == 10)
-				dungeon[i + 1][j] = 17;
-			if (dungeon[i][j] == 22 && dungeon[i][j + 1] == 11)
-				dungeon[i][j + 1] = 17;
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] == 28 && dungeon[i + 2][j] == 16)
-				dungeon[i + 1][j] = 23;
-			if (dungeon[i][j] == 28 && dungeon[i + 1][j] == 23 && dungeon[i + 1][j + 1] == 1 && dungeon[i + 2][j] == 6)
-				dungeon[i + 1][j] = 16;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j] == 10)
+				universe.dungeon[i + 1][j] = 17;
+			if (universe.dungeon[i][j] == 17 && universe.dungeon[i + 1][j] == 4)
+				universe.dungeon[i + 1][j] = 12;
+			if (universe.dungeon[i][j] == 10 && universe.dungeon[i + 1][j] == 4)
+				universe.dungeon[i + 1][j] = 12;
+			if (universe.dungeon[i][j] == 17 && universe.dungeon[i][j + 1] == 5)
+				universe.dungeon[i][j + 1] = 12;
+			if (universe.dungeon[i][j] == 29 && universe.dungeon[i][j + 1] == 9)
+				universe.dungeon[i][j + 1] = 10;
+			if (universe.dungeon[i][j] == 13 && universe.dungeon[i][j + 1] == 5)
+				universe.dungeon[i][j + 1] = 12;
+			if (universe.dungeon[i][j] == 9 && universe.dungeon[i][j + 1] == 16)
+				universe.dungeon[i][j + 1] = 13;
+			if (universe.dungeon[i][j] == 10 && universe.dungeon[i][j + 1] == 16)
+				universe.dungeon[i][j + 1] = 13;
+			if (universe.dungeon[i][j] == 16 && universe.dungeon[i][j + 1] == 3)
+				universe.dungeon[i][j + 1] = 4;
+			if (universe.dungeon[i][j] == 11 && universe.dungeon[i][j + 1] == 5)
+				universe.dungeon[i][j + 1] = 12;
+			if (universe.dungeon[i][j] == 10 && universe.dungeon[i + 1][j] == 3 && universe.dungeon[i + 1][j - 1] == 16)
+				universe.dungeon[i + 1][j] = 12;
+			if (universe.dungeon[i][j] == 16 && universe.dungeon[i][j + 1] == 5)
+				universe.dungeon[i][j + 1] = 12;
+			if (universe.dungeon[i][j] == 1 && universe.dungeon[i][j + 1] == 6)
+				universe.dungeon[i][j + 1] = 4;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j] == 13 && universe.dungeon[i][j + 1] == 10)
+				universe.dungeon[i + 1][j + 1] = 12;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i + 1][j] == 10)
+				universe.dungeon[i + 1][j] = 17;
+			if (universe.dungeon[i][j] == 22 && universe.dungeon[i][j + 1] == 11)
+				universe.dungeon[i][j + 1] = 17;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i + 1][j] == 28 && universe.dungeon[i + 2][j] == 16)
+				universe.dungeon[i + 1][j] = 23;
+			if (universe.dungeon[i][j] == 28 && universe.dungeon[i + 1][j] == 23 && universe.dungeon[i + 1][j + 1] == 1 && universe.dungeon[i + 2][j] == 6)
+				universe.dungeon[i + 1][j] = 16;
 		}
 	}
 	for (j = 0; j < DMAXY; j++) {
 		for (i = 0; i < DMAXX; i++) {
-			if (dungeon[i][j] == 15 && dungeon[i + 1][j] == 28 && dungeon[i + 2][j] == 16)
-				dungeon[i + 1][j] = 23;
-			if (dungeon[i][j] == 21 && dungeon[i + 1][j - 1] == 21 && dungeon[i + 1][j + 1] == 13 && dungeon[i + 2][j] == 2)
-				dungeon[i + 1][j] = 17;
-			if (dungeon[i][j] == 19 && dungeon[i + 1][j] == 15 && dungeon[i + 1][j + 1] == 12)
-				dungeon[i + 1][j] = 17;
+			if (universe.dungeon[i][j] == 15 && universe.dungeon[i + 1][j] == 28 && universe.dungeon[i + 2][j] == 16)
+				universe.dungeon[i + 1][j] = 23;
+			if (universe.dungeon[i][j] == 21 && universe.dungeon[i + 1][j - 1] == 21 && universe.dungeon[i + 1][j + 1] == 13 && universe.dungeon[i + 2][j] == 2)
+				universe.dungeon[i + 1][j] = 17;
+			if (universe.dungeon[i][j] == 19 && universe.dungeon[i + 1][j] == 15 && universe.dungeon[i + 1][j + 1] == 12)
+				universe.dungeon[i + 1][j] = 17;
 		}
 	}
 }
@@ -932,7 +932,7 @@ static void DRLG_L4Subs(Universe& universe)
 			if (rv == 0) {
 				c = GetDungeon(universe, x, y);
 				c = L4BTYPES[c];
-				if (c != 0 && dflags[x][y] == 0) {
+				if (c != 0 && universe.dflags[x][y] == 0) {
 					rv = random_(universe, 0, 16);
 					i = -1;
 					while (rv >= 0) {
@@ -954,7 +954,7 @@ static void DRLG_L4Subs(Universe& universe)
 			rv = random_(universe, 0, 10);
 			if (rv == 0) {
 				c = GetDungeon(universe, x, y);
-				if (L4BTYPES[c] == 6 && dflags[x][y] == 0) {
+				if (L4BTYPES[c] == 6 && universe.dflags[x][y] == 0) {
 					SetDungeon(universe, x, y, random_(universe, 0, 3) + 95);
 				}
 			}
@@ -1196,12 +1196,12 @@ static void L4firstRoom(Universe& universe)
 {
 	int x, y, w, h, rndx, rndy, xmin, xmax, ymin, ymax, tx, ty;
 
-	if (currlevel != 16) {
-		if (currlevel == quests[Q_WARLORD]._qlevel && quests[Q_WARLORD]._qactive != QUEST_NOTAVAIL) {
+	if (universe.currlevel != 16) {
+		if (universe.currlevel == quests[Q_WARLORD]._qlevel && quests[Q_WARLORD]._qactive != QUEST_NOTAVAIL) {
 			/// ASSERT: assert(universe.gbMaxPlayers == 1);
 			w = 11;
 			h = 11;
-		} else if (currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
+		} else if (universe.currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
 			w = 11;
 			h = 11;
 		} else {
@@ -1232,11 +1232,11 @@ static void L4firstRoom(Universe& universe)
 		y = rndy;
 	}
 
-	if (currlevel == 16) {
+	if (universe.currlevel == 16) {
 		universe.l4holdx = x;
 		universe.l4holdy = y;
 	}
-	if (QuestStatus(Q_WARLORD) || currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
+	if (QuestStatus(universe, Q_WARLORD) || universe.currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
 		universe.SP4x1 = x + 1;
 		universe.SP4y1 = y + 1;
 		universe.SP4x2 = universe.SP4x1 + w;
@@ -1261,10 +1261,10 @@ void L4SaveQuads(Universe& universe)
 
 	for (j = 0; j < 14; j++) {
 		for (i = 0; i < 14; i++) {
-			dflags[i + x][j + y] = 1;
-			dflags[DMAXX - 1 - i - x][j + y] = 1;
-			dflags[i + x][DMAXY - 1 - j - y] = 1;
-			dflags[DMAXX - 1 - i - x][DMAXY - 1 - j - y] = 1;
+			universe.dflags[i + x][j + y] = 1;
+			universe.dflags[DMAXX - 1 - i - x][j + y] = 1;
+			universe.dflags[i + x][DMAXY - 1 - j - y] = 1;
+			universe.dflags[DMAXX - 1 - i - x][DMAXY - 1 - j - y] = 1;
 		}
 	}
 }
@@ -1282,7 +1282,7 @@ void DRLG_L4SetRoom(Universe& universe, const BYTE *pSetPiece, int rx1, int ry1)
 		for (i = 0; i < rw; i++) {
 			if (*sp != 0) {
 				SetDungeon(universe, i + rx1, j + ry1, *sp);
-				dflags[i + rx1][j + ry1] |= DLRG_PROTECTED;
+				universe.dflags[i + rx1][j + ry1] |= DLRG_PROTECTED;
 			} else {
 				SetDungeon(universe, i + rx1, j + ry1, 6);
 			}
@@ -1365,7 +1365,7 @@ static BOOL DRLG_L4PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmi
 					if (miniset[ii] != 0 && GetDungeon(universe, xx + sx, yy + sy) != miniset[ii]) {
 						found = FALSE;
 					}
-					if (dflags[xx + sx][yy + sy] != 0) {
+					if (universe.dflags[xx + sx][yy + sy] != 0) {
 						found = FALSE;
 					}
 					ii++;
@@ -1390,24 +1390,24 @@ static BOOL DRLG_L4PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmi
 			for (xx = 0; xx < sw; xx++) {
 				if (miniset[ii] != 0) {
 					SetDungeon(universe, xx + sx, yy + sy, miniset[ii]);
-					dflags[xx + sx][yy + sy] |= 8;
+					universe.dflags[xx + sx][yy + sy] |= 8;
 				}
 				ii++;
 			}
 		}
 	}
 
-	if (currlevel == 15) {
+	if (universe.currlevel == 15) {
 		quests[Q_BETRAYER]._qtx = sx + 1;
 		quests[Q_BETRAYER]._qty = sy + 1;
 	}
 	if (setview == TRUE) {
-		ViewX = 2 * sx + 21;
-		ViewY = 2 * sy + 22;
+		universe.ViewX = 2 * sx + 21;
+		universe.ViewY = 2 * sy + 22;
 	}
 	if (ldir == 0) {
-		LvlViewX = 2 * sx + 21;
-		LvlViewY = 2 * sy + 22;
+		universe.LvlViewX = 2 * sx + 21;
+		universe.LvlViewY = 2 * sy + 22;
 	}
 
 	return TRUE;
@@ -1415,40 +1415,40 @@ static BOOL DRLG_L4PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmi
 
 static void DRLG_L4FTVR(Universe& universe, int i, int j, int x, int y, int d)
 {
-	if (dTransVal[x][y] != 0 || GetDungeon(universe, i, j) != 6) {
+	if (universe.dTransVal[x][y] != 0 || GetDungeon(universe, i, j) != 6) {
 		if (d == 1) {
-			dTransVal[x][y] = TransVal;
-			dTransVal[x][y + 1] = TransVal;
+			universe.dTransVal[x][y] = universe.TransVal;
+			universe.dTransVal[x][y + 1] = universe.TransVal;
 		}
 		if (d == 2) {
-			dTransVal[x + 1][y] = TransVal;
-			dTransVal[x + 1][y + 1] = TransVal;
+			universe.dTransVal[x + 1][y] = universe.TransVal;
+			universe.dTransVal[x + 1][y + 1] = universe.TransVal;
 		}
 		if (d == 3) {
-			dTransVal[x][y] = TransVal;
-			dTransVal[x + 1][y] = TransVal;
+			universe.dTransVal[x][y] = universe.TransVal;
+			universe.dTransVal[x + 1][y] = universe.TransVal;
 		}
 		if (d == 4) {
-			dTransVal[x][y + 1] = TransVal;
-			dTransVal[x + 1][y + 1] = TransVal;
+			universe.dTransVal[x][y + 1] = universe.TransVal;
+			universe.dTransVal[x + 1][y + 1] = universe.TransVal;
 		}
 		if (d == 5) {
-			dTransVal[x + 1][y + 1] = TransVal;
+			universe.dTransVal[x + 1][y + 1] = universe.TransVal;
 		}
 		if (d == 6) {
-			dTransVal[x][y + 1] = TransVal;
+			universe.dTransVal[x][y + 1] = universe.TransVal;
 		}
 		if (d == 7) {
-			dTransVal[x + 1][y] = TransVal;
+			universe.dTransVal[x + 1][y] = universe.TransVal;
 		}
 		if (d == 8) {
-			dTransVal[x][y] = TransVal;
+			universe.dTransVal[x][y] = universe.TransVal;
 		}
 	} else {
-		dTransVal[x][y] = TransVal;
-		dTransVal[x + 1][y] = TransVal;
-		dTransVal[x][y + 1] = TransVal;
-		dTransVal[x + 1][y + 1] = TransVal;
+		universe.dTransVal[x][y] = universe.TransVal;
+		universe.dTransVal[x + 1][y] = universe.TransVal;
+		universe.dTransVal[x][y + 1] = universe.TransVal;
+		universe.dTransVal[x + 1][y + 1] = universe.TransVal;
 		DRLG_L4FTVR(universe, i + 1, j, x + 2, y, 1);
 		DRLG_L4FTVR(universe, i - 1, j, x - 2, y, 2);
 		DRLG_L4FTVR(universe, i, j + 1, x, y + 2, 3);
@@ -1468,9 +1468,9 @@ static void DRLG_L4FloodTVal(Universe& universe)
 	for (j = 0; j < DMAXY; j++) {
 		xx = 16;
 		for (i = 0; i < DMAXX; i++) {
-			if (GetDungeon(universe, i, j) == 6 && dTransVal[xx][yy] == 0) {
+			if (GetDungeon(universe, i, j) == 6 && universe.dTransVal[xx][yy] == 0) {
 				DRLG_L4FTVR(universe, i, j, xx, yy, 0);
-				TransVal++;
+				universe.TransVal++;
 			}
 			xx += 2;
 		}
@@ -1517,33 +1517,33 @@ static void DRLG_L4TransFix(Universe& universe)
 		xx = 16;
 		for (i = 0; i < DMAXX; i++) {
 			if (IsDURWall(GetDungeon(universe, i, j)) && GetDungeon(universe, i, j - 1) == 18) {
-				dTransVal[xx + 1][yy] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy + 1] = universe.dTransVal[xx][yy];
 			}
 			if (IsDLLWall(GetDungeon(universe, i, j)) && GetDungeon(universe, i + 1, j) == 19) {
-				dTransVal[xx][yy + 1] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+				universe.dTransVal[xx][yy + 1] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy + 1] = universe.dTransVal[xx][yy];
 			}
 			if (GetDungeon(universe, i, j) == 18) {
-				dTransVal[xx + 1][yy] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy + 1] = universe.dTransVal[xx][yy];
 			}
 			if (GetDungeon(universe, i, j) == 19) {
-				dTransVal[xx][yy + 1] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+				universe.dTransVal[xx][yy + 1] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy + 1] = universe.dTransVal[xx][yy];
 			}
 			if (GetDungeon(universe, i, j) == 24) {
-				dTransVal[xx + 1][yy] = dTransVal[xx][yy];
-				dTransVal[xx][yy + 1] = dTransVal[xx][yy];
-				dTransVal[xx + 1][yy + 1] = dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx][yy + 1] = universe.dTransVal[xx][yy];
+				universe.dTransVal[xx + 1][yy + 1] = universe.dTransVal[xx][yy];
 			}
 			if (GetDungeon(universe, i, j) == 57) {
-				dTransVal[xx - 1][yy] = dTransVal[xx][yy + 1];
-				dTransVal[xx][yy] = dTransVal[xx][yy + 1];
+				universe.dTransVal[xx - 1][yy] = universe.dTransVal[xx][yy + 1];
+				universe.dTransVal[xx][yy] = universe.dTransVal[xx][yy + 1];
 			}
 			if (GetDungeon(universe, i, j) == 53) {
-				dTransVal[xx][yy - 1] = dTransVal[xx + 1][yy];
-				dTransVal[xx][yy] = dTransVal[xx + 1][yy];
+				universe.dTransVal[xx][yy - 1] = universe.dTransVal[xx + 1][yy];
+				universe.dTransVal[xx][yy] = universe.dTransVal[xx + 1][yy];
 			}
 			xx += 2;
 		}
@@ -1601,7 +1601,7 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 	std::optional<uint32_t> levelSeed = std::nullopt;
 
 	do {
-		DRLG_InitTrans();
+		DRLG_InitTrans(universe);
 		do {
 			levelSeed = GetRndState(universe);
 			InitL4Dungeon(universe);
@@ -1616,75 +1616,75 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 		} while (ar < 173);
 		L4makeDungeon(universe);
 		L4makeDmt(universe);
-		L4tileFix();
-		if (currlevel == 16) {
+		L4tileFix(universe);
+		if (universe.currlevel == 16) {
 			L4SaveQuads(universe);
 		}
-		if (QuestStatus(Q_WARLORD) || currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
+		if (QuestStatus(universe, Q_WARLORD) || universe.currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
 			for (spi = universe.SP4x1; spi < universe.SP4x2; spi++) {
 				for (spj = universe.SP4y1; spj < universe.SP4y2; spj++) {
-					dflags[spi][spj] = 1;
+					universe.dflags[spi][spj] = 1;
 				}
 			}
 		}
 		L4AddWall(universe);
 		DRLG_L4FloodTVal(universe);
 		DRLG_L4TransFix(universe);
-		if (setloadflag) {
+		if (universe.setloadflag) {
 			DRLG_L4SetSPRoom(universe, universe.SP4x1, universe.SP4y1);
 		}
-		if (currlevel == 16) {
+		if (universe.currlevel == 16) {
 			DRLG_LoadDiabQuads(universe, TRUE);
 		}
-		if (QuestStatus(Q_WARLORD)) {
+		if (QuestStatus(universe, Q_WARLORD)) {
 			if (entry == ENTRY_MAIN) {
 				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, TRUE, 0);
-				if (doneflag && currlevel == 13) {
+				if (doneflag && universe.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, FALSE, 6);
 				}
-				ViewX++;
+				universe.ViewX++;
 			} else if (entry == ENTRY_PREV) {
 				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
-				if (doneflag && currlevel == 13) {
+				if (doneflag && universe.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, FALSE, 6);
 				}
-				ViewX = 2 * setpc_x + 22;
-				ViewY = 2 * setpc_y + 22;
+				universe.ViewX = 2 * universe.setpc_x + 22;
+				universe.ViewY = 2 * universe.setpc_y + 22;
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
-				if (doneflag && currlevel == 13) {
+				if (doneflag && universe.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, TRUE, 6);
 				}
-				ViewX++;
+				universe.ViewX++;
 			}
-		} else if (currlevel != 15) {
+		} else if (universe.currlevel != 15) {
 			if (entry == ENTRY_MAIN) {
 				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, TRUE, 0);
-				if (doneflag && currlevel != 16) {
+				if (doneflag && universe.currlevel != 16) {
 					doneflag = DRLG_L4PlaceMiniSet(universe, L4DSTAIRS, 1, 1, -1, -1, FALSE, 1);
 				}
-				if (doneflag && currlevel == 13) {
+				if (doneflag && universe.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, FALSE, 6);
 				}
-				ViewX++;
+				universe.ViewX++;
 			} else if (entry == ENTRY_PREV) {
 				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
-				if (doneflag && currlevel != 16) {
+				if (doneflag && universe.currlevel != 16) {
 					doneflag = DRLG_L4PlaceMiniSet(universe, L4DSTAIRS, 1, 1, -1, -1, TRUE, 1);
 				}
-				if (doneflag && currlevel == 13) {
+				if (doneflag && universe.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, FALSE, 6);
 				}
-				ViewY++;
+				universe.ViewY++;
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
-				if (doneflag && currlevel != 16) {
+				if (doneflag && universe.currlevel != 16) {
 					doneflag = DRLG_L4PlaceMiniSet(universe, L4DSTAIRS, 1, 1, -1, -1, FALSE, 1);
 				}
-				if (doneflag && currlevel == 13) {
+				if (doneflag && universe.currlevel == 13) {
 					doneflag = DRLG_L4PlaceMiniSet(universe, L4TWARP, 1, 1, -1, -1, TRUE, 6);
 				}
-				ViewX++;
+				universe.ViewX++;
 			}
 		} else {
 			if (entry == ENTRY_MAIN) {
@@ -1696,7 +1696,7 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 						doneflag = DRLG_L4PlaceMiniSet(universe, L4PENTA2, 1, 1, -1, -1, FALSE, 1);
 					}
 				}
-				ViewX++;
+				universe.ViewX++;
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
 				if (doneflag) {
@@ -1706,7 +1706,7 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 						doneflag = DRLG_L4PlaceMiniSet(universe, L4PENTA2, 1, 1, -1, -1, TRUE, 1);
 					}
 				}
-				ViewY++;
+				universe.ViewY++;
 			}
 		}
 		if (mode == DungeonMode::BreakOnFailure && !doneflag)
@@ -1718,7 +1718,7 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 
 	DRLG_L4GeneralFix(universe);
 
-	if (currlevel != 16) {
+	if (universe.currlevel != 16) {
 		DRLG_PlaceThemeRooms(universe, 7, 10, 6, 8, 1);
 	}
 
@@ -1727,32 +1727,32 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 	DRLG_L4Subs(universe);
 	DRLG_Init_Globals(universe);
 
-	if (QuestStatus(Q_WARLORD)) {
+	if (QuestStatus(universe, Q_WARLORD)) {
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++) {
-				pdungeon[i][j] = GetDungeon(universe, i, j);
+				universe.pdungeon[i][j] = GetDungeon(universe, i, j);
 			}
 		}
 	}
 
 	DRLG_CheckQuests(universe, universe.SP4x1, universe.SP4y1);
 
-	if (currlevel == 15) {
+	if (universe.currlevel == 15) {
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++) {
 				if (GetDungeon(universe, i, j) == 98) {
-					Make_SetPC(i - 1, j - 1, 5, 5);
+					Make_SetPC(universe, i - 1, j - 1, 5, 5);
 				}
 				if (GetDungeon(universe, i, j) == 107) {
-					Make_SetPC(i - 1, j - 1, 5, 5);
+					Make_SetPC(universe, i - 1, j - 1, 5, 5);
 				}
 			}
 		}
 	}
-	if (currlevel == 16) {
+	if (universe.currlevel == 16) {
 		for (j = 0; j < DMAXY; j++) {
 			for (i = 0; i < DMAXX; i++) {
-				pdungeon[i][j] = GetDungeon(universe, i, j);
+				universe.pdungeon[i][j] = GetDungeon(universe, i, j);
 			}
 		}
 		DRLG_LoadDiabQuads(universe, FALSE);
@@ -1798,10 +1798,10 @@ static void DRLG_L4Pass3(Universe& universe)
 	for (j = 0; j < MAXDUNY; j += 2)
 	{
 		for (i = 0; i < MAXDUNX; i += 2) {
-			dPiece[i][j] = v1;
-			dPiece[i + 1][j] = v2;
-			dPiece[i][j + 1] = v3;
-			dPiece[i + 1][j + 1] = v4;
+			universe.dPiece[i][j] = v1;
+			universe.dPiece[i + 1][j] = v2;
+			universe.dPiece[i][j + 1] = v3;
+			universe.dPiece[i + 1][j + 1] = v4;
 		}
 	}
 
@@ -1850,10 +1850,10 @@ static void DRLG_L4Pass3(Universe& universe)
 				v4 = 0;
 			}
 #endif
-			dPiece[xx][yy] = v1;
-			dPiece[xx + 1][yy] = v2;
-			dPiece[xx][yy + 1] = v3;
-			dPiece[xx + 1][yy + 1] = v4;
+			universe.dPiece[xx][yy] = v1;
+			universe.dPiece[xx + 1][yy] = v2;
+			universe.dPiece[xx][yy + 1] = v3;
+			universe.dPiece[xx + 1][yy + 1] = v4;
 			xx += 2;
 		}
 		yy += 2;
@@ -1864,15 +1864,15 @@ std::optional<uint32_t> CreateL4Dungeon(Universe& universe, DWORD rseed, int ent
 {
 	SetRndSeed(universe, rseed);
 
-	dminx = 16;
-	dminy = 16;
-	dmaxx = 96;
-	dmaxy = 96;
+	universe.dminx = 16;
+	universe.dminy = 16;
+	universe.dmaxx = 96;
+	universe.dmaxy = 96;
 
-	ViewX = 40;
-	ViewY = 40;
+	universe.ViewX = 40;
+	universe.ViewY = 40;
 
-	DRLG_InitSetPC();
+	DRLG_InitSetPC(universe);
 	DRLG_LoadL4SP(universe);
 	std::optional<uint32_t> levelSeed = DRLG_L4(universe, entry, mode);
 	if (mode == DungeonMode::BreakOnFailure || mode == DungeonMode::BreakOnSuccess) {
@@ -1882,7 +1882,7 @@ std::optional<uint32_t> CreateL4Dungeon(Universe& universe, DWORD rseed, int ent
 
 	DRLG_L4Pass3(universe);
 	DRLG_FreeL4SP();
-	DRLG_SetPC();
+	DRLG_SetPC(universe);
 
 	return levelSeed;
 }

@@ -67,7 +67,7 @@ const int trm3y[] = {
 	1, 1, 1
 };
 
-BOOL TFit_Shrine(int i)
+BOOL TFit_Shrine(Universe& universe, int i)
 {
 	int xp, yp, found;
 
@@ -75,24 +75,24 @@ BOOL TFit_Shrine(int i)
 	yp = 0;
 	found = 0;
 	while (found == 0) {
-		if (dTransVal[xp][yp] == themes[i].ttval) {
-			if (nTrapTable[dPiece[xp][yp - 1]]
-			    && !nSolidTable[dPiece[xp - 1][yp]]
-			    && !nSolidTable[dPiece[xp + 1][yp]]
-			    && dTransVal[xp - 1][yp] == themes[i].ttval
-			    && dTransVal[xp + 1][yp] == themes[i].ttval
-			    && dObject[xp - 1][yp - 1] == 0
-			    && dObject[xp + 1][yp - 1] == 0) {
+		if (universe.dTransVal[xp][yp] == themes[i].ttval) {
+			if (universe.nTrapTable[universe.dPiece[xp][yp - 1]]
+			    && !universe.nSolidTable[universe.dPiece[xp - 1][yp]]
+			    && !universe.nSolidTable[universe.dPiece[xp + 1][yp]]
+			    && universe.dTransVal[xp - 1][yp] == themes[i].ttval
+			    && universe.dTransVal[xp + 1][yp] == themes[i].ttval
+			    && universe.dObject[xp - 1][yp - 1] == 0
+			    && universe.dObject[xp + 1][yp - 1] == 0) {
 				found = 1;
 			}
 			if (found == 0
-			    && nTrapTable[dPiece[xp - 1][yp]]
-			    && !nSolidTable[dPiece[xp][yp - 1]]
-			    && !nSolidTable[dPiece[xp][yp + 1]]
-			    && dTransVal[xp][yp - 1] == themes[i].ttval
-			    && dTransVal[xp][yp + 1] == themes[i].ttval
-			    && dObject[xp - 1][yp - 1] == 0
-			    && dObject[xp - 1][yp + 1] == 0) {
+			    && universe.nTrapTable[universe.dPiece[xp - 1][yp]]
+			    && !universe.nSolidTable[universe.dPiece[xp][yp - 1]]
+			    && !universe.nSolidTable[universe.dPiece[xp][yp + 1]]
+			    && universe.dTransVal[xp][yp - 1] == themes[i].ttval
+			    && universe.dTransVal[xp][yp + 1] == themes[i].ttval
+			    && universe.dObject[xp - 1][yp - 1] == 0
+			    && universe.dObject[xp - 1][yp + 1] == 0) {
 				found = 2;
 			}
 		}
@@ -124,13 +124,13 @@ BOOL TFit_Obj5(Universe& universe, int t)
 	rs = r;
 	while (r > 0) {
 		found = FALSE;
-		if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
+		if (universe.dTransVal[xp][yp] == themes[t].ttval && !universe.nSolidTable[universe.dPiece[xp][yp]]) {
 			found = TRUE;
 			for (i = 0; found && i < 25; i++) {
-				if (nSolidTable[dPiece[xp + trm5x[i]][yp + trm5y[i]]]) {
+				if (universe.nSolidTable[universe.dPiece[xp + trm5x[i]][yp + trm5y[i]]]) {
 					found = FALSE;
 				}
-				if (dTransVal[xp + trm5x[i]][yp + trm5y[i]] != themes[t].ttval) {
+				if (universe.dTransVal[xp + trm5x[i]][yp + trm5y[i]] != themes[t].ttval) {
 					found = FALSE;
 				}
 			}
@@ -164,7 +164,7 @@ BOOL TFit_SkelRoom(Universe& universe, int t)
 {
 	int i;
 
-	if (leveltype != DTYPE_CATHEDRAL && leveltype != DTYPE_CATACOMBS) {
+	if (universe.leveltype != DTYPE_CATHEDRAL && universe.leveltype != DTYPE_CATACOMBS) {
 		return FALSE;
 	}
 
@@ -199,11 +199,11 @@ BOOL CheckThemeObj3(Universe& universe, int xp, int yp, int t, int f)
 	for (i = 0; i < 9; i++) {
 		if (xp + trm3x[i] < 0 || yp + trm3y[i] < 0)
 			return FALSE;
-		if (nSolidTable[dPiece[xp + trm3x[i]][yp + trm3y[i]]])
+		if (universe.nSolidTable[universe.dPiece[xp + trm3x[i]][yp + trm3y[i]]])
 			return FALSE;
-		if (dTransVal[xp + trm3x[i]][yp + trm3y[i]] != themes[t].ttval)
+		if (universe.dTransVal[xp + trm3x[i]][yp + trm3y[i]] != themes[t].ttval)
 			return FALSE;
-		if (dObject[xp + trm3x[i]][yp + trm3y[i]])
+		if (universe.dObject[xp + trm3x[i]][yp + trm3y[i]])
 			return FALSE;
 		if (f != -1 && random_(universe, 0, f) == 0)
 			return FALSE;
@@ -219,7 +219,7 @@ BOOL TFit_Obj3(Universe& universe, int t)
 
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
 		for (xp = 1; xp < MAXDUNX - 1; xp++) {
-			if (CheckThemeObj3(universe, xp, yp, t, objrnd[leveltype - 1])) {
+			if (CheckThemeObj3(universe, xp, yp, t, objrnd[universe.leveltype - 1])) {
 				themex = xp;
 				themey = yp;
 				return TRUE;
@@ -230,7 +230,7 @@ BOOL TFit_Obj3(Universe& universe, int t)
 	return FALSE;
 }
 
-BOOL CheckThemeReqs(int t)
+BOOL CheckThemeReqs(Universe& universe, int t)
 {
 	BOOL rv;
 
@@ -239,7 +239,7 @@ BOOL CheckThemeReqs(int t)
 	case THEME_SHRINE:
 	case THEME_SKELROOM:
 	case THEME_LIBRARY:
-		if (leveltype == DTYPE_CAVES || leveltype == DTYPE_HELL) {
+		if (universe.leveltype == DTYPE_CAVES || universe.leveltype == DTYPE_HELL) {
 			rv = FALSE;
 		}
 		break;
@@ -254,12 +254,12 @@ BOOL CheckThemeReqs(int t)
 		}
 		break;
 	case THEME_ARMORSTAND:
-		if (leveltype == DTYPE_CATHEDRAL) {
+		if (universe.leveltype == DTYPE_CATHEDRAL) {
 			rv = FALSE;
 		}
 		break;
 	case THEME_CAULDRON:
-		if (leveltype != DTYPE_HELL || !cauldronFlag) {
+		if (universe.leveltype != DTYPE_HELL || !cauldronFlag) {
 			rv = FALSE;
 		}
 		break;
@@ -274,7 +274,7 @@ BOOL CheckThemeReqs(int t)
 		}
 		break;
 	case THEME_WEAPONRACK:
-		if (leveltype == DTYPE_CATHEDRAL) {
+		if (universe.leveltype == DTYPE_CATHEDRAL) {
 			rv = FALSE;
 		}
 		break;
@@ -287,12 +287,12 @@ BOOL SpecialThemeFit(Universe& universe, int i, int t)
 {
 	BOOL rv;
 
-	rv = CheckThemeReqs(t);
+	rv = CheckThemeReqs(universe, t);
 	switch (t) {
 	case THEME_SHRINE:
 	case THEME_LIBRARY:
 		if (rv) {
-			rv = TFit_Shrine(i);
+			rv = TFit_Shrine(universe, i);
 		}
 		break;
 	case THEME_SKELROOM:
@@ -365,21 +365,21 @@ BOOL SpecialThemeFit(Universe& universe, int i, int t)
 	return rv;
 }
 
-BOOL CheckThemeRoom(int tv)
+BOOL CheckThemeRoom(Universe& universe, int tv)
 {
 	int i, j, tarea;
 
 	for (i = 0; i < numtrigs; i++) {
-		if (dTransVal[trigs[i]._tx][trigs[i]._ty] == tv)
+		if (universe.dTransVal[trigs[i]._tx][trigs[i]._ty] == tv)
 			return FALSE;
 	}
 
 	tarea = 0;
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dTransVal[i][j] != tv)
+			if (universe.dTransVal[i][j] != tv)
 				continue;
-			if (dFlags[i][j] & BFLAG_POPULATED)
+			if (universe.dFlags[i][j] & BFLAG_POPULATED)
 				return FALSE;
 
 			tarea++;
@@ -393,15 +393,15 @@ BOOL CheckThemeRoom(int tv)
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dTransVal[i][j] != tv || nSolidTable[dPiece[i][j]])
+			if (universe.dTransVal[i][j] != tv || universe.nSolidTable[universe.dPiece[i][j]])
 				continue;
-			if (dTransVal[i - 1][j] != tv && !nSolidTable[dPiece[i - 1][j]])
+			if (universe.dTransVal[i - 1][j] != tv && !universe.nSolidTable[universe.dPiece[i - 1][j]])
 				return FALSE;
-			if (dTransVal[i + 1][j] != tv && !nSolidTable[dPiece[i + 1][j]])
+			if (universe.dTransVal[i + 1][j] != tv && !universe.nSolidTable[universe.dPiece[i + 1][j]])
 				return FALSE;
-			if (dTransVal[i][j - 1] != tv && !nSolidTable[dPiece[i][j - 1]])
+			if (universe.dTransVal[i][j - 1] != tv && !universe.nSolidTable[universe.dPiece[i][j - 1]])
 				return FALSE;
-			if (dTransVal[i][j + 1] != tv && !nSolidTable[dPiece[i][j + 1]])
+			if (universe.dTransVal[i][j + 1] != tv && !universe.nSolidTable[universe.dPiece[i][j + 1]])
 				return FALSE;
 		}
 	}
@@ -425,15 +425,15 @@ void InitThemes(Universe& universe)
 	bCrossFlag = FALSE;
 	weaponFlag = TRUE;
 
-	if (currlevel == 16)
+	if (universe.currlevel == 16)
 		return;
 
-	if (leveltype == DTYPE_CATHEDRAL) {
+	if (universe.leveltype == DTYPE_CATHEDRAL) {
 		for (i = 0; i < sizeof(ThemeGoodIn) / sizeof(ThemeGoodIn[0]); i++)
 			ThemeGoodIn[i] = FALSE;
 
-		for (i = 0; i < TransVal && numthemes < MAXTHEMES; i++) {
-			if (CheckThemeRoom(i)) {
+		for (i = 0; i < universe.TransVal && numthemes < MAXTHEMES; i++) {
+			if (CheckThemeRoom(universe, i)) {
 				themes[numthemes].ttval = i;
 				for (j = ThemeGood[random_(universe, 0, 4)];; j = random_(universe, 0, 17)) {
 					if (SpecialThemeFit(universe, numthemes, j)) {
@@ -445,12 +445,12 @@ void InitThemes(Universe& universe)
 			}
 		}
 	}
-	if (leveltype == DTYPE_CATACOMBS || leveltype == DTYPE_CAVES || leveltype == DTYPE_HELL) {
-		for (i = 0; i < themeCount; i++)
+	if (universe.leveltype == DTYPE_CATACOMBS || universe.leveltype == DTYPE_CAVES || universe.leveltype == DTYPE_HELL) {
+		for (i = 0; i < universe.themeCount; i++)
 			themes[i].ttype = THEME_NONE;
-		if (QuestStatus(Q_ZHAR)) {
-			for (j = 0; j < themeCount; j++) {
-				themes[j].ttval = themeLoc[j].ttval;
+		if (QuestStatus(universe, Q_ZHAR)) {
+			for (j = 0; j < universe.themeCount; j++) {
+				themes[j].ttval = universe.themeLoc[j].ttval;
 				if (SpecialThemeFit(universe, j, THEME_LIBRARY)) {
 					themes[j].ttype = THEME_LIBRARY;
 					zharlib = j;
@@ -458,9 +458,9 @@ void InitThemes(Universe& universe)
 				}
 			}
 		}
-		for (i = 0; i < themeCount; i++) {
+		for (i = 0; i < universe.themeCount; i++) {
 			if (themes[i].ttype == THEME_NONE) {
-				themes[i].ttval = themeLoc[i].ttval;
+				themes[i].ttval = universe.themeLoc[i].ttval;
 				for (j = ThemeGood[random_(universe, 0, 4)];; j = random_(universe, 0, 17)) {
 					if (SpecialThemeFit(universe, i, j)) {
 						break;
@@ -469,32 +469,32 @@ void InitThemes(Universe& universe)
 				themes[i].ttype = j;
 			}
 		}
-		numthemes += themeCount;
+		numthemes += universe.themeCount;
 	}
 }
 
 /**
  * @brief HoldThemeRooms marks theme rooms as populated.
  */
-void HoldThemeRooms()
+void HoldThemeRooms(Universe& universe)
 {
 	int i, x, y;
 	char v;
 
-	if (currlevel != 16) {
-		if (leveltype == DTYPE_CATHEDRAL) {
+	if (universe.currlevel != 16) {
+		if (universe.leveltype == DTYPE_CATHEDRAL) {
 			for (i = 0; i < numthemes; i++) {
 				v = themes[i].ttval;
 				for (y = 0; y < MAXDUNY; y++) {
 					for (x = 0; x < MAXDUNX; x++) {
-						if (dTransVal[x][y] == v) {
-							dFlags[x][y] |= BFLAG_POPULATED;
+						if (universe.dTransVal[x][y] == v) {
+							universe.dFlags[x][y] |= BFLAG_POPULATED;
 						}
 					}
 				}
 			}
 		} else {
-			DRLG_HoldThemeRooms();
+			DRLG_HoldThemeRooms(universe);
 		}
 	}
 }
@@ -525,7 +525,7 @@ void PlaceThemeMonsts(Universe& universe, int t, int f)
 	mtype = scattertypes[random_(universe, 0, numscattypes)];
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]] && dItem[xp][yp] == 0 && dObject[xp][yp] == 0) {
+			if (universe.dTransVal[xp][yp] == themes[t].ttval && !universe.nSolidTable[universe.dPiece[xp][yp]] && universe.dItem[xp][yp] == 0 && universe.dObject[xp][yp] == 0) {
 				if (random_(universe, 0, f) == 0) {
 					AddMonster(universe, xp, yp, random_(universe, 0, 8), mtype, TRUE);
 				}
@@ -547,9 +547,9 @@ void Theme_Barrel(Universe& universe, int t)
 
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
-				if (random_(universe, 0, barrnd[leveltype - 1]) == 0) {
-					if (random_(universe, 0, barrnd[leveltype - 1]) == 0) {
+			if (universe.dTransVal[xp][yp] == themes[t].ttval && !universe.nSolidTable[universe.dPiece[xp][yp]]) {
+				if (random_(universe, 0, barrnd[universe.leveltype - 1]) == 0) {
+					if (random_(universe, 0, barrnd[universe.leveltype - 1]) == 0) {
 						r = OBJ_BARREL;
 					} else {
 						r = OBJ_BARRELEX;
@@ -559,7 +559,7 @@ void Theme_Barrel(Universe& universe, int t)
 			}
 		}
 	}
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
 /**
@@ -571,7 +571,7 @@ void Theme_Shrine(Universe& universe, int t)
 {
 	char monstrnd[4] = { 6, 6, 3, 9 };
 
-	TFit_Shrine(t);
+	TFit_Shrine(universe, t);
 	if (themeVar1 == 1) {
 		AddObject(universe, OBJ_CANDLE2, themex - 1, themey);
 		AddObject(universe, OBJ_SHRINER, themex, themey);
@@ -581,7 +581,7 @@ void Theme_Shrine(Universe& universe, int t)
 		AddObject(universe, OBJ_SHRINEL, themex, themey);
 		AddObject(universe, OBJ_CANDLE2, themex, themey + 1);
 	}
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
 /**
@@ -599,7 +599,7 @@ void Theme_MonstPit(Universe& universe, int t)
 	ixp = 0;
 	iyp = 0;
 	while (r > 0) {
-		if (dTransVal[ixp][iyp] == themes[t].ttval && !nSolidTable[dPiece[ixp][iyp]]) {
+		if (universe.dTransVal[ixp][iyp] == themes[t].ttval && !universe.nSolidTable[universe.dPiece[ixp][iyp]]) {
 			--r;
 		}
 		if (r <= 0)
@@ -615,7 +615,7 @@ void Theme_MonstPit(Universe& universe, int t)
 	}
 	CreateRndItem(universe, ixp, iyp, TRUE, FALSE, TRUE);
 	ItemNoFlippy();
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
 /**
@@ -635,7 +635,7 @@ void Theme_SkelRoom(Universe& universe, int t)
 
 	AddObject(universe, OBJ_SKFIRE, xp, yp);
 
-	if (random_(universe, 0, monstrnd[leveltype - 1]) != 0) {
+	if (random_(universe, 0, monstrnd[universe.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(universe, i, xp - 1, yp - 1);
 	} else {
@@ -645,25 +645,25 @@ void Theme_SkelRoom(Universe& universe, int t)
 	i = PreSpawnSkeleton(universe);
 	SpawnSkeleton(universe, i, xp, yp - 1);
 
-	if (random_(universe, 0, monstrnd[leveltype - 1]) != 0) {
+	if (random_(universe, 0, monstrnd[universe.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(universe, i, xp + 1, yp - 1);
 	} else {
 		AddObject(universe, OBJ_BANNERR, xp + 1, yp - 1);
 	}
-	if (random_(universe, 0, monstrnd[leveltype - 1]) != 0) {
+	if (random_(universe, 0, monstrnd[universe.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(universe, i, xp - 1, yp);
 	} else {
 		AddObject(universe, OBJ_BANNERM, xp - 1, yp);
 	}
-	if (random_(universe, 0, monstrnd[leveltype - 1]) != 0) {
+	if (random_(universe, 0, monstrnd[universe.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(universe, i, xp + 1, yp);
 	} else {
 		AddObject(universe, OBJ_BANNERM, xp + 1, yp);
 	}
-	if (random_(universe, 0, monstrnd[leveltype - 1]) != 0) {
+	if (random_(universe, 0, monstrnd[universe.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(universe, i, xp - 1, yp + 1);
 	} else {
@@ -673,17 +673,17 @@ void Theme_SkelRoom(Universe& universe, int t)
 	i = PreSpawnSkeleton(universe);
 	SpawnSkeleton(universe, i, xp, yp + 1);
 
-	if (random_(universe, 0, monstrnd[leveltype - 1]) != 0) {
+	if (random_(universe, 0, monstrnd[universe.leveltype - 1]) != 0) {
 		i = PreSpawnSkeleton(universe);
 		SpawnSkeleton(universe, i, xp + 1, yp + 1);
 	} else {
 		AddObject(universe, OBJ_BANNERL, xp + 1, yp + 1);
 	}
 
-	if (dObject[xp][yp - 3] == 0) {
+	if (universe.dObject[xp][yp - 3] == 0) {
 		AddObject(universe, OBJ_SKELBOOK, xp, yp - 2);
 	}
-	if (dObject[xp][yp + 3] == 0) {
+	if (universe.dObject[xp][yp + 3] == 0) {
 		AddObject(universe, OBJ_SKELBOOK, xp, yp + 2);
 	}
 }
@@ -703,10 +703,10 @@ void Theme_Treasure(Universe& universe, int t)
 	GetRndSeed(universe);
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
-				int rv = random_(universe, 0, treasrnd[leveltype - 1]);
+			if (universe.dTransVal[xp][yp] == themes[t].ttval && !universe.nSolidTable[universe.dPiece[xp][yp]]) {
+				int rv = random_(universe, 0, treasrnd[universe.leveltype - 1]);
 				// BUGFIX: the `2*` in `2*random_(universe, 0, treasrnd...) == 0` has no effect, should probably be `random_(universe, 0, 2*treasrnd...) == 0`
-				if ((2 * random_(universe, 0, treasrnd[leveltype - 1])) == 0) {
+				if ((2 * random_(universe, 0, treasrnd[universe.leveltype - 1])) == 0) {
 					CreateTypeItem(universe, xp, yp, FALSE, ITYPE_GOLD, IMISC_NONE, FALSE, TRUE);
 					ItemNoFlippy();
 				}
@@ -718,19 +718,19 @@ void Theme_Treasure(Universe& universe, int t)
 				//
 				//    `rv == 0` has no effect.
 				//
-				//    `rv >= treasrnd[leveltype - 1] - 2` is not connected to either
+				//    `rv >= treasrnd[universe.leveltype - 1] - 2` is not connected to either
 				//    of the item creation branches above, thus the last (unrelated)
 				//    item spawned/dropped on ground would be halved in value.
-				if (rv == 0 || rv >= treasrnd[leveltype - 1] - 2) {
+				if (rv == 0 || rv >= treasrnd[universe.leveltype - 1] - 2) {
 					i = ItemNoFlippy();
-					if (rv >= treasrnd[leveltype - 1] - 2 && leveltype != DTYPE_CATHEDRAL) {
+					if (rv >= treasrnd[universe.leveltype - 1] - 2 && universe.leveltype != DTYPE_CATHEDRAL) {
 						item[i]._ivalue >>= 1;
 					}
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
 /**
@@ -744,7 +744,7 @@ void Theme_Library(Universe& universe, int t)
 	char librnd[4] = { 1, 2, 2, 5 };
 	char monstrnd[4] = { 5, 7, 3, 9 };
 
-	TFit_Shrine(t);
+	TFit_Shrine(universe, t);
 
 	if (themeVar1 == 1) {
 		AddObject(universe, OBJ_BOOKCANDLE, themex - 1, themey);
@@ -758,10 +758,10 @@ void Theme_Library(Universe& universe, int t)
 
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
 		for (xp = 1; xp < MAXDUNX - 1; xp++) {
-			if (CheckThemeObj3(universe, xp, yp, t, -1) && dMonster[xp][yp] == 0 && random_(universe, 0, librnd[leveltype - 1]) == 0) {
+			if (CheckThemeObj3(universe, xp, yp, t, -1) && universe.dMonster[xp][yp] == 0 && random_(universe, 0, librnd[universe.leveltype - 1]) == 0) {
 				AddObject(universe, OBJ_BOOKSTAND, xp, yp);
-				if (random_(universe, 0, 2 * librnd[leveltype - 1]) != 0) { /// BUGFIX: check dObject[xp][yp] was populated by AddObject
-					oi = dObject[xp][yp] - 1;
+				if (random_(universe, 0, 2 * librnd[universe.leveltype - 1]) != 0) { /// BUGFIX: check universe.dObject[xp][yp] was populated by AddObject
+					oi = universe.dObject[xp][yp] - 1;
 					SetObjectSelFlag(universe, oi, 0);
 					IncrementObjectFrame(universe, oi, 2);
 				}
@@ -769,13 +769,13 @@ void Theme_Library(Universe& universe, int t)
 		}
 	}
 
-	if (QuestStatus(Q_ZHAR)) {
+	if (QuestStatus(universe, Q_ZHAR)) {
 		if (t == zharlib) {
 			return;
 		}
-		PlaceThemeMonsts(universe, t, monstrnd[leveltype]); /// BUGFIX: `leveltype - 1`
+		PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype]); /// BUGFIX: `universe.leveltype - 1`
 	} else {
-		PlaceThemeMonsts(universe, t, monstrnd[leveltype]); /// BUGFIX: `leveltype - 1`
+		PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype]); /// BUGFIX: `universe.leveltype - 1`
 	}
 }
 
@@ -792,16 +792,16 @@ void Theme_Torture(Universe& universe, int t)
 
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
 		for (xp = 1; xp < MAXDUNX - 1; xp++) {
-			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
+			if (universe.dTransVal[xp][yp] == themes[t].ttval && !universe.nSolidTable[universe.dPiece[xp][yp]]) {
 				if (CheckThemeObj3(universe, xp, yp, t, -1)) {
-					if (random_(universe, 0, tortrnd[leveltype - 1]) == 0) {
+					if (random_(universe, 0, tortrnd[universe.leveltype - 1]) == 0) {
 						AddObject(universe, OBJ_TNUDEM2, xp, yp);
 					}
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
 /**
@@ -814,7 +814,7 @@ void Theme_BloodFountain(Universe& universe, int t)
 
 	TFit_Obj5(universe, t);
 	AddObject(universe, OBJ_BLOODFTN, themex, themey);
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
 /**
@@ -830,16 +830,16 @@ void Theme_Decap(Universe& universe, int t)
 
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
 		for (xp = 1; xp < MAXDUNX - 1; xp++) {
-			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
+			if (universe.dTransVal[xp][yp] == themes[t].ttval && !universe.nSolidTable[universe.dPiece[xp][yp]]) {
 				if (CheckThemeObj3(universe, xp, yp, t, -1)) {
-					if (random_(universe, 0, decaprnd[leveltype - 1]) == 0) {
+					if (random_(universe, 0, decaprnd[universe.leveltype - 1]) == 0) {
 						AddObject(universe, OBJ_DECAP, xp, yp);
 					}
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
 /**
@@ -853,7 +853,7 @@ void Theme_PurifyingFountain(Universe& universe, int t)
 
 	TFit_Obj5(universe, t);
 	AddObject(universe, OBJ_PURIFYINGFTN, themex, themey);
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
 /**
@@ -873,16 +873,16 @@ void Theme_ArmorStand(Universe& universe, int t)
 	}
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
+			if (universe.dTransVal[xp][yp] == themes[t].ttval && !universe.nSolidTable[universe.dPiece[xp][yp]]) {
 				if (CheckThemeObj3(universe, xp, yp, t, -1)) {
-					if (random_(universe, 0, armorrnd[leveltype - 1]) == 0) {
+					if (random_(universe, 0, armorrnd[universe.leveltype - 1]) == 0) {
 						AddObject(universe, OBJ_ARMORSTANDN, xp, yp);
 					}
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 	armorFlag = FALSE;
 }
 
@@ -899,7 +899,7 @@ void Theme_GoatShrine(Universe& universe, int t)
 	AddObject(universe, OBJ_GOATSHRINE, themex, themey);
 	for (yy = themey - 1; yy <= themey + 1; yy++) {
 		for (xx = themex - 1; xx <= themex + 1; xx++) {
-			if (dTransVal[xx][yy] == themes[t].ttval && !nSolidTable[dPiece[xx][yy]] && (xx != themex || yy != themey)) {
+			if (universe.dTransVal[xx][yy] == themes[t].ttval && !universe.nSolidTable[universe.dPiece[xx][yy]] && (xx != themex || yy != themey)) {
 				AddMonster(universe, xx, yy, DIR_SW, themeVar1, TRUE);
 			}
 		}
@@ -917,7 +917,7 @@ void Theme_Cauldron(Universe& universe, int t)
 
 	TFit_Obj5(universe, t);
 	AddObject(universe, OBJ_CAULDRON, themex, themey);
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
 /**
@@ -931,7 +931,7 @@ void Theme_MurkyFountain(Universe& universe, int t)
 
 	TFit_Obj5(universe, t);
 	AddObject(universe, OBJ_MURKYFTN, themex, themey);
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
 /**
@@ -945,7 +945,7 @@ void Theme_TearFountain(Universe& universe, int t)
 
 	TFit_Obj5(universe, t);
 	AddObject(universe, OBJ_TEARFTN, themex, themey);
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
 /**
@@ -961,16 +961,16 @@ void Theme_BrnCross(Universe& universe, int t)
 
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
+			if (universe.dTransVal[xp][yp] == themes[t].ttval && !universe.nSolidTable[universe.dPiece[xp][yp]]) {
 				if (CheckThemeObj3(universe, xp, yp, t, -1)) {
-					if (random_(universe, 0, bcrossrnd[leveltype - 1]) == 0) {
+					if (random_(universe, 0, bcrossrnd[universe.leveltype - 1]) == 0) {
 						AddObject(universe, OBJ_TBCROSS, xp, yp);
 					}
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 	bCrossFlag = TRUE;
 }
 
@@ -991,30 +991,30 @@ void Theme_WeaponRack(Universe& universe, int t)
 	}
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
-			if (dTransVal[xp][yp] == themes[t].ttval && !nSolidTable[dPiece[xp][yp]]) {
+			if (universe.dTransVal[xp][yp] == themes[t].ttval && !universe.nSolidTable[universe.dPiece[xp][yp]]) {
 				if (CheckThemeObj3(universe, xp, yp, t, -1)) {
-					if (random_(universe, 0, weaponrnd[leveltype - 1]) == 0) {
+					if (random_(universe, 0, weaponrnd[universe.leveltype - 1]) == 0) {
 						AddObject(universe, OBJ_WEAPONRACKN, xp, yp);
 					}
 				}
 			}
 		}
 	}
-	PlaceThemeMonsts(universe, t, monstrnd[leveltype - 1]);
+	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 	weaponFlag = FALSE;
 }
 
 /**
  * UpdateL4Trans sets each value of the transparency map to 1.
  */
-void UpdateL4Trans()
+void UpdateL4Trans(Universe& universe)
 {
 	int i, j;
 
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (dTransVal[i][j] != 0) {
-				dTransVal[i][j] = 1;
+			if (universe.dTransVal[i][j] != 0) {
+				universe.dTransVal[i][j] = 1;
 			}
 		}
 	}
@@ -1027,7 +1027,7 @@ void CreateThemeRooms(Universe& universe)
 {
 	int i;
 
-	if (currlevel == 16) {
+	if (universe.currlevel == 16) {
 		return;
 	}
 	InitObjFlag = TRUE;
@@ -1089,7 +1089,7 @@ void CreateThemeRooms(Universe& universe)
 		}
 	}
 	InitObjFlag = FALSE;
-	if (leveltype == DTYPE_HELL && themeCount > 0) {
-		UpdateL4Trans();
+	if (universe.leveltype == DTYPE_HELL && universe.themeCount > 0) {
+		UpdateL4Trans(universe);
 	}
 }

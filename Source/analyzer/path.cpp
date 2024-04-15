@@ -43,18 +43,18 @@ const bool isVisible[MAXVIEWY][MAXVIEWX] = {
 
 Point StairsDownPrevious;
 
-BOOL PosOkPlayer(int pnum, int x, int y)
+BOOL PosOkPlayer(Universe& universe, int pnum, int x, int y)
 {
 	if (x < 0 || y < 0 || x >= MAXDUNX || y >= MAXDUNY)
 		return FALSE;
-	int tileId = dPiece[x][y];
+	int tileId = universe.dPiece[x][y];
 	if (tileId == 0)
 		return FALSE;
-	if (nSolidTable[tileId])
+	if (universe.nSolidTable[tileId])
 		return FALSE;
 
-	if (dObject[x][y] != 0) {
-		ObjectStruct *obj = &object[abs(dObject[x][y]) - 1];
+	if (universe.dObject[x][y] != 0) {
+		ObjectStruct *obj = &object[abs(universe.dObject[x][y]) - 1];
 		if (obj->_oSolidFlag && !obj->_oBreak) {
 			return FALSE;
 		}
@@ -63,9 +63,9 @@ BOOL PosOkPlayer(int pnum, int x, int y)
 	return TRUE;
 }
 
-int PathLength(Point start, Point end)
+int PathLength(Universe& universe, Point start, Point end)
 {
-	return FindPath(PosOkPlayer, 0, start.x, start.y, end.x, end.y, Path);
+	return FindPath(universe, PosOkPlayer, 0, start.x, start.y, end.x, end.y, Path);
 }
 
 /**
@@ -110,7 +110,7 @@ int CalcStairsChebyshevDistance(Point start, Point end)
 	return std::max(horizontal, vertical);
 }
 
-int GetWalkTime(Point start, Point end)
+int GetWalkTime(Universe& universe, Point start, Point end)
 {
 	constexpr int ticksToWalkATile = 8;
 
@@ -118,7 +118,7 @@ int GetWalkTime(Point start, Point end)
 	if (cDistance == -1 || cDistance > MAX_PATH_LENGTH)
 		return -1;
 
-	int stairsPath = PathLength(start, end);
+	int stairsPath = PathLength(universe, start, end);
 	if (stairsPath == 0)
 		return -1;
 
@@ -153,23 +153,23 @@ int GetShortestTeleportTime(Point startA, Point startB, Point end)
 	return std::min(teleportTime, teleportTimePrevious);
 }
 
-void setDoorSolidState(BOOLEAN doorState)
+void setDoorSolidState(Universe& universe, BOOLEAN doorState)
 {
-	if (leveltype == DTYPE_CATHEDRAL) {
-		nSolidTable[44] = doorState;
-		nSolidTable[46] = doorState;
-		nSolidTable[51] = doorState;
-		nSolidTable[56] = doorState;
-		nSolidTable[214] = doorState;
-		nSolidTable[270] = doorState;
-	} else if (leveltype == DTYPE_CATACOMBS) {
-		nSolidTable[55] = doorState;
-		nSolidTable[58] = doorState;
-		nSolidTable[538] = doorState;
-		nSolidTable[540] = doorState;
-	} else if (leveltype == DTYPE_CAVES) {
-		nSolidTable[531] = doorState;
-		nSolidTable[534] = doorState;
+	if (universe.leveltype == DTYPE_CATHEDRAL) {
+		universe.nSolidTable[44] = doorState;
+		universe.nSolidTable[46] = doorState;
+		universe.nSolidTable[51] = doorState;
+		universe.nSolidTable[56] = doorState;
+		universe.nSolidTable[214] = doorState;
+		universe.nSolidTable[270] = doorState;
+	} else if (universe.leveltype == DTYPE_CATACOMBS) {
+		universe.nSolidTable[55] = doorState;
+		universe.nSolidTable[58] = doorState;
+		universe.nSolidTable[538] = doorState;
+		universe.nSolidTable[540] = doorState;
+	} else if (universe.leveltype == DTYPE_CAVES) {
+		universe.nSolidTable[531] = doorState;
+		universe.nSolidTable[534] = doorState;
 	}
 }
 
@@ -178,19 +178,19 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 	int tickLenth = 0;
 	tickLenth += 20; // Load screens
 
-	if (currlevel < 9) {
-		int walkTicks = GetWalkTime(Spawn, StairsDown);
+	if (universe.currlevel < 9) {
+		int walkTicks = GetWalkTime(universe, Spawn, StairsDown);
 		if (walkTicks == -1) {
 			if (Config.verbose)
 				std::cerr << "Path: Gave up on walking to the stairs" << std::endl;
 			return false;
 		}
 		tickLenth += walkTicks;
-	} else if (currlevel == 9) {
+	} else if (universe.currlevel == 9) {
 		LocatePuzzler(universe);
 		int pathToPuzzler = -1;
 		if (POI != Point { -1, -1 }) {
-			int walkTicks = GetWalkTime(Spawn, POI);
+			int walkTicks = GetWalkTime(universe, Spawn, POI);
 			if (walkTicks != -1) {
 				int teleportTime = GetTeleportTime(Spawn, StairsDown);
 				if (teleportTime != -1) {
@@ -219,7 +219,7 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 		}
 
 		tickLenth += 1100; // Fight monsters to get Puzzler or level up to read the book
-	} else if (currlevel == 15) {
+	} else if (universe.currlevel == 15) {
 		Point target = { -1, -1 };
 
 		// Locate Lazarus staff
@@ -271,7 +271,7 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 		}
 		tickLenth += teleportTime;
 
-		if (currlevel == 16) {
+		if (universe.currlevel == 16) {
 			tickLenth += 180; // Defeat Diablo
 		}
 	}
@@ -279,7 +279,7 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 	TotalTickLenth += tickLenth;
 
 	if (Config.verbose)
-		std::cerr << "Path: Compleated dlvl " << (int)currlevel << " @ " << formatTime() << std::endl;
+		std::cerr << "Path: Compleated dlvl " << (int)universe.currlevel << " @ " << formatTime() << std::endl;
 
 	if (TotalTickLenth > *Config.target * 20) {
 		if (Config.verbose)
@@ -292,9 +292,9 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 
 bool IsGoodLevel(Universe& universe)
 {
-	setDoorSolidState(FALSE); // Open doors
+	setDoorSolidState(universe, FALSE); // Open doors
 	bool result = IsGoodLevelSoursororStrategy(universe);
-	setDoorSolidState(TRUE); // Close doors
+	setDoorSolidState(universe, TRUE); // Close doors
 
 	return result;
 }
@@ -339,7 +339,7 @@ bool ScannerPath::levelMatches(std::optional<uint32_t> levelSeed)
 
 	StairsDownPrevious = StairsDown;
 
-	int level = currlevel;
+	int level = universe.currlevel;
 	if (level == 16) {
 		std::cout << universe.sgGameInitInfo.dwSeed << " (etc " << formatTime() << ")" << std::endl;
 		Ended = true;
