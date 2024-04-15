@@ -1197,7 +1197,7 @@ void DRLG_Init_Globals(Universe& universe)
 	memset(universe.dObject, 0, sizeof(universe.dObject));
 	memset(universe.dItem, 0, sizeof(universe.dItem));
 	memset(universe.dMissile, 0, sizeof(universe.dMissile));
-	if (!lightflag) {
+	if (!universe.lightflag) {
 		if (universe.light4flag)
 			c = 3;
 		else

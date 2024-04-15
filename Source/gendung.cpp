@@ -358,7 +358,7 @@ void MakeSpeedCels(Universe& universe)
 					add		edi, frameidx
 					mov		ebx, j
 					shl		ebx, 8
-					add		ebx, pLightTbl
+					add		ebx, universe.pLightTbl
 					mov		ecx, t
 					jecxz	l3_label2
 				l3_label1:
@@ -372,7 +372,7 @@ void MakeSpeedCels(Universe& universe)
 #else
 				src = &pDungeonCels[pFrameTable[z]];
 				dst = &pSpeedCels[frameidx];
-				tbl = &pLightTbl[256 * j];
+				tbl = &universe.pLightTbl[256 * j];
 				for (k = t; k; k--) {
 					*dst++ = tbl[*src++];
 				}
@@ -394,7 +394,7 @@ void MakeSpeedCels(Universe& universe)
 					add		edi, frameidx
 					mov		ebx, j
 					shl		ebx, 8
-					add		ebx, pLightTbl
+					add		ebx, universe.pLightTbl
 					mov		ecx, 32
 				l4_label1:
 					push	ecx
@@ -426,7 +426,7 @@ void MakeSpeedCels(Universe& universe)
 #else
 				src = &pDungeonCels[pFrameTable[z]];
 				dst = &pSpeedCels[frameidx];
-				tbl = &pLightTbl[256 * j];
+				tbl = &universe.pLightTbl[256 * j];
 				for (k = 32; k; k--) {
 					for (l = 32; l;) {
 						width = *src++;

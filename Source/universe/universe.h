@@ -284,4 +284,18 @@ struct Universe {
 	BYTE *itemanims[ITEMTYPES];
 	int gnNumGetRecords;
 	ItemStruct golditem;
+
+	// lighting.h
+	LightListStruct VisionList[MAXVISION];
+	BYTE lightactive[MAXLIGHTS];
+	LightListStruct LightList[MAXLIGHTS];
+	int numlights;
+	BYTE lightradius[16][128];
+	BOOL dovision;
+	int numvision;
+	char lightmax;
+	BOOL dolighting;
+	int visionid;
+	BYTE pLightTbl[LIGHTSIZE];
+	BOOL lightflag;
 };

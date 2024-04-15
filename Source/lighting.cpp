@@ -13,19 +13,7 @@
 #include "Source/gendung.h"
 #include "Source/universe/universe.h"
 
-LightListStruct VisionList[MAXVISION];
-BYTE lightactive[MAXLIGHTS];
-LightListStruct LightList[MAXLIGHTS];
-int numlights;
-BYTE lightradius[16][128];
-BOOL dovision;
-int numvision;
-char lightmax;
-BOOL dolighting;
 BYTE lightblock[64][16][16];
-int visionid;
-BYTE *pLightTbl;
-BOOL lightflag;
 
 /**
  * CrawlTable specifies X- and Y-coordinate deltas from a missile target coordinate.
@@ -672,13 +660,10 @@ void DoVision(Universe& universe, int nXPos, int nYPos, int nRadius, BOOL doauto
 
 void FreeLightTable()
 {
-	MemFreeDbg(pLightTbl);
 }
 
 void InitLightTable()
 {
-	assert(!pLightTbl);
-	pLightTbl = DiabloAllocPtr(LIGHTSIZE);
 }
 
 void MakeLightTable(Universe& universe)
@@ -689,7 +674,7 @@ void MakeLightTable(Universe& universe)
 	BYTE *tbl, *trn;
 	BYTE blood[16];
 
-	tbl = pLightTbl;
+	tbl = universe.pLightTbl;
 	shade = 0;
 
 	if (universe.light4flag) {
@@ -757,7 +742,7 @@ void MakeLightTable(Universe& universe)
 	}
 
 	if (universe.leveltype == DTYPE_HELL) {
-		tbl = pLightTbl;
+		tbl = universe.pLightTbl;
 		for (i = 0; i < lights; i++) {
 			l1 = lights - i;
 			l2 = l1;
@@ -798,7 +783,7 @@ void MakeLightTable(Universe& universe)
 	}
 #ifdef HELLFIRE
 	if (currlevel >= 17) {
-		tbl = pLightTbl;
+		tbl = universe.pLightTbl;
 		for (i = 0; i < lights; i++) {
 			*tbl++ = 0;
 			for (j = 1; j < 16; j++)
@@ -853,10 +838,10 @@ void MakeLightTable(Universe& universe)
 	for (j = 0; j < 16; j++) {
 		for (i = 0; i < 128; i++) {
 			if (i > (j + 1) * 8) {
-				lightradius[j][i] = 15;
+				universe.lightradius[j][i] = 15;
 			} else {
 				fs = (double)15 * i / ((double)8 * (j + 1));
-				lightradius[j][i] = (BYTE)(fs + 0.5);
+				universe.lightradius[j][i] = (BYTE)(fs + 0.5);
 			}
 		}
 	}
@@ -867,12 +852,12 @@ void MakeLightTable(Universe& universe)
 			fa = (sqrt((double)(16 - j))) / 128;
 			fa *= fa;
 			for (i = 0; i < 128; i++) {
-				lightradius[15 - j][i] = 15 - (BYTE)(fa * (double)((128 - i) * (128 - i)));
-				if (lightradius[15 - j][i] > 15)
-					lightradius[15 - j][i] = 0;
-				lightradius[15 - j][i] = lightradius[15 - j][i] - (BYTE)((15 - j) / 2);
-				if (lightradius[15 - j][i] > 15)
-					lightradius[15 - j][i] = 0;
+				universe.lightradius[15 - j][i] = 15 - (BYTE)(fa * (double)((128 - i) * (128 - i)));
+				if (universe.lightradius[15 - j][i] > 15)
+					universe.lightradius[15 - j][i] = 0;
+				universe.lightradius[15 - j][i] = universe.lightradius[15 - j][i] - (BYTE)((15 - j) / 2);
+				if (universe.lightradius[15 - j][i] > 15)
+					universe.lightradius[15 - j][i] = 0;
 			}
 		}
 	}
@@ -896,10 +881,10 @@ void ToggleLighting_2()
 {
 	int i;
 
-	if (lightflag) {
+	if (universe.lightflag) {
 		memset(universe.dLight, 0, sizeof(universe.dLight));
 	} else {
-		memset(universe.dLight, lightmax, sizeof(universe.dLight));
+		memset(universe.dLight, universe.lightmax, sizeof(universe.dLight));
 		for (i = 0; i < MAX_PLRS; i++) {
 			if (plr[i].plractive && plr[i].plrlevel == currlevel) {
 				DoLighting(plr[i]._px, plr[i]._py, plr[i]._pLightRad, -1);
@@ -912,9 +897,9 @@ void ToggleLighting()
 {
 	int i;
 
-	lightflag ^= TRUE;
+	universe.lightflag ^= TRUE;
 
-	if (lightflag) {
+	if (universe.lightflag) {
 		memset(universe.dLight, 0, sizeof(universe.dLight));
 	} else {
 		memcpy(universe.dLight, universe.dPreLight, sizeof(universe.dLight));
@@ -930,22 +915,22 @@ void ToggleLighting()
 void InitLightMax(Universe& universe)
 {
 	if (universe.light4flag) {
-		lightmax = 3;
+		universe.lightmax = 3;
 	} else {
-		lightmax = 15;
+		universe.lightmax = 15;
 	}
 }
 
-void InitLighting()
+void InitLighting(Universe& universe)
 {
 	int i;
 
-	numlights = 0;
-	dolighting = FALSE;
-	lightflag = FALSE;
+	universe.numlights = 0;
+	universe.dolighting = FALSE;
+	universe.lightflag = FALSE;
 
 	for (i = 0; i < MAXLIGHTS; i++) {
-		lightactive[i] = i;
+		universe.lightactive[i] = i;
 	}
 }
 
@@ -954,74 +939,74 @@ int AddLight(int x, int y, int r)
 	return -1;
 }
 
-void AddUnLight(int i)
+void AddUnLight(Universe& universe, int i)
 {
-	if (lightflag || i == -1) {
+	if (universe.lightflag || i == -1) {
 		return;
 	}
 
-	LightList[i]._ldel = TRUE;
-	dolighting = TRUE;
+	universe.LightList[i]._ldel = TRUE;
+	universe.dolighting = TRUE;
 }
 
-void ChangeLightRadius(int i, int r)
+void ChangeLightRadius(Universe& universe, int i, int r)
 {
-	if (lightflag || i == -1) {
+	if (universe.lightflag || i == -1) {
 		return;
 	}
 
-	LightList[i]._lunflag = TRUE;
-	LightList[i]._lunx = LightList[i]._lx;
-	LightList[i]._luny = LightList[i]._ly;
-	LightList[i]._lunr = LightList[i]._lradius;
-	LightList[i]._lradius = r;
-	dolighting = TRUE;
+	universe.LightList[i]._lunflag = TRUE;
+	universe.LightList[i]._lunx = universe.LightList[i]._lx;
+	universe.LightList[i]._luny = universe.LightList[i]._ly;
+	universe.LightList[i]._lunr = universe.LightList[i]._lradius;
+	universe.LightList[i]._lradius = r;
+	universe.dolighting = TRUE;
 }
 
-void ChangeLightXY(int i, int x, int y)
+void ChangeLightXY(Universe& universe, int i, int x, int y)
 {
-	if (lightflag || i == -1) {
+	if (universe.lightflag || i == -1) {
 		return;
 	}
 
-	LightList[i]._lunflag = TRUE;
-	LightList[i]._lunx = LightList[i]._lx;
-	LightList[i]._luny = LightList[i]._ly;
-	LightList[i]._lunr = LightList[i]._lradius;
-	LightList[i]._lx = x;
-	LightList[i]._ly = y;
-	dolighting = TRUE;
+	universe.LightList[i]._lunflag = TRUE;
+	universe.LightList[i]._lunx = universe.LightList[i]._lx;
+	universe.LightList[i]._luny = universe.LightList[i]._ly;
+	universe.LightList[i]._lunr = universe.LightList[i]._lradius;
+	universe.LightList[i]._lx = x;
+	universe.LightList[i]._ly = y;
+	universe.dolighting = TRUE;
 }
 
-void ChangeLightOff(int i, int x, int y)
+void ChangeLightOff(Universe& universe, int i, int x, int y)
 {
-	if (lightflag || i == -1) {
+	if (universe.lightflag || i == -1) {
 		return;
 	}
 
-	LightList[i]._lunflag = TRUE;
-	LightList[i]._lunx = LightList[i]._lx;
-	LightList[i]._luny = LightList[i]._ly;
-	LightList[i]._lunr = LightList[i]._lradius;
-	LightList[i]._xoff = x;
-	LightList[i]._yoff = y;
-	dolighting = TRUE;
+	universe.LightList[i]._lunflag = TRUE;
+	universe.LightList[i]._lunx = universe.LightList[i]._lx;
+	universe.LightList[i]._luny = universe.LightList[i]._ly;
+	universe.LightList[i]._lunr = universe.LightList[i]._lradius;
+	universe.LightList[i]._xoff = x;
+	universe.LightList[i]._yoff = y;
+	universe.dolighting = TRUE;
 }
 
-void ChangeLight(int i, int x, int y, int r)
+void ChangeLight(Universe& universe, int i, int x, int y, int r)
 {
-	if (lightflag || i == -1) {
+	if (universe.lightflag || i == -1) {
 		return;
 	}
 
-	LightList[i]._lunflag = TRUE;
-	LightList[i]._lunx = LightList[i]._lx;
-	LightList[i]._luny = LightList[i]._ly;
-	LightList[i]._lunr = LightList[i]._lradius;
-	LightList[i]._lx = x;
-	LightList[i]._ly = y;
-	LightList[i]._lradius = r;
-	dolighting = TRUE;
+	universe.LightList[i]._lunflag = TRUE;
+	universe.LightList[i]._lunx = universe.LightList[i]._lx;
+	universe.LightList[i]._luny = universe.LightList[i]._ly;
+	universe.LightList[i]._lunr = universe.LightList[i]._lradius;
+	universe.LightList[i]._lx = x;
+	universe.LightList[i]._ly = y;
+	universe.LightList[i]._lradius = r;
+	universe.dolighting = TRUE;
 }
 
 void ProcessLightList(Universe& universe)
@@ -1029,41 +1014,41 @@ void ProcessLightList(Universe& universe)
 	int i, j;
 	BYTE temp;
 
-	if (lightflag) {
+	if (universe.lightflag) {
 		return;
 	}
 
-	if (dolighting) {
-		for (i = 0; i < numlights; i++) {
-			j = lightactive[i];
-			if (LightList[j]._ldel) {
-				DoUnLight(universe, LightList[j]._lx, LightList[j]._ly, LightList[j]._lradius);
+	if (universe.dolighting) {
+		for (i = 0; i < universe.numlights; i++) {
+			j = universe.lightactive[i];
+			if (universe.LightList[j]._ldel) {
+				DoUnLight(universe, universe.LightList[j]._lx, universe.LightList[j]._ly, universe.LightList[j]._lradius);
 			}
-			if (LightList[j]._lunflag) {
-				DoUnLight(universe, LightList[j]._lunx, LightList[j]._luny, LightList[j]._lunr);
-				LightList[j]._lunflag = FALSE;
+			if (universe.LightList[j]._lunflag) {
+				DoUnLight(universe, universe.LightList[j]._lunx, universe.LightList[j]._luny, universe.LightList[j]._lunr);
+				universe.LightList[j]._lunflag = FALSE;
 			}
 		}
-		for (i = 0; i < numlights; i++) {
-			j = lightactive[i];
-			if (!LightList[j]._ldel) {
-				DoLighting(LightList[j]._lx, LightList[j]._ly, LightList[j]._lradius, j);
+		for (i = 0; i < universe.numlights; i++) {
+			j = universe.lightactive[i];
+			if (!universe.LightList[j]._ldel) {
+				DoLighting(universe.LightList[j]._lx, universe.LightList[j]._ly, universe.LightList[j]._lradius, j);
 			}
 		}
 		i = 0;
-		while (i < numlights) {
-			if (LightList[lightactive[i]]._ldel) {
-				numlights--;
-				temp = lightactive[numlights];
-				lightactive[numlights] = lightactive[i];
-				lightactive[i] = temp;
+		while (i < universe.numlights) {
+			if (universe.LightList[universe.lightactive[i]]._ldel) {
+				universe.numlights--;
+				temp = universe.lightactive[universe.numlights];
+				universe.lightactive[universe.numlights] = universe.lightactive[i];
+				universe.lightactive[i] = temp;
 			} else {
 				i++;
 			}
 		}
 	}
 
-	dolighting = FALSE;
+	universe.dolighting = FALSE;
 }
 
 void SavePreLighting(Universe& universe)
@@ -1077,38 +1062,38 @@ void InitVision(Universe& universe)
 
 }
 
-int AddVision(int x, int y, int r, BOOL mine)
+int AddVision(Universe& universe, int x, int y, int r, BOOL mine)
 {
-	int vid; // BUGFIX: if numvision >= MAXVISION behavior is undefined
+	int vid; // BUGFIX: if universe.numvision >= MAXVISION behavior is undefined
 
-	if (numvision < MAXVISION) {
-		VisionList[numvision]._lx = x;
-		VisionList[numvision]._ly = y;
-		VisionList[numvision]._lradius = r;
-		vid = visionid++;
-		VisionList[numvision]._lid = vid;
-		VisionList[numvision]._ldel = FALSE;
-		VisionList[numvision]._lunflag = FALSE;
-		VisionList[numvision]._lflags = mine != 0;
-		numvision++;
-		dovision = TRUE;
+	if (universe.numvision < MAXVISION) {
+		universe.VisionList[universe.numvision]._lx = x;
+		universe.VisionList[universe.numvision]._ly = y;
+		universe.VisionList[universe.numvision]._lradius = r;
+		vid = universe.visionid++;
+		universe.VisionList[universe.numvision]._lid = vid;
+		universe.VisionList[universe.numvision]._ldel = FALSE;
+		universe.VisionList[universe.numvision]._lunflag = FALSE;
+		universe.VisionList[universe.numvision]._lflags = mine != 0;
+		universe.numvision++;
+		universe.dovision = TRUE;
 	}
 
 	return vid;
 }
 
-void ChangeVisionRadius(int id, int r)
+void ChangeVisionRadius(Universe& universe, int id, int r)
 {
 	int i;
 
-	for (i = 0; i < numvision; i++) {
-		if (VisionList[i]._lid == id) {
-			VisionList[i]._lunflag = TRUE;
-			VisionList[i]._lunx = VisionList[i]._lx;
-			VisionList[i]._luny = VisionList[i]._ly;
-			VisionList[i]._lunr = VisionList[i]._lradius;
-			VisionList[i]._lradius = r;
-			dovision = TRUE;
+	for (i = 0; i < universe.numvision; i++) {
+		if (universe.VisionList[i]._lid == id) {
+			universe.VisionList[i]._lunflag = TRUE;
+			universe.VisionList[i]._lunx = universe.VisionList[i]._lx;
+			universe.VisionList[i]._luny = universe.VisionList[i]._ly;
+			universe.VisionList[i]._lunr = universe.VisionList[i]._lradius;
+			universe.VisionList[i]._lradius = r;
+			universe.dovision = TRUE;
 		}
 	}
 }
@@ -1122,37 +1107,37 @@ void ProcessVisionList(Universe& universe)
 	int i;
 	BOOL delflag;
 
-	if (dovision) {
-		for (i = 0; i < numvision; i++) {
-			if (VisionList[i]._ldel) {
-				DoUnVision(universe, VisionList[i]._lx, VisionList[i]._ly, VisionList[i]._lradius);
+	if (universe.dovision) {
+		for (i = 0; i < universe.numvision; i++) {
+			if (universe.VisionList[i]._ldel) {
+				DoUnVision(universe, universe.VisionList[i]._lx, universe.VisionList[i]._ly, universe.VisionList[i]._lradius);
 			}
-			if (VisionList[i]._lunflag) {
-				DoUnVision(universe, VisionList[i]._lunx, VisionList[i]._luny, VisionList[i]._lunr);
-				VisionList[i]._lunflag = FALSE;
+			if (universe.VisionList[i]._lunflag) {
+				DoUnVision(universe, universe.VisionList[i]._lunx, universe.VisionList[i]._luny, universe.VisionList[i]._lunr);
+				universe.VisionList[i]._lunflag = FALSE;
 			}
 		}
 		for (i = 0; i < universe.TransVal; i++) {
 			universe.TransList[i] = FALSE;
 		}
-		for (i = 0; i < numvision; i++) {
-			if (!VisionList[i]._ldel) {
+		for (i = 0; i < universe.numvision; i++) {
+			if (!universe.VisionList[i]._ldel) {
 				DoVision(
 				    universe,
-				    VisionList[i]._lx,
-				    VisionList[i]._ly,
-				    VisionList[i]._lradius,
-				    VisionList[i]._lflags & 1,
-				    VisionList[i]._lflags & 1);
+				    universe.VisionList[i]._lx,
+				    universe.VisionList[i]._ly,
+				    universe.VisionList[i]._lradius,
+				    universe.VisionList[i]._lflags & 1,
+				    universe.VisionList[i]._lflags & 1);
 			}
 		}
 		do {
 			delflag = FALSE;
-			for (i = 0; i < numvision; i++) {
-				if (VisionList[i]._ldel) {
-					numvision--;
-					if (numvision > 0 && i != numvision) {
-						VisionList[i] = VisionList[numvision];
+			for (i = 0; i < universe.numvision; i++) {
+				if (universe.VisionList[i]._ldel) {
+					universe.numvision--;
+					if (universe.numvision > 0 && i != universe.numvision) {
+						universe.VisionList[i] = universe.VisionList[universe.numvision];
 					}
 					delflag = TRUE;
 				}
@@ -1160,7 +1145,7 @@ void ProcessVisionList(Universe& universe)
 		} while (delflag);
 	}
 
-	dovision = FALSE;
+	universe.dovision = FALSE;
 }
 
 void lighting_color_cycling(Universe& universe)
@@ -1175,7 +1160,7 @@ void lighting_color_cycling(Universe& universe)
 		return;
 	}
 
-	tbl = pLightTbl;
+	tbl = universe.pLightTbl;
 
 	for (j = 0; j < l; j++) {
 		tbl++;
