@@ -25,8 +25,8 @@ bool ScannerGameSeed::skipLevel(int level)
 	InitDungeonMonsters(universe);
 
 	bool hasLavaLoards = false;
-	for (int i = 0; i < nummtypes && !hasLavaLoards; i++)
-		hasLavaLoards = Monsters[i].mtype == MT_WMAGMA;
+	for (int i = 0; i < universe.nummtypes && !hasLavaLoards; i++)
+		hasLavaLoards = universe.Monsters[i].mtype == MT_WMAGMA;
 
 	return !hasLavaLoards;
 }

@@ -109,12 +109,12 @@ void CreateItemsFromObject(Universe& universe, int oid)
 void DropAllItems(Universe& universe)
 {
 	MonsterItems = universe.numitems;
-	for (int i = 0; i < nummonsters; i++) {
-		int mid = monstactive[i];
-		if (monster[mid].MType->mtype == MT_GOLEM)
+	for (int i = 0; i < universe.nummonsters; i++) {
+		int mid = universe.monstactive[i];
+		if (universe.monster[mid].MType->mtype == MT_GOLEM)
 			continue;
-		SetRndSeed(universe, monster[mid]._mRndSeed);
-		SpawnItem(universe, mid, monster[mid]._mx, monster[mid]._my, TRUE);
+		SetRndSeed(universe, universe.monster[mid]._mRndSeed);
+		SpawnItem(universe, mid, universe.monster[mid]._mx, universe.monster[mid]._my, TRUE);
 	}
 
 	ObjectItems = universe.numitems;
@@ -152,9 +152,9 @@ bool ScannerPuzzler::levelMatches(std::optional<uint32_t> levelSeed)
 		return false;
 
 	if (Config.verbose) {
-		std::cerr << "Monster Count: " << nummonsters << std::endl;
-		for (int i = 0; i < nummonsters; i++) {
-			std::cerr << "Monster " << i << ": " << monster[monstactive[i]].mName << " (" << monster[monstactive[i]]._mRndSeed << ")" << std::endl;
+		std::cerr << "Monster Count: " << universe.nummonsters << std::endl;
+		for (int i = 0; i < universe.nummonsters; i++) {
+			std::cerr << "Monster " << i << ": " << universe.monster[universe.monstactive[i]].mName << " (" << universe.monster[universe.monstactive[i]]._mRndSeed << ")" << std::endl;
 		}
 		std::cerr << std::endl;
 		std::cerr << "Object Count: " << nobjects << std::endl;

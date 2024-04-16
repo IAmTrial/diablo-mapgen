@@ -53,7 +53,7 @@ void ExportDun(Universe& universe, uint32_t seed)
 			uint16_t monsterId = 0;
 			if (universe.dMonster[x][y] > 0) {
 				for (int i = 0; i < 128; i++) {
-					if (MonstConvTbl[i] == monster[universe.dMonster[x][y] - 1].MType->mtype) {
+					if (MonstConvTbl[i] == universe.monster[universe.dMonster[x][y] - 1].MType->mtype) {
 						monsterId = i + 1;
 						break;
 					}

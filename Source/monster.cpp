@@ -23,15 +23,8 @@
 /** Tracks which missile files are already loaded */
 int MissileFileFlag;
 
-// BUGFIX: replace monstkills[MAXMONSTERS] with monstkills[NUM_MTYPES].
-/** Tracks the total number of monsters killed per monster_id. */
-int monstkills[MAXMONSTERS];
-int monstactive[MAXMONSTERS];
-int nummonsters;
 BOOLEAN sgbSaveSoundOn;
-MonsterStruct monster[MAXMONSTERS];
 int totalmonsters;
-CMonster Monsters[MAX_LVLMTYPES];
 #ifdef HELLFIRE
 int GraphicTable[NUMLEVELS][MAX_LVLMTYPES];
 #else
@@ -39,7 +32,6 @@ BYTE GraphicTable[NUMLEVELS][MAX_LVLMTYPES];
 #endif
 int monstimgtot;
 int uniquetrans;
-int nummtypes;
 
 /** Maps from walking path step to facing direction. */
 const char plr2monst[9] = { 0, 5, 3, 7, 1, 4, 6, 0, 2 };
@@ -186,45 +178,45 @@ void InitLevelMonsters(Universe& universe)
 {
 	int i;
 
-	nummtypes = 0;
+	universe.nummtypes = 0;
 	monstimgtot = 0;
 	MissileFileFlag = 0;
 
 	for (i = 0; i < MAX_LVLMTYPES; i++) {
-		Monsters[i].mPlaceFlags = 0;
+		universe.Monsters[i].mPlaceFlags = 0;
 	}
 
 	ClrAllMonsters(universe);
-	nummonsters = 0;
+	universe.nummonsters = 0;
 	totalmonsters = MAXMONSTERS;
 
 	for (i = 0; i < MAXMONSTERS; i++) {
-		monstactive[i] = i;
+		universe.monstactive[i] = i;
 	}
 
 	uniquetrans = 0;
 }
 
-int AddMonsterType(int type, int placeflag)
+int AddMonsterType(Universe& universe, int type, int placeflag)
 {
 	BOOL done = FALSE;
 	int i;
 
-	for (i = 0; i < nummtypes && !done; i++) {
-		done = Monsters[i].mtype == type;
+	for (i = 0; i < universe.nummtypes && !done; i++) {
+		done = universe.Monsters[i].mtype == type;
 	}
 
 	i--;
 
 	if (!done) {
-		i = nummtypes;
-		nummtypes++;
-		Monsters[i].mtype = type;
+		i = universe.nummtypes;
+		universe.nummtypes++;
+		universe.Monsters[i].mtype = type;
 		monstimgtot += monsterdata[type].mImage;
-		InitMonsterGFX(i);
+		InitMonsterGFX(universe, i);
 	}
 
-	Monsters[i].mPlaceFlags |= placeflag;
+	universe.Monsters[i].mPlaceFlags |= placeflag;
 	return i;
 }
 
@@ -249,46 +241,46 @@ void GetLevelMTypes(Universe& universe)
 	mamask = 3; // monster availability mask
 #endif
 
-	AddMonsterType(MT_GOLEM, PLACE_SPECIAL);
+	AddMonsterType(universe, MT_GOLEM, PLACE_SPECIAL);
 	if (universe.currlevel == 16) {
-		AddMonsterType(MT_ADVOCATE, PLACE_SCATTER);
-		AddMonsterType(MT_RBLACK, PLACE_SCATTER);
-		AddMonsterType(MT_DIABLO, PLACE_SPECIAL);
+		AddMonsterType(universe, MT_ADVOCATE, PLACE_SCATTER);
+		AddMonsterType(universe, MT_RBLACK, PLACE_SCATTER);
+		AddMonsterType(universe, MT_DIABLO, PLACE_SPECIAL);
 		return;
 	}
 
 #ifdef HELLFIRE
 	if (universe.currlevel == 18)
-		AddMonsterType(MT_HORKSPWN, PLACE_SCATTER);
+		AddMonsterType(universe, MT_HORKSPWN, PLACE_SCATTER);
 	if (universe.currlevel == 19) {
-		AddMonsterType(MT_HORKSPWN, PLACE_SCATTER);
-		AddMonsterType(MT_HORKDMN, PLACE_UNIQUE);
+		AddMonsterType(universe, MT_HORKSPWN, PLACE_SCATTER);
+		AddMonsterType(universe, MT_HORKDMN, PLACE_UNIQUE);
 	}
 	if (universe.currlevel == 20)
-		AddMonsterType(MT_DEFILER, PLACE_UNIQUE);
+		AddMonsterType(universe, MT_DEFILER, PLACE_UNIQUE);
 	if (universe.currlevel == 24) {
-		AddMonsterType(MT_ARCHLICH, PLACE_SCATTER);
-		AddMonsterType(MT_NAKRUL, PLACE_SPECIAL);
+		AddMonsterType(universe, MT_ARCHLICH, PLACE_SCATTER);
+		AddMonsterType(universe, MT_NAKRUL, PLACE_SPECIAL);
 	}
 #endif
 
 	if (!universe.setlevel) {
 		if (QuestStatus(universe, Q_BUTCHER))
-			AddMonsterType(MT_CLEAVER, PLACE_SPECIAL);
+			AddMonsterType(universe, MT_CLEAVER, PLACE_SPECIAL);
 		if (QuestStatus(universe, Q_GARBUD))
-			AddMonsterType(UniqMonst[UMT_GARBUD].mtype, PLACE_UNIQUE);
+			AddMonsterType(universe, UniqMonst[UMT_GARBUD].mtype, PLACE_UNIQUE);
 		if (QuestStatus(universe, Q_ZHAR))
-			AddMonsterType(UniqMonst[UMT_ZHAR].mtype, PLACE_UNIQUE);
+			AddMonsterType(universe, UniqMonst[UMT_ZHAR].mtype, PLACE_UNIQUE);
 		if (QuestStatus(universe, Q_LTBANNER))
-			AddMonsterType(UniqMonst[UMT_SNOTSPIL].mtype, PLACE_UNIQUE);
+			AddMonsterType(universe, UniqMonst[UMT_SNOTSPIL].mtype, PLACE_UNIQUE);
 		if (QuestStatus(universe, Q_VEIL))
-			AddMonsterType(UniqMonst[UMT_LACHDAN].mtype, PLACE_UNIQUE);
+			AddMonsterType(universe, UniqMonst[UMT_LACHDAN].mtype, PLACE_UNIQUE);
 		if (QuestStatus(universe, Q_WARLORD))
-			AddMonsterType(UniqMonst[UMT_WARLORD].mtype, PLACE_UNIQUE);
+			AddMonsterType(universe, UniqMonst[UMT_WARLORD].mtype, PLACE_UNIQUE);
 
 		if (universe.gbMaxPlayers != 1 && universe.currlevel == quests[Q_SKELKING]._qlevel) {
 
-			AddMonsterType(MT_SKING, PLACE_UNIQUE);
+			AddMonsterType(universe, MT_SKING, PLACE_UNIQUE);
 
 			nt = 0;
 			for (i = MT_WSKELAX; i <= MT_WSKELAX + numskeltypes; i++) {
@@ -303,7 +295,7 @@ void GetLevelMTypes(Universe& universe)
 					}
 				}
 			}
-			AddMonsterType(skeltypes[random_(universe, 88, nt)], PLACE_SCATTER);
+			AddMonsterType(universe, skeltypes[random_(universe, 88, nt)], PLACE_SCATTER);
 		}
 
 		nt = 0;
@@ -318,7 +310,7 @@ void GetLevelMTypes(Universe& universe)
 			}
 		}
 
-		while (nt > 0 && nummtypes < MAX_LVLMTYPES && monstimgtot < 4000) {
+		while (nt > 0 && universe.nummtypes < MAX_LVLMTYPES && monstimgtot < 4000) {
 			for (i = 0; i < nt;) {
 				if (monsterdata[typelist[i]].mImage > 4000 - monstimgtot) {
 					typelist[i] = typelist[--nt];
@@ -330,137 +322,137 @@ void GetLevelMTypes(Universe& universe)
 
 			if (nt != 0) {
 				i = random_(universe, 88, nt);
-				AddMonsterType(typelist[i], PLACE_SCATTER);
+				AddMonsterType(universe, typelist[i], PLACE_SCATTER);
 				typelist[i] = typelist[--nt];
 			}
 		}
 
 	} else {
 		if (universe.setlvlnum == SL_SKELKING) {
-			AddMonsterType(MT_SKING, PLACE_UNIQUE);
+			AddMonsterType(universe, MT_SKING, PLACE_UNIQUE);
 		}
 	}
 }
 
-void InitMonsterGFX(int monst)
+void InitMonsterGFX(Universe& universe, int monst)
 {
-	int mtype = Monsters[monst].mtype;
+	int mtype = universe.Monsters[monst].mtype;
 
 	for (int anim = 0; anim < 6; anim++) {
-		Monsters[monst].Anims[anim].Frames = monsterdata[mtype].Frames[anim];
-		Monsters[monst].Anims[anim].Rate = monsterdata[mtype].Rate[anim];
+		universe.Monsters[monst].Anims[anim].Frames = monsterdata[mtype].Frames[anim];
+		universe.Monsters[monst].Anims[anim].Rate = monsterdata[mtype].Rate[anim];
 	}
 
-	Monsters[monst].MData = &monsterdata[mtype];
+	universe.Monsters[monst].MData = &monsterdata[mtype];
 }
 
-void ClearMVars(int i)
+void ClearMVars(Universe& universe, int i)
 {
-	monster[i]._mVar1 = 0;
-	monster[i]._mVar2 = 0;
-	monster[i]._mVar3 = 0;
-	monster[i]._mVar4 = 0;
-	monster[i]._mVar5 = 0;
-	monster[i]._mVar6 = 0;
-	monster[i]._mVar7 = 0;
-	monster[i]._mVar8 = 0;
+	universe.monster[i]._mVar1 = 0;
+	universe.monster[i]._mVar2 = 0;
+	universe.monster[i]._mVar3 = 0;
+	universe.monster[i]._mVar4 = 0;
+	universe.monster[i]._mVar5 = 0;
+	universe.monster[i]._mVar6 = 0;
+	universe.monster[i]._mVar7 = 0;
+	universe.monster[i]._mVar8 = 0;
 }
 
 void InitMonster(Universe& universe, int i, int rd, int mtype, int x, int y)
 {
-	CMonster *monst = &Monsters[mtype];
+	CMonster *monst = &universe.Monsters[mtype];
 
-	monster[i]._mdir = rd;
-	monster[i]._mx = x;
-	monster[i]._my = y;
-	monster[i]._mfutx = x;
-	monster[i]._mfuty = y;
-	monster[i]._moldx = x;
-	monster[i]._moldy = y;
-	monster[i]._mMTidx = mtype;
-	monster[i]._mmode = MM_STAND;
-	monster[i].mName = monst->MData->mName;
-	monster[i].MType = monst;
-	monster[i].MData = monst->MData;
-	monster[i]._mAnimData = monst->Anims[MA_STAND].Data[rd];
-	monster[i]._mAnimDelay = monst->Anims[MA_STAND].Rate;
-	monster[i]._mAnimCnt = random_(universe, 88, monster[i]._mAnimDelay - 1);
-	monster[i]._mAnimLen = monst->Anims[MA_STAND].Frames;
-	monster[i]._mAnimFrame = random_(universe, 88, monster[i]._mAnimLen - 1) + 1;
+	universe.monster[i]._mdir = rd;
+	universe.monster[i]._mx = x;
+	universe.monster[i]._my = y;
+	universe.monster[i]._mfutx = x;
+	universe.monster[i]._mfuty = y;
+	universe.monster[i]._moldx = x;
+	universe.monster[i]._moldy = y;
+	universe.monster[i]._mMTidx = mtype;
+	universe.monster[i]._mmode = MM_STAND;
+	universe.monster[i].mName = monst->MData->mName;
+	universe.monster[i].MType = monst;
+	universe.monster[i].MData = monst->MData;
+	universe.monster[i]._mAnimData = monst->Anims[MA_STAND].Data[rd];
+	universe.monster[i]._mAnimDelay = monst->Anims[MA_STAND].Rate;
+	universe.monster[i]._mAnimCnt = random_(universe, 88, universe.monster[i]._mAnimDelay - 1);
+	universe.monster[i]._mAnimLen = monst->Anims[MA_STAND].Frames;
+	universe.monster[i]._mAnimFrame = random_(universe, 88, universe.monster[i]._mAnimLen - 1) + 1;
 
 	if (monst->mtype == MT_DIABLO) {
 #ifdef HELLFIRE
-		monster[i]._mmaxhp = (random_(universe, 88, 1) + 3333) << 6;
+		universe.monster[i]._mmaxhp = (random_(universe, 88, 1) + 3333) << 6;
 #else
-		monster[i]._mmaxhp = (random_(universe, 88, 1) + 1666) << 6;
+		universe.monster[i]._mmaxhp = (random_(universe, 88, 1) + 1666) << 6;
 #endif
 	} else {
-		monster[i]._mmaxhp = (monst->mMinHP + random_(universe, 88, monst->mMaxHP - monst->mMinHP + 1)) << 6;
+		universe.monster[i]._mmaxhp = (monst->mMinHP + random_(universe, 88, monst->mMaxHP - monst->mMinHP + 1)) << 6;
 	}
 
 	if (universe.gbMaxPlayers == 1) {
-		monster[i]._mmaxhp >>= 1;
-		if (monster[i]._mmaxhp < 64) {
-			monster[i]._mmaxhp = 64;
+		universe.monster[i]._mmaxhp >>= 1;
+		if (universe.monster[i]._mmaxhp < 64) {
+			universe.monster[i]._mmaxhp = 64;
 		}
 	}
 
-	monster[i]._mhitpoints = monster[i]._mmaxhp;
-	monster[i]._mAi = monst->MData->mAi;
-	monster[i]._mint = monst->MData->mInt;
-	monster[i]._mgoal = MGOAL_NORMAL;
-	monster[i]._mgoalvar1 = 0;
-	monster[i]._mgoalvar2 = 0;
-	monster[i]._mgoalvar3 = 0;
-	monster[i].field_18 = 0;
-	monster[i]._pathcount = 0;
-	monster[i]._mDelFlag = FALSE;
-	monster[i]._uniqtype = 0;
-	monster[i]._msquelch = 0;
+	universe.monster[i]._mhitpoints = universe.monster[i]._mmaxhp;
+	universe.monster[i]._mAi = monst->MData->mAi;
+	universe.monster[i]._mint = monst->MData->mInt;
+	universe.monster[i]._mgoal = MGOAL_NORMAL;
+	universe.monster[i]._mgoalvar1 = 0;
+	universe.monster[i]._mgoalvar2 = 0;
+	universe.monster[i]._mgoalvar3 = 0;
+	universe.monster[i].field_18 = 0;
+	universe.monster[i]._pathcount = 0;
+	universe.monster[i]._mDelFlag = FALSE;
+	universe.monster[i]._uniqtype = 0;
+	universe.monster[i]._msquelch = 0;
 #ifdef HELLFIRE
-	monster[i].mlid = 0;
+	universe.monster[i].mlid = 0;
 #endif
-	monster[i]._mRndSeed = GetRndSeed(universe);
-	monster[i]._mAISeed = GetRndSeed(universe);
-	monster[i].mWhoHit = 0;
-	monster[i].mLevel = monst->MData->mLevel;
-	monster[i].mExp = monst->MData->mExp;
-	monster[i].mHit = monst->MData->mHit;
-	monster[i].mMinDamage = monst->MData->mMinDamage;
-	monster[i].mMaxDamage = monst->MData->mMaxDamage;
-	monster[i].mHit2 = monst->MData->mHit2;
-	monster[i].mMinDamage2 = monst->MData->mMinDamage2;
-	monster[i].mMaxDamage2 = monst->MData->mMaxDamage2;
-	monster[i].mArmorClass = monst->MData->mArmorClass;
-	monster[i].mMagicRes = monst->MData->mMagicRes;
-	monster[i].leader = 0;
-	monster[i].leaderflag = 0;
-	monster[i]._mFlags = monst->MData->mFlags;
-	monster[i].mtalkmsg = 0;
+	universe.monster[i]._mRndSeed = GetRndSeed(universe);
+	universe.monster[i]._mAISeed = GetRndSeed(universe);
+	universe.monster[i].mWhoHit = 0;
+	universe.monster[i].mLevel = monst->MData->mLevel;
+	universe.monster[i].mExp = monst->MData->mExp;
+	universe.monster[i].mHit = monst->MData->mHit;
+	universe.monster[i].mMinDamage = monst->MData->mMinDamage;
+	universe.monster[i].mMaxDamage = monst->MData->mMaxDamage;
+	universe.monster[i].mHit2 = monst->MData->mHit2;
+	universe.monster[i].mMinDamage2 = monst->MData->mMinDamage2;
+	universe.monster[i].mMaxDamage2 = monst->MData->mMaxDamage2;
+	universe.monster[i].mArmorClass = monst->MData->mArmorClass;
+	universe.monster[i].mMagicRes = monst->MData->mMagicRes;
+	universe.monster[i].leader = 0;
+	universe.monster[i].leaderflag = 0;
+	universe.monster[i]._mFlags = monst->MData->mFlags;
+	universe.monster[i].mtalkmsg = 0;
 
-	if (monster[i]._mAi == AI_GARG) {
-		monster[i]._mAnimData = monst->Anims[MA_SPECIAL].Data[rd];
-		monster[i]._mAnimFrame = 1;
-		monster[i]._mFlags |= MFLAG_ALLOW_SPECIAL;
-		monster[i]._mmode = MM_SATTACK;
+	if (universe.monster[i]._mAi == AI_GARG) {
+		universe.monster[i]._mAnimData = monst->Anims[MA_SPECIAL].Data[rd];
+		universe.monster[i]._mAnimFrame = 1;
+		universe.monster[i]._mFlags |= MFLAG_ALLOW_SPECIAL;
+		universe.monster[i]._mmode = MM_SATTACK;
 	}
 
 	if (universe.gnDifficulty == DIFF_NIGHTMARE) {
 #ifdef HELLFIRE
-		monster[i]._mmaxhp = 3 * monster[i]._mmaxhp + ((universe.gbMaxPlayers != 1 ? 100 : 50) << 6);
+		universe.monster[i]._mmaxhp = 3 * universe.monster[i]._mmaxhp + ((universe.gbMaxPlayers != 1 ? 100 : 50) << 6);
 #else
-		monster[i]._mmaxhp = 3 * monster[i]._mmaxhp + 64;
+		universe.monster[i]._mmaxhp = 3 * universe.monster[i]._mmaxhp + 64;
 #endif
-		monster[i]._mhitpoints = monster[i]._mmaxhp;
-		monster[i].mLevel += 15;
-		monster[i].mExp = 2 * (monster[i].mExp + 1000);
-		monster[i].mHit += 85;
-		monster[i].mMinDamage = 2 * (monster[i].mMinDamage + 2);
-		monster[i].mMaxDamage = 2 * (monster[i].mMaxDamage + 2);
-		monster[i].mHit2 += 85;
-		monster[i].mMinDamage2 = 2 * (monster[i].mMinDamage2 + 2);
-		monster[i].mMaxDamage2 = 2 * (monster[i].mMaxDamage2 + 2);
-		monster[i].mArmorClass += 50;
+		universe.monster[i]._mhitpoints = universe.monster[i]._mmaxhp;
+		universe.monster[i].mLevel += 15;
+		universe.monster[i].mExp = 2 * (universe.monster[i].mExp + 1000);
+		universe.monster[i].mHit += 85;
+		universe.monster[i].mMinDamage = 2 * (universe.monster[i].mMinDamage + 2);
+		universe.monster[i].mMaxDamage = 2 * (universe.monster[i].mMaxDamage + 2);
+		universe.monster[i].mHit2 += 85;
+		universe.monster[i].mMinDamage2 = 2 * (universe.monster[i].mMinDamage2 + 2);
+		universe.monster[i].mMaxDamage2 = 2 * (universe.monster[i].mMaxDamage2 + 2);
+		universe.monster[i].mArmorClass += 50;
 	}
 
 #ifdef HELLFIRE
@@ -468,21 +460,21 @@ void InitMonster(Universe& universe, int i, int rd, int mtype, int x, int y)
 #endif
 	    if (universe.gnDifficulty == DIFF_HELL) {
 #ifdef HELLFIRE
-		monster[i]._mmaxhp = 4 * monster[i]._mmaxhp + ((universe.gbMaxPlayers != 1 ? 200 : 100) << 6);
+		universe.monster[i]._mmaxhp = 4 * universe.monster[i]._mmaxhp + ((universe.gbMaxPlayers != 1 ? 200 : 100) << 6);
 #else
-		monster[i]._mmaxhp = 4 * monster[i]._mmaxhp + 192;
+		universe.monster[i]._mmaxhp = 4 * universe.monster[i]._mmaxhp + 192;
 #endif
-		monster[i]._mhitpoints = monster[i]._mmaxhp;
-		monster[i].mLevel += 30;
-		monster[i].mExp = 4 * (monster[i].mExp + 1000);
-		monster[i].mHit += 120;
-		monster[i].mMinDamage = 4 * monster[i].mMinDamage + 6;
-		monster[i].mMaxDamage = 4 * monster[i].mMaxDamage + 6;
-		monster[i].mHit2 += 120;
-		monster[i].mMinDamage2 = 4 * monster[i].mMinDamage2 + 6;
-		monster[i].mMaxDamage2 = 4 * monster[i].mMaxDamage2 + 6;
-		monster[i].mArmorClass += 80;
-		monster[i].mMagicRes = monst->MData->mMagicRes2;
+		universe.monster[i]._mhitpoints = universe.monster[i]._mmaxhp;
+		universe.monster[i].mLevel += 30;
+		universe.monster[i].mExp = 4 * (universe.monster[i].mExp + 1000);
+		universe.monster[i].mHit += 120;
+		universe.monster[i].mMinDamage = 4 * universe.monster[i].mMinDamage + 6;
+		universe.monster[i].mMaxDamage = 4 * universe.monster[i].mMaxDamage + 6;
+		universe.monster[i].mHit2 += 120;
+		universe.monster[i].mMinDamage2 = 4 * universe.monster[i].mMinDamage2 + 6;
+		universe.monster[i].mMaxDamage2 = 4 * universe.monster[i].mMaxDamage2 + 6;
+		universe.monster[i].mArmorClass += 80;
+		universe.monster[i].mMagicRes = monst->MData->mMagicRes2;
 	}
 }
 
@@ -492,8 +484,8 @@ void ClrAllMonsters(Universe& universe)
 	MonsterStruct *Monst;
 
 	for (i = 0; i < MAXMONSTERS; i++) {
-		Monst = &monster[i];
-		ClearMVars(i);
+		Monst = &universe.monster[i];
+		ClearMVars(universe, i);
 		Monst->mName = "Invalid Monster";
 		Monst->_mgoal = 0;
 		Monst->_mmode = MM_STAND;
@@ -563,8 +555,8 @@ void monster_some_crypt(Universe& universe)
 	MonsterStruct *mon;
 	int hp;
 
-	if (universe.currlevel == 24 && universe.UberDiabloMonsterIndex >= 0 && universe.UberDiabloMonsterIndex < nummonsters) {
-		mon = &monster[universe.UberDiabloMonsterIndex];
+	if (universe.currlevel == 24 && universe.UberDiabloMonsterIndex >= 0 && universe.UberDiabloMonsterIndex < universe.nummonsters) {
+		mon = &universe.monster[universe.UberDiabloMonsterIndex];
 		PlayEffect(universe.UberDiabloMonsterIndex, 2);
 		quests[Q_NAKRUL]._qlog = FALSE;
 		mon->mArmorClass -= 50;
@@ -581,12 +573,12 @@ void PlaceMonster(Universe& universe, int i, int mtype, int x, int y)
 	int rd;
 
 #ifdef HELLFIRE
-	if (Monsters[mtype].mtype == MT_NAKRUL) {
-		for (int j = 0; j < nummonsters; j++) {
-			if (monster[j]._mMTidx == mtype) {
+	if (universe.Monsters[mtype].mtype == MT_NAKRUL) {
+		for (int j = 0; j < universe.nummonsters; j++) {
+			if (universe.monster[j]._mMTidx == mtype) {
 				return;
 			}
-			if (monster[j].MType->mtype == MT_NAKRUL) {
+			if (universe.monster[j].MType->mtype == MT_NAKRUL) {
 				return;
 			}
 		}
@@ -610,7 +602,7 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 	MonsterStruct *Monst;
 	int count;
 
-	Monst = &monster[nummonsters];
+	Monst = &universe.monster[universe.nummonsters];
 	count = 0;
 	Uniq = &UniqMonst[uniqindex];
 
@@ -618,8 +610,8 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 		return;
 	}
 
-	for (uniqtype = 0; uniqtype < nummtypes; uniqtype++) {
-		if (Monsters[uniqtype].mtype == UniqMonst[uniqindex].mtype) {
+	for (uniqtype = 0; uniqtype < universe.nummtypes; uniqtype++) {
+		if (universe.Monsters[uniqtype].mtype == UniqMonst[uniqindex].mtype) {
 			break;
 		}
 	}
@@ -714,10 +706,10 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 		}
 		xp = universe.UberRow - 2;
 		yp = universe.UberCol;
-		universe.UberDiabloMonsterIndex = nummonsters;
+		universe.UberDiabloMonsterIndex = universe.nummonsters;
 	}
 #endif
-	PlaceMonster(universe, nummonsters, uniqtype, xp, yp);
+	PlaceMonster(universe, universe.nummonsters, uniqtype, xp, yp);
 	Monst->_uniqtype = uniqindex + 1;
 
 	if (Uniq->mlevel) {
@@ -817,10 +809,10 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 		Monst->mArmorClass = Uniq->mUnqVar1;
 	}
 
-	nummonsters++;
+	universe.nummonsters++;
 
 	if (Uniq->mUnqAttr & 1) {
-		PlaceGroup(universe, miniontype, bosspacksize, Uniq->mUnqAttr, nummonsters - 1);
+		PlaceGroup(universe, miniontype, bosspacksize, Uniq->mUnqAttr, universe.nummonsters - 1);
 	}
 
 	if (Monst->_mAi != AI_GARG) {
@@ -840,10 +832,10 @@ static void PlaceUniques(Universe& universe)
 		if (UniqMonst[u].mlevel != universe.currlevel)
 			continue;
 		done = FALSE;
-		for (mt = 0; mt < nummtypes; mt++) {
+		for (mt = 0; mt < universe.nummtypes; mt++) {
 			if (done)
 				break;
-			done = (Monsters[mt].mtype == UniqMonst[u].mtype);
+			done = (universe.Monsters[mt].mtype == UniqMonst[u].mtype);
 		}
 		mt--;
 		if (u == UMT_GARBUD && quests[Q_GARBUD]._qactive == QUEST_NOTAVAIL)
@@ -874,8 +866,8 @@ void PlaceQuestMonsters(Universe& universe)
 		if (universe.currlevel == quests[Q_SKELKING]._qlevel && universe.gbMaxPlayers != 1) {
 			skeltype = 0;
 
-			for (skeltype = 0; skeltype < nummtypes; skeltype++) {
-				if (IsSkel(Monsters[skeltype].mtype)) {
+			for (skeltype = 0; skeltype < universe.nummtypes; skeltype++) {
+				if (IsSkel(universe.Monsters[skeltype].mtype)) {
 					break;
 				}
 			}
@@ -907,18 +899,18 @@ void PlaceQuestMonsters(Universe& universe)
 			setp = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
 			SetMapMonsters(universe, setp, 2 * universe.setpc_x, 2 * universe.setpc_y);
 			mem_free_dbg(setp);
-			AddMonsterType(UniqMonst[UMT_WARLORD].mtype, PLACE_SCATTER);
+			AddMonsterType(universe, UniqMonst[UMT_WARLORD].mtype, PLACE_SCATTER);
 		}
 		if (QuestStatus(universe, Q_VEIL)) {
-			AddMonsterType(UniqMonst[UMT_LACHDAN].mtype, PLACE_SCATTER);
+			AddMonsterType(universe, UniqMonst[UMT_LACHDAN].mtype, PLACE_SCATTER);
 		}
 		if (QuestStatus(universe, Q_ZHAR) && zharlib == -1) {
 			quests[Q_ZHAR]._qactive = QUEST_NOTAVAIL;
 		}
 
 		if (universe.currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
-			AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, PLACE_UNIQUE);
-			AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, PLACE_UNIQUE);
+			AddMonsterType(universe, UniqMonst[UMT_LAZURUS].mtype, PLACE_UNIQUE);
+			AddMonsterType(universe, UniqMonst[UMT_RED_VEX].mtype, PLACE_UNIQUE);
 			PlaceUniqueMonst(universe, UMT_LAZURUS, 0, 0);
 			PlaceUniqueMonst(universe, UMT_RED_VEX, 0, 0);
 			PlaceUniqueMonst(universe, UMT_BLACKJADE, 0, 0);
@@ -931,14 +923,14 @@ void PlaceQuestMonsters(Universe& universe)
 		if (universe.currlevel == 24) {
 			universe.UberDiabloMonsterIndex = -1;
 			int i1;
-			for (i1 = 0; i1 < nummtypes; i1++) {
-				if (Monsters[i1].mtype == UniqMonst[UMT_NAKRUL].mtype)
+			for (i1 = 0; i1 < universe.nummtypes; i1++) {
+				if (universe.Monsters[i1].mtype == UniqMonst[UMT_NAKRUL].mtype)
 					break;
 			}
 
-			if (i1 < nummtypes) {
-				for (int i2 = 0; i2 < nummonsters; i2++) {
-					if (monster[i2]._uniqtype != 0 || monster[i2]._mMTidx == i1) {
+			if (i1 < universe.nummtypes) {
+				for (int i2 = 0; i2 < universe.nummonsters; i2++) {
+					if (universe.monster[i2]._uniqtype != 0 || universe.monster[i2]._mMTidx == i1) {
 						universe.UberDiabloMonsterIndex = i2;
 						break;
 					}
@@ -963,15 +955,15 @@ void PlaceGroup(Universe& universe, int mtype, int num, int leaderf, int leader)
 
 	for (try1 = 0; try1 < 10; try1++) {
 		while (placed) {
-			nummonsters--;
+			universe.nummonsters--;
 			placed--;
-			universe.dMonster[monster[nummonsters]._mx][monster[nummonsters]._my] = 0;
+			universe.dMonster[universe.monster[universe.nummonsters]._mx][universe.monster[universe.nummonsters]._my] = 0;
 		}
 
 		if (leaderf & 1) {
 			int offset = random_(universe, 92, 8);
-			x1 = xp = monster[leader]._mx + offset_x[offset];
-			y1 = yp = monster[leader]._my + offset_y[offset];
+			x1 = xp = universe.monster[leader]._mx + offset_x[offset];
+			y1 = yp = universe.monster[leader]._my + offset_y[offset];
 		} else {
 			do {
 				x1 = xp = random_(universe, 93, 80) + 16;
@@ -979,8 +971,8 @@ void PlaceGroup(Universe& universe, int mtype, int num, int leaderf, int leader)
 			} while (!MonstPlace(universe, xp, yp));
 		}
 
-		if (num + nummonsters > totalmonsters) {
-			num = totalmonsters - nummonsters;
+		if (num + universe.nummonsters > totalmonsters) {
+			num = totalmonsters - universe.nummonsters;
 		}
 
 		j = 0;
@@ -992,26 +984,26 @@ void PlaceGroup(Universe& universe, int mtype, int num, int leaderf, int leader)
 				continue;
 			}
 
-			PlaceMonster(universe, nummonsters, mtype, xp, yp);
+			PlaceMonster(universe, universe.nummonsters, mtype, xp, yp);
 			if (leaderf & 1) {
-				monster[nummonsters]._mmaxhp *= 2;
-				monster[nummonsters]._mhitpoints = monster[nummonsters]._mmaxhp;
-				monster[nummonsters]._mint = monster[leader]._mint;
+				universe.monster[universe.nummonsters]._mmaxhp *= 2;
+				universe.monster[universe.nummonsters]._mhitpoints = universe.monster[universe.nummonsters]._mmaxhp;
+				universe.monster[universe.nummonsters]._mint = universe.monster[leader]._mint;
 
 				if (leaderf & 2) {
-					monster[nummonsters].leader = leader;
-					monster[nummonsters].leaderflag = 1;
-					monster[nummonsters]._mAi = monster[leader]._mAi;
+					universe.monster[universe.nummonsters].leader = leader;
+					universe.monster[universe.nummonsters].leaderflag = 1;
+					universe.monster[universe.nummonsters]._mAi = universe.monster[leader]._mAi;
 				}
 
-				if (monster[nummonsters]._mAi != AI_GARG) {
-					monster[nummonsters]._mAnimData = monster[nummonsters].MType->Anims[MA_STAND].Data[monster[nummonsters]._mdir];
-					monster[nummonsters]._mAnimFrame = random_(universe, 88, monster[nummonsters]._mAnimLen - 1) + 1;
-					monster[nummonsters]._mFlags &= ~MFLAG_ALLOW_SPECIAL;
-					monster[nummonsters]._mmode = MM_STAND;
+				if (universe.monster[universe.nummonsters]._mAi != AI_GARG) {
+					universe.monster[universe.nummonsters]._mAnimData = universe.monster[universe.nummonsters].MType->Anims[MA_STAND].Data[universe.monster[universe.nummonsters]._mdir];
+					universe.monster[universe.nummonsters]._mAnimFrame = random_(universe, 88, universe.monster[universe.nummonsters]._mAnimLen - 1) + 1;
+					universe.monster[universe.nummonsters]._mFlags &= ~MFLAG_ALLOW_SPECIAL;
+					universe.monster[universe.nummonsters]._mmode = MM_STAND;
 				}
 			}
-			nummonsters++;
+			universe.nummonsters++;
 			placed++;
 			j++;
 		}
@@ -1022,7 +1014,7 @@ void PlaceGroup(Universe& universe, int mtype, int num, int leaderf, int leader)
 	}
 
 	if (leaderf & 2) {
-		monster[leader].packsize = placed;
+		universe.monster[leader].packsize = placed;
 	}
 }
 
@@ -1090,16 +1082,16 @@ void InitMonsters(Universe& universe)
 		numplacemonsters = na / 30;
 		if (universe.gbMaxPlayers != 1)
 			numplacemonsters += numplacemonsters >> 1;
-		if (nummonsters + numplacemonsters > MAXMONSTERS - 10)
-			numplacemonsters = MAXMONSTERS - 10 - nummonsters;
-		totalmonsters = nummonsters + numplacemonsters;
-		for (i = 0; i < nummtypes; i++) {
-			if (Monsters[i].mPlaceFlags & PLACE_SCATTER) {
+		if (universe.nummonsters + numplacemonsters > MAXMONSTERS - 10)
+			numplacemonsters = MAXMONSTERS - 10 - universe.nummonsters;
+		totalmonsters = universe.nummonsters + numplacemonsters;
+		for (i = 0; i < universe.nummtypes; i++) {
+			if (universe.Monsters[i].mPlaceFlags & PLACE_SCATTER) {
 				scattertypes[numscattypes] = i;
 				numscattypes++;
 			}
 		}
-		while (nummonsters < totalmonsters) {
+		while (universe.nummonsters < totalmonsters) {
 			mtype = scattertypes[random_(universe, 95, numscattypes)];
 			if (universe.currlevel == 1 || random_(universe, 95, 2) == 0)
 				na = 1;
@@ -1130,16 +1122,16 @@ void SetMapMonsters(Universe& universe, BYTE *pMap, int startx, int starty)
 	int i, j;
 	int mtype;
 
-	AddMonsterType(MT_GOLEM, PLACE_SPECIAL);
+	AddMonsterType(universe, MT_GOLEM, PLACE_SPECIAL);
 	// See https://github.com/diasurgical/devilutionX/pull/2822
 	AddMonster(universe, 1, 0, 0, 0, FALSE); // BUGFIX: add only if universe.setlevel is true
 	AddMonster(universe, 1, 0, 0, 0, FALSE); // BUGFIX: add only if universe.setlevel is true
 	AddMonster(universe, 1, 0, 0, 0, FALSE); // BUGFIX: add only if universe.setlevel is true
 	AddMonster(universe, 1, 0, 0, 0, FALSE); // BUGFIX: add only if universe.setlevel is true
 	if (universe.setlevel && universe.setlvlnum == SL_VILEBETRAYER) {
-		AddMonsterType(UniqMonst[UMT_LAZURUS].mtype, PLACE_UNIQUE);
-		AddMonsterType(UniqMonst[UMT_RED_VEX].mtype, PLACE_UNIQUE);
-		AddMonsterType(UniqMonst[UMT_BLACKJADE].mtype, PLACE_UNIQUE);
+		AddMonsterType(universe, UniqMonst[UMT_LAZURUS].mtype, PLACE_UNIQUE);
+		AddMonsterType(universe, UniqMonst[UMT_RED_VEX].mtype, PLACE_UNIQUE);
+		AddMonsterType(universe, UniqMonst[UMT_BLACKJADE].mtype, PLACE_UNIQUE);
 		PlaceUniqueMonst(universe, UMT_LAZURUS, 0, 0);
 		PlaceUniqueMonst(universe, UMT_RED_VEX, 0, 0);
 		PlaceUniqueMonst(universe, UMT_BLACKJADE, 0, 0);
@@ -1155,8 +1147,8 @@ void SetMapMonsters(Universe& universe, BYTE *pMap, int startx, int starty)
 	for (j = 0; j < rh; j++) {
 		for (i = 0; i < rw; i++) {
 			if (*lm != 0) {
-				mtype = AddMonsterType(MonstConvTbl[(*lm) - 1], PLACE_SPECIAL);
-				PlaceMonster(universe, nummonsters++, mtype, i + startx + 16, j + starty + 16);
+				mtype = AddMonsterType(universe, MonstConvTbl[(*lm) - 1], PLACE_SPECIAL);
+				PlaceMonster(universe, universe.nummonsters++, mtype, i + startx + 16, j + starty + 16);
 			}
 			lm++;
 		}
@@ -1168,16 +1160,16 @@ void DeleteMonster(Universe& universe, int i)
 {
 	int temp;
 
-	nummonsters--;
-	temp = monstactive[nummonsters];
-	monstactive[nummonsters] = monstactive[i];
-	monstactive[i] = temp;
+	universe.nummonsters--;
+	temp = universe.monstactive[universe.nummonsters];
+	universe.monstactive[universe.nummonsters] = universe.monstactive[i];
+	universe.monstactive[i] = temp;
 }
 
 int AddMonster(Universe& universe, int x, int y, int dir, int mtype, BOOL InMap)
 {
-	if (nummonsters < MAXMONSTERS) {
-		int i = monstactive[nummonsters++];
+	if (universe.nummonsters < MAXMONSTERS) {
+		int i = universe.monstactive[universe.nummonsters++];
 		if (InMap)
 			universe.dMonster[x][y] = i + 1;
 		InitMonster(universe, i, dir, mtype, x, y);
@@ -1228,7 +1220,7 @@ BOOL PosOkMonst(Universe& universe, int i, int x, int y)
 	//			}
 	//		}
 	//	}
-	//	if (fire && (!(monster[i].mMagicRes & IMMUNE_FIRE) || monster[i].MType->mtype == MT_DIABLO))
+	//	if (fire && (!(universe.monster[i].mMagicRes & IMMUNE_FIRE) || universe.monster[i].MType->mtype == MT_DIABLO))
 	//		ret = FALSE;
 	//}
 #endif
@@ -1276,7 +1268,7 @@ BOOL PosOkMonst(Universe& universe, int i, int x, int y)
 //				}
 //			}
 //		}
-//		if (fire && (!(monster[i].mMagicRes & IMMUNE_FIRE) || monster[i].MType->mtype == MT_DIABLO))
+//		if (fire && (!(universe.monster[i].mMagicRes & IMMUNE_FIRE) || universe.monster[i].MType->mtype == MT_DIABLO))
 //			ret = FALSE;
 //	}
 //#endif
@@ -1343,7 +1335,7 @@ BOOL PosOkMonst(Universe& universe, int i, int x, int y)
 //				}
 //			}
 //		}
-//		if (fire && (!(monster[i].mMagicRes & IMMUNE_FIRE) || monster[i].MType->mtype == MT_DIABLO))
+//		if (fire && (!(universe.monster[i].mMagicRes & IMMUNE_FIRE) || universe.monster[i].MType->mtype == MT_DIABLO))
 //			ret = FALSE;
 //	}
 //#endif
@@ -1369,16 +1361,16 @@ BOOL IsGoat(int mt)
 //	int i, j, skeltypes, skel;
 //
 //	j = 0;
-//	for (i = 0; i < nummtypes; i++) {
-//		if (IsSkel(Monsters[i].mtype))
+//	for (i = 0; i < universe.nummtypes; i++) {
+//		if (IsSkel(universe.Monsters[i].mtype))
 //			j++;
 //	}
 //
 //	if (j) {
 //		skeltypes = random_(universe, 136, j);
 //		j = 0;
-//		for (i = 0; i < nummtypes && j <= skeltypes; i++) {
-//			if (IsSkel(Monsters[i].mtype))
+//		for (i = 0; i < universe.nummtypes && j <= skeltypes; i++) {
+//			if (IsSkel(universe.Monsters[i].mtype))
 //				j++;
 //		}
 //		skel = AddMonster(universe, x, y, dir, i - 1, TRUE);
@@ -1394,12 +1386,12 @@ BOOL IsGoat(int mt)
 void ActivateSpawn(Universe& universe, int i, int x, int y, int dir)
 {
 	universe.dMonster[x][y] = i + 1;
-	monster[i]._mx = x;
-	monster[i]._my = y;
-	monster[i]._mfutx = x;
-	monster[i]._mfuty = y;
-	monster[i]._moldx = x;
-	monster[i]._moldy = y;
+	universe.monster[i]._mx = x;
+	universe.monster[i]._my = y;
+	universe.monster[i]._mfutx = x;
+	universe.monster[i]._mfuty = y;
+	universe.monster[i]._moldx = x;
+	universe.monster[i]._moldy = y;
 }
 
 BOOL SpawnSkeleton(Universe& universe, int ii, int x, int y)
@@ -1463,16 +1455,16 @@ int PreSpawnSkeleton(Universe& universe)
 
 	j = 0;
 
-	for (i = 0; i < nummtypes; i++) {
-		if (IsSkel(Monsters[i].mtype))
+	for (i = 0; i < universe.nummtypes; i++) {
+		if (IsSkel(universe.Monsters[i].mtype))
 			j++;
 	}
 
 	if (j) {
 		skeltypes = random_(universe, 136, j);
 		j = 0;
-		for (i = 0; i < nummtypes && j <= skeltypes; i++) {
-			if (IsSkel(Monsters[i].mtype))
+		for (i = 0; i < universe.nummtypes && j <= skeltypes; i++) {
+			if (IsSkel(universe.Monsters[i].mtype))
 				j++;
 		}
 		skel = AddMonster(universe, 0, 0, 0, i - 1, FALSE);

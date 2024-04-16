@@ -301,4 +301,14 @@ struct Universe {
 
 	// lighting.cpp
 	BYTE lightblock[64][16][16];
+
+	// monster.h
+	// BUGFIX: replace monstkills[MAXMONSTERS] with monstkills[NUM_MTYPES].
+	/** Tracks the total number of monsters killed per monster_id. */
+	int monstkills[MAXMONSTERS];
+	int monstactive[MAXMONSTERS];
+	int nummonsters;
+	MonsterStruct monster[MAXMONSTERS];
+	CMonster Monsters[MAX_LVLMTYPES];
+	int nummtypes;
 };

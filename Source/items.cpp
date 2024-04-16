@@ -1481,10 +1481,10 @@ int RndItem(Universe& universe, int m)
 	int i, ri, r;
 	int ril[512];
 
-	if ((monster[m].MData->mTreasure & 0x8000) != 0)
-		return -1 - (monster[m].MData->mTreasure & 0xFFF);
+	if ((universe.monster[m].MData->mTreasure & 0x8000) != 0)
+		return -1 - (universe.monster[m].MData->mTreasure & 0xFFF);
 
-	if (monster[m].MData->mTreasure & 0x4000)
+	if (universe.monster[m].MData->mTreasure & 0x4000)
 		return 0;
 
 	if (random_(universe, 24, 100) > 40)
@@ -1495,7 +1495,7 @@ int RndItem(Universe& universe, int m)
 
 	ri = 0;
 	for (i = 0; AllItemsList[i].iLoc != ILOC_INVALID; i++) {
-		if (AllItemsList[i].iRnd == IDROP_DOUBLE && monster[m].mLevel >= AllItemsList[i].iMinMLvl
+		if (AllItemsList[i].iRnd == IDROP_DOUBLE && universe.monster[m].mLevel >= AllItemsList[i].iMinMLvl
 #ifdef HELLFIRE
 		    && ri < 512
 #endif
@@ -1503,7 +1503,7 @@ int RndItem(Universe& universe, int m)
 			ril[ri] = i;
 			ri++;
 		}
-		if (AllItemsList[i].iRnd != IDROP_NEVER && monster[m].mLevel >= AllItemsList[i].iMinMLvl
+		if (AllItemsList[i].iRnd != IDROP_NEVER && universe.monster[m].mLevel >= AllItemsList[i].iMinMLvl
 #ifdef HELLFIRE
 		    && ri < 512
 #endif
@@ -1530,8 +1530,8 @@ int RndUItem(Universe& universe, int m)
 	int ril[512];
 	BOOL okflag;
 
-	if (m != -1 && (monster[m].MData->mTreasure & 0x8000) != 0 && universe.gbMaxPlayers == 1)
-		return -1 - (monster[m].MData->mTreasure & 0xFFF);
+	if (m != -1 && (universe.monster[m].MData->mTreasure & 0x8000) != 0 && universe.gbMaxPlayers == 1)
+		return -1 - (universe.monster[m].MData->mTreasure & 0xFFF);
 
 #ifdef HELLFIRE
 	int curlv = items_get_currlevel();
@@ -1542,7 +1542,7 @@ int RndUItem(Universe& universe, int m)
 		if (AllItemsList[i].iRnd == IDROP_NEVER)
 			okflag = FALSE;
 		if (m != -1) {
-			if (monster[m].mLevel < AllItemsList[i].iMinMLvl)
+			if (universe.monster[m].mLevel < AllItemsList[i].iMinMLvl)
 				okflag = FALSE;
 		} else {
 #ifdef HELLFIRE
@@ -1815,7 +1815,7 @@ void SpawnItem(Universe& universe, int m, int x, int y, BOOL sendmsg)
 	// BUGFIX: onlygood may be used uninitialized in call to SetupAllItems.universe, 
 	BOOL onlygood;
 
-	if (monster[m]._uniqtype || ((monster[m].MData->mTreasure & 0x8000) && universe.gbMaxPlayers != 1)) {
+	if (universe.monster[m]._uniqtype || ((universe.monster[m].MData->mTreasure & 0x8000) && universe.gbMaxPlayers != 1)) {
 		idx = RndUItem(universe, m);
 		if (idx < 0) {
 			SpawnUnique(universe, -(idx + 1), x, y);
@@ -1843,10 +1843,10 @@ void SpawnItem(Universe& universe, int m, int x, int y, BOOL sendmsg)
 		GetSuperItemSpace(universe, x, y, ii);
 		universe.itemavail[0] = universe.itemavail[MAXITEMS - universe.numitems - 1];
 		universe.itemactive[universe.numitems] = ii;
-		if (monster[m]._uniqtype) {
-			SetupAllItems(universe, ii, idx, GetRndSeed(universe), monster[m].MData->mLevel, 15, onlygood, FALSE, FALSE);
+		if (universe.monster[m]._uniqtype) {
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), universe.monster[m].MData->mLevel, 15, onlygood, FALSE, FALSE);
 		} else {
-			SetupAllItems(universe, ii, idx, GetRndSeed(universe), monster[m].MData->mLevel, 1, onlygood, FALSE, FALSE);
+			SetupAllItems(universe, ii, idx, GetRndSeed(universe), universe.monster[m].MData->mLevel, 1, onlygood, FALSE, FALSE);
 		}
 		universe.numitems++;
 	}

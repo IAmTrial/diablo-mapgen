@@ -11,16 +11,9 @@
 #include "types.h"
 #include "Source/universe/universe.h"
 
-extern int monstkills[MAXMONSTERS];
-extern int monstactive[MAXMONSTERS];
-extern int nummonsters;
-extern MonsterStruct monster[MAXMONSTERS];
-extern CMonster Monsters[MAX_LVLMTYPES];
-extern int nummtypes;
-
 void InitLevelMonsters(Universe& universe);
 void GetLevelMTypes(Universe& universe);
-void InitMonsterGFX(int monst);
+void InitMonsterGFX(Universe& universe, int monst);
 void InitMonster(Universe& universe, int i, int rd, int mtype, int x, int y);
 void ClrAllMonsters(Universe& universe);
 #ifdef HELLFIRE
