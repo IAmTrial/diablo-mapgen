@@ -269,13 +269,13 @@ struct Universe {
 	ItemGetRecordStruct itemrecord[MAXITEMS];
 	/** Contains the items on ground in the current game. */
 	ItemStruct item[MAXITEMS + 1];
-	#ifdef HELLFIRE
+#ifdef HELLFIRE
 	CornerStoneStruct CornerStone;
-	#endif
+#endif
 	BOOL UniqueItemFlag[128];
-	#ifdef HELLFIRE
+#ifdef HELLFIRE
 	int auricGold = GOLD_MAX_LIMIT * 2;
-	#endif
+#endif
 	int numitems;
 
 	// items.cpp
@@ -317,11 +317,11 @@ struct Universe {
 	int MissileFileFlag;
 	BOOLEAN sgbSaveSoundOn;
 	int totalmonsters;
-	#ifdef HELLFIRE
+#ifdef HELLFIRE
 	int GraphicTable[NUMLEVELS][MAX_LVLMTYPES];
-	#else
+#else
 	BYTE GraphicTable[NUMLEVELS][MAX_LVLMTYPES];
-	#endif
+#endif
 	int monstimgtot;
 	int uniquetrans;
 
@@ -332,4 +332,14 @@ struct Universe {
 	int objectavail[MAXOBJECTS];
 	ObjectStruct object[MAXOBJECTS];
 	BOOL InitObjFlag;
+
+	// objects.cpp
+	int trapid;
+	int trapdir;
+	char ObjFileList[40];
+	int leverid;
+	int numobjfiles;
+#ifdef HELLFIRE
+	int dword_6DE0E0;
+#endif
 };

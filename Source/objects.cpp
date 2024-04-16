@@ -19,15 +19,8 @@
 #include "Source/themes.h"
 #include "Source/universe/universe.h"
 
-int trapid;
-int trapdir;
+// TODO: Mark these as OpenCL __global
 BYTE *pObjCels[40];
-char ObjFileList[40];
-int leverid;
-int numobjfiles;
-#ifdef HELLFIRE
-int dword_6DE0E0;
-#endif
 
 /** Specifies the X-coordinate delta between barrels. */
 const int bxadd[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
@@ -366,9 +359,9 @@ void ClrAllObjects(Universe& universe)
 #ifdef HELLFIRE
 	memset(universe.objectactive, 0, sizeof(universe.objectactive));
 #endif
-	trapdir = 0;
-	trapid = 1;
-	leverid = 1;
+	universe.trapdir = 0;
+	universe.trapid = 1;
+	universe.leverid = 1;
 }
 
 void AddTortures(Universe& universe)
@@ -440,9 +433,9 @@ void AddBookLever(Universe& universe, int lx1, int ly1, int lx2, int ly2, int x1
 		AddObject(universe, OBJ_BLOODBOOK, xp, yp);
 	}
 	ob = universe.dObject[xp][yp] - 1;
-	SetObjMapRange(universe, ob, x1, y1, x2, y2, leverid);
+	SetObjMapRange(universe, ob, x1, y1, x2, y2, universe.leverid);
 	SetBookMsg(universe, ob, msg);
-	leverid++;
+	universe.leverid++;
 	universe.object[ob]._oVar6 = universe.object[ob]._oAnimFrame + 1;
 }
 
@@ -957,7 +950,7 @@ void InitObjects(Universe& universe)
 
 	ClrAllObjects(universe);
 #ifdef HELLFIRE
-	dword_6DE0E0 = 0;
+	universe.dword_6DE0E0 = 0;
 #endif
 	if (universe.currlevel == 16) {
 		AddDiabObjs(universe);
@@ -1147,10 +1140,10 @@ void SetMapObjects(Universe& universe, BYTE *pMap, int startx, int starty)
 		if (!fileload[i])
 			continue;
 
-		ObjFileList[numobjfiles] = i;
+		universe.ObjFileList[universe.numobjfiles] = i;
 		sprintf(filestr, "Objects\\%s.CEL", ObjMasterLoadList[i]);
-		pObjCels[numobjfiles] = LoadFileInMem(filestr, NULL);
-		numobjfiles++;
+		pObjCels[universe.numobjfiles] = LoadFileInMem(filestr, NULL);
+		universe.numobjfiles++;
 	}
 
 	lm = h;
@@ -1312,15 +1305,15 @@ void AddSarc(Universe& universe, int i)
 
 void AddFlameTrap(Universe& universe, int i)
 {
-	universe.object[i]._oVar1 = trapid;
+	universe.object[i]._oVar1 = universe.trapid;
 	universe.object[i]._oVar2 = 0;
-	universe.object[i]._oVar3 = trapdir;
+	universe.object[i]._oVar3 = universe.trapdir;
 	universe.object[i]._oVar4 = 0;
 }
 
 void AddFlameLvr(Universe& universe, int i)
 {
-	universe.object[i]._oVar1 = trapid;
+	universe.object[i]._oVar1 = universe.trapid;
 	universe.object[i]._oVar2 = MIS_FLAMEC;
 }
 
