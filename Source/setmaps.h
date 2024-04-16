@@ -6,7 +6,9 @@
 #ifndef __SETMAPS_H__
 #define __SETMAPS_H__
 
-int ObjIndex(int x, int y);
+#include "Source/universe/universe.h"
+
+int ObjIndex(Universe& universe, int x, int y);
 void LoadSetMap();
 
 /* rdata */

@@ -54,7 +54,7 @@ BOOL PosOkPlayer(Universe& universe, int pnum, int x, int y)
 		return FALSE;
 
 	if (universe.dObject[x][y] != 0) {
-		ObjectStruct *obj = &object[abs(universe.dObject[x][y]) - 1];
+		ObjectStruct *obj = &universe.object[abs(universe.dObject[x][y]) - 1];
 		if (obj->_oSolidFlag && !obj->_oBreak) {
 			return FALSE;
 		}
@@ -223,9 +223,9 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 		Point target = { -1, -1 };
 
 		// Locate Lazarus staff
-		for (int i = 0; i < nobjects; i++) {
-			int oid = objectactive[i];
-			ObjectStruct stand = object[oid];
+		for (int i = 0; i < universe.nobjects; i++) {
+			int oid = universe.objectactive[i];
+			ObjectStruct stand = universe.object[oid];
 			if (stand._otype != OBJ_LAZSTAND)
 				continue;
 			target = { stand._ox, stand._oy };

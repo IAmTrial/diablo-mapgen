@@ -39,7 +39,7 @@ BOOL PosOkPlayer(Universe& universe, int pnum, int x, int y)
 		} else {
 			bv = -(universe.dObject[x][y] + 1);
 		}
-		if (object[bv]._oSolidFlag) {
+		if (universe.object[bv]._oSolidFlag) {
 			return FALSE;
 		}
 	}

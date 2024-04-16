@@ -324,4 +324,12 @@ struct Universe {
 	#endif
 	int monstimgtot;
 	int uniquetrans;
+
+	// objects.h
+	int objectactive[MAXOBJECTS];
+	/** Specifies the number of active objects. */
+	int nobjects;
+	int objectavail[MAXOBJECTS];
+	ObjectStruct object[MAXOBJECTS];
+	BOOL InitObjFlag;
 };

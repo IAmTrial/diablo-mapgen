@@ -1176,7 +1176,7 @@ BOOL PosOkMonst(Universe& universe, int i, int x, int y)
 	oi = universe.dObject[x][y];
 	if (ret && oi != 0) {
 		oi = oi > 0 ? oi - 1 : -(oi + 1);
-		if (object[oi]._oSolidFlag)
+		if (universe.object[oi]._oSolidFlag)
 			ret = FALSE;
 	}
 
@@ -1190,7 +1190,7 @@ BOOL PosOkMonst(Universe& universe, int i, int x, int y)
 	ret = !SolidLoc(universe, x, y) && universe.dPlayer[x][y] == 0 && universe.dMonster[x][y] == 0;
 	if (ret && universe.dObject[x][y] != 0) {
 		oi = universe.dObject[x][y] > 0 ? universe.dObject[x][y] - 1 : -(universe.dObject[x][y] + 1);
-		if (object[oi]._oSolidFlag)
+		if (universe.object[oi]._oSolidFlag)
 			ret = FALSE;
 	}
 
@@ -1225,7 +1225,7 @@ BOOL PosOkMonst(Universe& universe, int i, int x, int y)
 //	ret = !SolidLoc(universe, x, y);
 //	if (ret && oi != 0) {
 //		oi = oi > 0 ? oi - 1 : -(oi + 1);
-//		if (object[oi]._oSolidFlag)
+//		if (universe.object[oi]._oSolidFlag)
 //			ret = FALSE;
 //	}
 //
@@ -1238,7 +1238,7 @@ BOOL PosOkMonst(Universe& universe, int i, int x, int y)
 //	ret = !SolidLoc(universe, x, y);
 //	if (ret && universe.dObject[x][y] != 0) {
 //		oi = universe.dObject[x][y] > 0 ? universe.dObject[x][y] - 1 : -(universe.dObject[x][y] + 1);
-//		if (object[oi]._oSolidFlag)
+//		if (universe.object[oi]._oSolidFlag)
 //			ret = FALSE;
 //	}
 //
@@ -1276,11 +1276,11 @@ BOOL PosOkMonst(Universe& universe, int i, int x, int y)
 //	oi = universe.dObject[x][y];
 //	if (ret && oi != 0) {
 //		oi = oi > 0 ? oi - 1 : -(oi + 1);
-//		objtype = object[oi]._otype;
+//		objtype = universe.object[oi]._otype;
 //		isdoor = objtype == OBJ_L1LDOOR || objtype == OBJ_L1RDOOR
 //		    || objtype == OBJ_L2LDOOR || objtype == OBJ_L2RDOOR
 //		    || objtype == OBJ_L3LDOOR || objtype == OBJ_L3RDOOR;
-//		if (object[oi]._oSolidFlag && !isdoor) {
+//		if (universe.object[oi]._oSolidFlag && !isdoor) {
 //			ret = FALSE;
 //		}
 //	}
@@ -1298,11 +1298,11 @@ BOOL PosOkMonst(Universe& universe, int i, int x, int y)
 //
 //	if (ret && universe.dObject[x][y] != 0) {
 //		oi = universe.dObject[x][y] > 0 ? universe.dObject[x][y] - 1 : -(universe.dObject[x][y] + 1);
-//		objtype = object[oi]._otype;
+//		objtype = universe.object[oi]._otype;
 //		isdoor = objtype == OBJ_L1LDOOR || objtype == OBJ_L1RDOOR
 //		    || objtype == OBJ_L2LDOOR || objtype == OBJ_L2RDOOR
 //		    || objtype == OBJ_L3LDOOR || objtype == OBJ_L3RDOOR;
-//		if (object[oi]._oSolidFlag && !isdoor) {
+//		if (universe.object[oi]._oSolidFlag && !isdoor) {
 //			ret = FALSE;
 //		}
 //	}

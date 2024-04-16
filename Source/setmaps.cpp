@@ -81,14 +81,14 @@ const char *const quest_level_names[] = {
 	"Archbishop Lazarus' Lair",
 };
 
-int ObjIndex(int x, int y)
+int ObjIndex(Universe& universe, int x, int y)
 {
 	int i;
 	int oi;
 
-	for (i = 0; i < nobjects; i++) {
-		oi = objectactive[i];
-		if (object[oi]._ox == x && object[oi]._oy == y)
+	for (i = 0; i < universe.nobjects; i++) {
+		oi = universe.objectactive[i];
+		if (universe.object[oi]._ox == x && universe.object[oi]._oy == y)
 			return oi;
 	}
 	char msg[200];
@@ -98,27 +98,27 @@ int ObjIndex(int x, int y)
 }
 
 #ifndef SPAWN
-void AddSKingObjs()
+void AddSKingObjs(Universe& universe)
 {
-	SetObjMapRange(ObjIndex(64, 34), 20, 7, 23, 10, 1);
-	SetObjMapRange(ObjIndex(64, 59), 20, 14, 21, 16, 2);
-	SetObjMapRange(ObjIndex(27, 37), 8, 1, 15, 11, 3);
-	SetObjMapRange(ObjIndex(46, 35), 8, 1, 15, 11, 3);
-	SetObjMapRange(ObjIndex(49, 53), 8, 1, 15, 11, 3);
-	SetObjMapRange(ObjIndex(27, 53), 8, 1, 15, 11, 3);
+	SetObjMapRange(universe, ObjIndex(universe, 64, 34), 20, 7, 23, 10, 1);
+	SetObjMapRange(universe, ObjIndex(universe, 64, 59), 20, 14, 21, 16, 2);
+	SetObjMapRange(universe, ObjIndex(universe, 27, 37), 8, 1, 15, 11, 3);
+	SetObjMapRange(universe, ObjIndex(universe, 46, 35), 8, 1, 15, 11, 3);
+	SetObjMapRange(universe, ObjIndex(universe, 49, 53), 8, 1, 15, 11, 3);
+	SetObjMapRange(universe, ObjIndex(universe, 27, 53), 8, 1, 15, 11, 3);
 }
 
-void AddSChamObjs()
+void AddSChamObjs(Universe& universe)
 {
-	SetObjMapRange(ObjIndex(37, 30), 17, 0, 21, 5, 1);
-	SetObjMapRange(ObjIndex(37, 46), 13, 0, 16, 5, 2);
+	SetObjMapRange(universe, ObjIndex(universe, 37, 30), 17, 0, 21, 5, 1);
+	SetObjMapRange(universe, ObjIndex(universe, 37, 46), 13, 0, 16, 5, 2);
 }
 
-void AddVileObjs()
+void AddVileObjs(Universe& universe)
 {
-	SetObjMapRange(ObjIndex(26, 45), 1, 1, 9, 10, 1);
-	SetObjMapRange(ObjIndex(45, 46), 11, 1, 20, 10, 2);
-	SetObjMapRange(ObjIndex(35, 36), 7, 11, 13, 18, 3);
+	SetObjMapRange(universe, ObjIndex(universe, 26, 45), 1, 1, 9, 10, 1);
+	SetObjMapRange(universe, ObjIndex(universe, 45, 46), 11, 1, 20, 10, 2);
+	SetObjMapRange(universe, ObjIndex(universe, 35, 36), 7, 11, 13, 18, 3);
 }
 
 void DRLG_SetMapTrans(Universe& universe, const char *sFileName)
@@ -166,7 +166,7 @@ void LoadSetMap(Universe& universe)
 		DRLG_AreaTrans(universe, sizeof(SkelKingTrans3) / 4, &SkelKingTrans3[0]);
 		DRLG_ListTrans(universe, sizeof(SkelKingTrans4) / 4, &SkelKingTrans4[0]);
 		AddL1Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
-		AddSKingObjs();
+		AddSKingObjs(universe);
 		InitSKingTriggers();
 		break;
 	case SL_BONECHAMB:
@@ -176,7 +176,7 @@ void LoadSetMap(Universe& universe)
 		DRLG_AreaTrans(universe, sizeof(SkelChamTrans2) / 4, &SkelChamTrans2[0]);
 		DRLG_ListTrans(universe, sizeof(SkelChamTrans3) / 4, &SkelChamTrans3[0]);
 		AddL2Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
-		AddSChamObjs();
+		AddSChamObjs(universe);
 		InitSChambTriggers();
 		break;
 	case SL_MAZE:
@@ -201,7 +201,7 @@ void LoadSetMap(Universe& universe)
 		LoadPreL1Dungeon(universe, "Levels\\L1Data\\Vile1.DUN", 35, 36);
 		LoadL1Dungeon(universe, "Levels\\L1Data\\Vile2.DUN", 35, 36);
 		AddL1Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
-		AddVileObjs();
+		AddVileObjs(universe);
 		DRLG_SetMapTrans(universe, "Levels\\L1Data\\Vile1.DUN");
 		InitNoTriggers();
 		break;

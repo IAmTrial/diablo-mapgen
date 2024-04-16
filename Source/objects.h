@@ -11,26 +11,20 @@
 #include "types.h"
 #include "Source/universe/universe.h"
 
-extern int objectactive[MAXOBJECTS];
-extern int nobjects;
-extern int objectavail[MAXOBJECTS];
-extern ObjectStruct object[MAXOBJECTS];
-extern BOOL InitObjFlag;
-
 void InitObjectGFX();
 void FreeObjectGFX();
 void AddL1Objs(Universe& universe, int x1, int y1, int x2, int y2);
 void AddL2Objs(Universe& universe, int x1, int y1, int x2, int y2);
 void InitObjects(Universe& universe);
 void SetMapObjects(Universe& universe, BYTE *pMap, int startx, int starty);
-void SetObjMapRange(int i, int x1, int y1, int x2, int y2, int v);
-void SetBookMsg(int i, int msg);
+void SetObjMapRange(Universe& universe, int i, int x1, int y1, int x2, int y2, int v);
+void SetBookMsg(Universe& universe, int i, int msg);
 void GetRndObjLoc(Universe& universe, int randarea, int &xx, int &yy);
 void AddMushPatch(Universe& universe);
 void AddSlainHero(Universe& universe);
 #ifdef HELLFIRE
 void AddCryptBook(int ot, int v2, int ox, int oy);
-void AddCryptObject(int a1, int a2);
+void AddCryptObject(Universe& universe, int a1, int a2);
 void AddNakrulBook(int a1, int a2, int a3);
 #endif
 void AddObject(Universe& universe, int ot, int ox, int oy);

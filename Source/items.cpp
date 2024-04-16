@@ -497,20 +497,20 @@ BOOL ItemSpaceOk(Universe& universe, int i, int j)
 
 	if (universe.dObject[i][j] != 0) {
 		oi = universe.dObject[i][j] > 0 ? universe.dObject[i][j] - 1 : -(universe.dObject[i][j] + 1);
-		if (object[oi]._oSolidFlag)
+		if (universe.object[oi]._oSolidFlag)
 			return FALSE;
 	}
 
-	if (universe.dObject[i + 1][j + 1] > 0 && object[universe.dObject[i + 1][j + 1] - 1]._oSelFlag != 0) /// BUGFIX: check for universe.dObject OOB
+	if (universe.dObject[i + 1][j + 1] > 0 && universe.object[universe.dObject[i + 1][j + 1] - 1]._oSelFlag != 0) /// BUGFIX: check for universe.dObject OOB
 		return FALSE;
 
-	if (universe.dObject[i + 1][j + 1] < 0 && object[-(universe.dObject[i + 1][j + 1] + 1)]._oSelFlag != 0) /// BUGFIX: check for universe.dObject OOB
+	if (universe.dObject[i + 1][j + 1] < 0 && universe.object[-(universe.dObject[i + 1][j + 1] + 1)]._oSelFlag != 0) /// BUGFIX: check for universe.dObject OOB
 		return FALSE;
 
 	if (universe.dObject[i + 1][j] > 0 /// BUGFIX: check for universe.dObject OOB
 	    && universe.dObject[i][j + 1] > 0 /// BUGFIX: check for universe.dObject OOB
-	    && object[universe.dObject[i + 1][j] - 1]._oSelFlag != 0
-	    && object[universe.dObject[i][j + 1] - 1]._oSelFlag != 0) {
+	    && universe.object[universe.dObject[i + 1][j] - 1]._oSelFlag != 0
+	    && universe.object[universe.dObject[i][j + 1] - 1]._oSelFlag != 0) {
 		return FALSE;
 	}
 
@@ -2066,9 +2066,9 @@ void SpawnRock(Universe& universe)
 	int ostand;
 
 	ostand = FALSE;
-	for (i = 0; i < nobjects && !ostand; i++) {
-		ii = objectactive[i];
-		ostand = object[ii]._otype == OBJ_STAND;
+	for (i = 0; i < universe.nobjects && !ostand; i++) {
+		ii = universe.objectactive[i];
+		ostand = universe.object[ii]._otype == OBJ_STAND;
 	}
 #ifdef HELLFIRE
 	int curlv = items_get_currlevel();
@@ -2077,8 +2077,8 @@ void SpawnRock(Universe& universe)
 		i = universe.itemavail[0];
 		universe.itemavail[0] = universe.itemavail[127 - universe.numitems - 1];
 		universe.itemactive[universe.numitems] = i;
-		xx = object[ii]._ox;
-		yy = object[ii]._oy;
+		xx = universe.object[ii]._ox;
+		yy = universe.object[ii]._oy;
 		universe.item[i]._ix = xx;
 		universe.item[i]._iy = yy;
 		universe.dItem[xx][universe.item[i]._iy] = i + 1;

@@ -91,7 +91,7 @@ inline void SetObjectSelFlag(Universe& universe, int id, int value)
 		universe.oobwrite = true;
 		return;
 	}
-	object[id]._oSelFlag = value;
+	universe.object[id]._oSelFlag = value;
 }
 
 inline void IncrementObjectFrame(Universe& universe, int id, int value)
@@ -100,7 +100,7 @@ inline void IncrementObjectFrame(Universe& universe, int id, int value)
 		universe.oobwrite = true;
 		return;
 	}
-	object[id]._oAnimFrame += value;
+	universe.object[id]._oAnimFrame += value;
 }
 
 BYTE *DiabloAllocPtr(DWORD dwBytes);

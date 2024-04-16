@@ -69,7 +69,7 @@ void ExportDun(Universe& universe, uint32_t seed)
 			uint16_t objectId = 0;
 			if (universe.dObject[x][y] > 0) {
 				for (int i = 0; i < 139; i++) {
-					if (ObjTypeConv[i] == object[universe.dObject[x][y] - 1]._otype) {
+					if (ObjTypeConv[i] == universe.object[universe.dObject[x][y] - 1]._otype) {
 						objectId = i;
 						break;
 					}

@@ -1030,7 +1030,7 @@ void CreateThemeRooms(Universe& universe)
 	if (universe.currlevel == 16) {
 		return;
 	}
-	InitObjFlag = TRUE;
+	universe.InitObjFlag = TRUE;
 	for (i = 0; i < numthemes; i++) {
 		themex = 0;
 		themey = 0;
@@ -1088,7 +1088,7 @@ void CreateThemeRooms(Universe& universe)
 			break;
 		}
 	}
-	InitObjFlag = FALSE;
+	universe.InitObjFlag = FALSE;
 	if (universe.leveltype == DTYPE_HELL && universe.themeCount > 0) {
 		UpdateL4Trans(universe);
 	}
