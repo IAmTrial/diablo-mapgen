@@ -12,25 +12,6 @@
 #include "Source/engine.h"
 #include "Source/universe/universe.h"
 
-/** Notes visisted by the path finding algorithm. */
-PATHNODE path_nodes[MAXPATHNODES];
-/** size of the pnode_tblptr stack */
-int gdwCurPathStep;
-/** the number of in-use nodes in path_nodes */
-int gdwCurNodes;
-/**
- * for reconstructing the path after the A* search is done. The longest
- * possible path is actually 24 steps, even though we can fit 25
- */
-int pnode_vals[MAX_PATH_LENGTH];
-/** A linked list of all visited nodes */
-PATHNODE *pnode_ptr;
-/** A stack for recursively searching nodes */
-PATHNODE *pnode_tblptr[MAXPATHNODES];
-/** A linked list of the A* frontier, sorted by distance */
-PATHNODE *path_2_nodes;
-PATHNODE path_unusednodes[MAXPATHNODES];
-
 /** For iterating over the 8 possible movement directions */
 const char pathxdir[8] = { -1, -1, 1, 1, -1, 0, 1, 0 };
 const char pathydir[8] = { -1, 1, -1, 1, 0, -1, 0, 1 };
@@ -59,19 +40,19 @@ int FindPath(Universe& universe, BOOL (*PosOk)(Universe&, int, int, int), int Po
 	int path_length, i;
 
 	// clear all nodes, create root nodes for the visited/frontier linked lists
-	gdwCurNodes = 0;
-	path_2_nodes = path_new_step();
-	pnode_ptr = path_new_step();
-	gdwCurPathStep = 0;
-	path_start = path_new_step();
+	universe.gdwCurNodes = 0;
+	universe.path_2_nodes = path_new_step(universe);
+	universe.pnode_ptr = path_new_step(universe);
+	universe.gdwCurPathStep = 0;
+	path_start = path_new_step(universe);
 	path_start->g = 0;
 	path_start->h = path_get_h_cost(sx, sy, dx, dy);
 	path_start->x = sx;
 	path_start->f = path_start->h + path_start->g;
 	path_start->y = sy;
-	path_2_nodes->NextNode = path_start;
+	universe.path_2_nodes->NextNode = path_start;
 	// A* search until we find (dx,dy) or fail
-	while ((next_node = GetNextPath())) {
+	while ((next_node = GetNextPath(universe))) {
 		// reached the end, success!
 		if (next_node->x == dx && next_node->y == dy) {
 			current = next_node;
@@ -79,12 +60,12 @@ int FindPath(Universe& universe, BOOL (*PosOk)(Universe&, int, int, int), int Po
 			while (current->Parent) {
 				if (path_length >= MAX_PATH_LENGTH)
 					break;
-				pnode_vals[path_length++] = path_directions[3 * (current->y - current->Parent->y) - current->Parent->x + 4 + current->x];
+				universe.pnode_vals[path_length++] = path_directions[3 * (current->y - current->Parent->y) - current->Parent->x + 4 + current->x];
 				current = current->Parent;
 			}
 			if (path_length != MAX_PATH_LENGTH) {
 				for (i = 0; i < path_length; i++)
-					path[i] = pnode_vals[path_length - i - 1];
+					path[i] = universe.pnode_vals[path_length - i - 1];
 				return i;
 			}
 			return 0;
@@ -130,18 +111,18 @@ int path_check_equal(PATHNODE *pPath, int dx, int dy)
 /**
  * @brief get the next node on the A* frontier to explore (estimated to be closest to the goal), mark it as visited, and return it
  */
-PATHNODE *GetNextPath()
+PATHNODE *GetNextPath(Universe& universe)
 {
 	PATHNODE *result;
 
-	result = path_2_nodes->NextNode;
+	result = universe.path_2_nodes->NextNode;
 	if (result == NULL) {
 		return result;
 	}
 
-	path_2_nodes->NextNode = result->NextNode;
-	result->NextNode = pnode_ptr->NextNode;
-	pnode_ptr->NextNode = result;
+	universe.path_2_nodes->NextNode = result->NextNode;
+	result->NextNode = universe.pnode_ptr->NextNode;
+	universe.pnode_ptr->NextNode = result;
 	return result;
 }
 
@@ -214,7 +195,7 @@ BOOL path_parent_path(Universe& universe, PATHNODE *pPath, int dx, int dy, int s
 
 	// 3 cases to consider
 	// case 1: (dx,dy) is already on the frontier
-	dxdy = path_get_node1(dx, dy);
+	dxdy = path_get_node1(universe, dx, dy);
 	if (dxdy != NULL) {
 		for (i = 0; i < 8; i++) {
 			if (pPath->Child[i] == NULL)
@@ -231,7 +212,7 @@ BOOL path_parent_path(Universe& universe, PATHNODE *pPath, int dx, int dy, int s
 		}
 	} else {
 		// case 2: (dx,dy) was already visited
-		dxdy = path_get_node2(dx, dy);
+		dxdy = path_get_node2(universe, dx, dy);
 		if (dxdy != NULL) {
 			for (i = 0; i < 8; i++) {
 				if (pPath->Child[i] == NULL)
@@ -248,7 +229,7 @@ BOOL path_parent_path(Universe& universe, PATHNODE *pPath, int dx, int dy, int s
 			}
 		} else {
 			// case 3: (dx,dy) is totally new
-			dxdy = path_new_step();
+			dxdy = path_new_step(universe);
 			if (dxdy == NULL)
 				return FALSE;
 			dxdy->Parent = pPath;
@@ -258,7 +239,7 @@ BOOL path_parent_path(Universe& universe, PATHNODE *pPath, int dx, int dy, int s
 			dxdy->x = dx;
 			dxdy->y = dy;
 			// add it to the frontier
-			path_next_node(dxdy);
+			path_next_node(universe, dxdy);
 
 			for (i = 0; i < 8; i++) {
 				if (pPath->Child[i] == NULL)
@@ -273,9 +254,9 @@ BOOL path_parent_path(Universe& universe, PATHNODE *pPath, int dx, int dy, int s
 /**
  * @brief return a node for (dx,dy) on the frontier, or NULL if not found
  */
-PATHNODE *path_get_node1(int dx, int dy)
+PATHNODE *path_get_node1(Universe& universe, int dx, int dy)
 {
-	PATHNODE *result = path_2_nodes->NextNode;
+	PATHNODE *result = universe.path_2_nodes->NextNode;
 	while (result != NULL) {
 		if (result->x == dx && result->y == dy)
 			return result;
@@ -287,9 +268,9 @@ PATHNODE *path_get_node1(int dx, int dy)
 /**
  * @brief return a node for (dx,dy) if it was visited, or NULL if not found
  */
-PATHNODE *path_get_node2(int dx, int dy)
+PATHNODE *path_get_node2(Universe& universe, int dx, int dy)
 {
-	PATHNODE *result = pnode_ptr->NextNode;
+	PATHNODE *result = universe.pnode_ptr->NextNode;
 	while (result != NULL) {
 		if (result->x == dx && result->y == dy)
 			return result;
@@ -301,17 +282,17 @@ PATHNODE *path_get_node2(int dx, int dy)
 /**
  * @brief insert pPath into the frontier (keeping the frontier sorted by total distance)
  */
-void path_next_node(PATHNODE *pPath)
+void path_next_node(Universe& universe, PATHNODE *pPath)
 {
 	PATHNODE *next, *current;
 	int f;
 
-	next = path_2_nodes;
-	if (!path_2_nodes->NextNode) {
-		path_2_nodes->NextNode = pPath;
+	next = universe.path_2_nodes;
+	if (!universe.path_2_nodes->NextNode) {
+		universe.path_2_nodes->NextNode = pPath;
 	} else {
-		current = path_2_nodes;
-		next = path_2_nodes->NextNode;
+		current = universe.path_2_nodes;
+		next = universe.path_2_nodes->NextNode;
 		f = pPath->f;
 		while (next && next->f < f) {
 			current = next;
@@ -331,9 +312,9 @@ void path_set_coords(Universe& universe, PATHNODE *pPath)
 	PATHNODE *PathAct;
 	int i;
 
-	path_push_active_step(pPath);
-	while (gdwCurPathStep) {
-		PathOld = path_pop_active_step();
+	path_push_active_step(universe, pPath);
+	while (universe.gdwCurPathStep) {
+		PathOld = path_pop_active_step(universe);
 		for (i = 0; i < 8; i++) {
 			PathAct = PathOld->Child[i];
 			if (PathAct == NULL)
@@ -344,7 +325,7 @@ void path_set_coords(Universe& universe, PATHNODE *pPath)
 					PathAct->Parent = PathOld;
 					PathAct->g = PathOld->g + path_check_equal(PathOld, PathAct->x, PathAct->y);
 					PathAct->f = PathAct->g + PathAct->h;
-					path_push_active_step(PathAct);
+					path_push_active_step(universe, PathAct);
 				}
 			}
 		}
@@ -352,36 +333,36 @@ void path_set_coords(Universe& universe, PATHNODE *pPath)
 }
 
 /**
- * @brief push pPath onto the pnode_tblptr stack
+ * @brief push pPath onto the universe.pnode_tblptr stack
  */
-void path_push_active_step(PATHNODE *pPath)
+void path_push_active_step(Universe& universe, PATHNODE *pPath)
 {
-	int stack_index = gdwCurPathStep;
-	gdwCurPathStep++;
-	pnode_tblptr[stack_index] = pPath;
+	int stack_index = universe.gdwCurPathStep;
+	universe.gdwCurPathStep++;
+	universe.pnode_tblptr[stack_index] = pPath;
 }
 
 /**
- * @brief pop and return a node from the pnode_tblptr stack
+ * @brief pop and return a node from the universe.pnode_tblptr stack
  */
-PATHNODE *path_pop_active_step()
+PATHNODE *path_pop_active_step(Universe& universe)
 {
-	gdwCurPathStep--;
-	return pnode_tblptr[gdwCurPathStep];
+	universe.gdwCurPathStep--;
+	return universe.pnode_tblptr[universe.gdwCurPathStep];
 }
 
 /**
  * @brief zero one of the preallocated nodes and return a pointer to it, or NULL if none are available
  */
-PATHNODE *path_new_step()
+PATHNODE *path_new_step(Universe& universe)
 {
 	PATHNODE *new_node;
 
-	if (gdwCurNodes == MAXPATHNODES)
+	if (universe.gdwCurNodes == MAXPATHNODES)
 		return NULL;
 
-	new_node = &path_nodes[gdwCurNodes];
-	gdwCurNodes++;
+	new_node = &universe.path_nodes[universe.gdwCurNodes];
+	universe.gdwCurNodes++;
 	memset(new_node, 0, sizeof(PATHNODE));
 	return new_node;
 }

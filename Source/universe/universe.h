@@ -342,4 +342,24 @@ struct Universe {
 #ifdef HELLFIRE
 	int dword_6DE0E0;
 #endif
+
+	// path.cpp
+	/** Notes visisted by the path finding algorithm. */
+	PATHNODE path_nodes[MAXPATHNODES];
+	/** size of the pnode_tblptr stack */
+	int gdwCurPathStep;
+	/** the number of in-use nodes in path_nodes */
+	int gdwCurNodes;
+	/**
+	* for reconstructing the path after the A* search is done. The longest
+	* possible path is actually 24 steps, even though we can fit 25
+	*/
+	int pnode_vals[MAX_PATH_LENGTH];
+	/** A linked list of all visited nodes */
+	PATHNODE *pnode_ptr;
+	/** A stack for recursively searching nodes */
+	PATHNODE *pnode_tblptr[MAXPATHNODES];
+	/** A linked list of the A* frontier, sorted by distance */
+	PATHNODE *path_2_nodes;
+	PATHNODE path_unusednodes[MAXPATHNODES];
 };
