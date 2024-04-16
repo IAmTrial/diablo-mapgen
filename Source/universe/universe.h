@@ -311,4 +311,17 @@ struct Universe {
 	MonsterStruct monster[MAXMONSTERS];
 	CMonster Monsters[MAX_LVLMTYPES];
 	int nummtypes;
+
+	// monster.cpp
+	/** Tracks which missile files are already loaded */
+	int MissileFileFlag;
+	BOOLEAN sgbSaveSoundOn;
+	int totalmonsters;
+	#ifdef HELLFIRE
+	int GraphicTable[NUMLEVELS][MAX_LVLMTYPES];
+	#else
+	BYTE GraphicTable[NUMLEVELS][MAX_LVLMTYPES];
+	#endif
+	int monstimgtot;
+	int uniquetrans;
 };

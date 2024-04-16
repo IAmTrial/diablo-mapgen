@@ -20,19 +20,6 @@
 #include "Source/trigs.h"
 #include "Source/universe/universe.h"
 
-/** Tracks which missile files are already loaded */
-int MissileFileFlag;
-
-BOOLEAN sgbSaveSoundOn;
-int totalmonsters;
-#ifdef HELLFIRE
-int GraphicTable[NUMLEVELS][MAX_LVLMTYPES];
-#else
-BYTE GraphicTable[NUMLEVELS][MAX_LVLMTYPES];
-#endif
-int monstimgtot;
-int uniquetrans;
-
 /** Maps from walking path step to facing direction. */
 const char plr2monst[9] = { 0, 5, 3, 7, 1, 4, 6, 0, 2 };
 /** Maps from monster intelligence factor to missile type. */
@@ -179,8 +166,8 @@ void InitLevelMonsters(Universe& universe)
 	int i;
 
 	universe.nummtypes = 0;
-	monstimgtot = 0;
-	MissileFileFlag = 0;
+	universe.monstimgtot = 0;
+	universe.MissileFileFlag = 0;
 
 	for (i = 0; i < MAX_LVLMTYPES; i++) {
 		universe.Monsters[i].mPlaceFlags = 0;
@@ -188,13 +175,13 @@ void InitLevelMonsters(Universe& universe)
 
 	ClrAllMonsters(universe);
 	universe.nummonsters = 0;
-	totalmonsters = MAXMONSTERS;
+	universe.totalmonsters = MAXMONSTERS;
 
 	for (i = 0; i < MAXMONSTERS; i++) {
 		universe.monstactive[i] = i;
 	}
 
-	uniquetrans = 0;
+	universe.uniquetrans = 0;
 }
 
 int AddMonsterType(Universe& universe, int type, int placeflag)
@@ -212,7 +199,7 @@ int AddMonsterType(Universe& universe, int type, int placeflag)
 		i = universe.nummtypes;
 		universe.nummtypes++;
 		universe.Monsters[i].mtype = type;
-		monstimgtot += monsterdata[type].mImage;
+		universe.monstimgtot += monsterdata[type].mImage;
 		InitMonsterGFX(universe, i);
 	}
 
@@ -310,9 +297,9 @@ void GetLevelMTypes(Universe& universe)
 			}
 		}
 
-		while (nt > 0 && universe.nummtypes < MAX_LVLMTYPES && monstimgtot < 4000) {
+		while (nt > 0 && universe.nummtypes < MAX_LVLMTYPES && universe.monstimgtot < 4000) {
 			for (i = 0; i < nt;) {
-				if (monsterdata[typelist[i]].mImage > 4000 - monstimgtot) {
+				if (monsterdata[typelist[i]].mImage > 4000 - universe.monstimgtot) {
 					typelist[i] = typelist[--nt];
 					continue;
 				}
@@ -606,7 +593,7 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 	count = 0;
 	Uniq = &UniqMonst[uniqindex];
 
-	if ((uniquetrans + 19) << 8 >= LIGHTSIZE) {
+	if ((universe.uniquetrans + 19) << 8 >= LIGHTSIZE) {
 		return;
 	}
 
@@ -799,7 +786,7 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 		Monst->mMaxDamage2 = 4 * Monst->mMaxDamage2 + 6;
 	}
 
-	Monst->_uniqtrans = uniquetrans++;
+	Monst->_uniqtrans = universe.uniquetrans++;
 
 	if (Uniq->mUnqAttr & 4) {
 		Monst->mHit = Uniq->mUnqVar1;
@@ -971,8 +958,8 @@ void PlaceGroup(Universe& universe, int mtype, int num, int leaderf, int leader)
 			} while (!MonstPlace(universe, xp, yp));
 		}
 
-		if (num + universe.nummonsters > totalmonsters) {
-			num = totalmonsters - universe.nummonsters;
+		if (num + universe.nummonsters > universe.totalmonsters) {
+			num = universe.totalmonsters - universe.nummonsters;
 		}
 
 		j = 0;
@@ -1084,14 +1071,14 @@ void InitMonsters(Universe& universe)
 			numplacemonsters += numplacemonsters >> 1;
 		if (universe.nummonsters + numplacemonsters > MAXMONSTERS - 10)
 			numplacemonsters = MAXMONSTERS - 10 - universe.nummonsters;
-		totalmonsters = universe.nummonsters + numplacemonsters;
+		universe.totalmonsters = universe.nummonsters + numplacemonsters;
 		for (i = 0; i < universe.nummtypes; i++) {
 			if (universe.Monsters[i].mPlaceFlags & PLACE_SCATTER) {
 				scattertypes[numscattypes] = i;
 				numscattypes++;
 			}
 		}
-		while (universe.nummonsters < totalmonsters) {
+		while (universe.nummonsters < universe.totalmonsters) {
 			mtype = scattertypes[random_(universe, 95, numscattypes)];
 			if (universe.currlevel == 1 || random_(universe, 95, 2) == 0)
 				na = 1;
