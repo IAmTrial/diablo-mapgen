@@ -637,7 +637,7 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 	if (uniqindex == UMT_ZHAR) {
 		zharflag = TRUE;
 		for (i = 0; i < universe.themeCount; i++) {
-			if (i == zharlib && zharflag == TRUE) {
+			if (i == universe.zharlib && zharflag == TRUE) {
 				zharflag = FALSE;
 				xp = 2 * universe.themeLoc[i].x + 20;
 				yp = 2 * universe.themeLoc[i].y + 20;
@@ -890,7 +890,7 @@ void PlaceQuestMonsters(Universe& universe)
 		if (QuestStatus(universe, Q_VEIL)) {
 			AddMonsterType(universe, UniqMonst[UMT_LACHDAN].mtype, PLACE_SCATTER);
 		}
-		if (QuestStatus(universe, Q_ZHAR) && zharlib == -1) {
+		if (QuestStatus(universe, Q_ZHAR) && universe.zharlib == -1) {
 			universe.quests[Q_ZHAR]._qactive = QUEST_NOTAVAIL;
 		}
 

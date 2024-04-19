@@ -381,4 +381,11 @@ struct Universe {
 	int WaterDone;
 	/** current frame # for the quest pentagram selector */
 	int questpentframe;
+
+	// themes.h
+	int numthemes;
+	BOOL armorFlag;
+	BOOL weaponFlag;
+	int zharlib;
+	ThemeStruct themes[MAXTHEMES];
 };

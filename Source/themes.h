@@ -11,12 +11,6 @@
 #include "types.h"
 #include "Source/universe/universe.h"
 
-extern int numthemes;
-extern BOOL armorFlag;
-extern BOOL weaponFlag;
-extern int zharlib;
-extern ThemeStruct themes[MAXTHEMES];
-
 void InitThemes(Universe& universe);
 void HoldThemeRooms(Universe& universe);
 void CreateThemeRooms(Universe& universe);

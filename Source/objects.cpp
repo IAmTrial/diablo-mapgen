@@ -1431,7 +1431,7 @@ void AddPurifyingFountain(Universe& universe, int i)
 
 void AddArmorStand(Universe& universe, int i)
 {
-	if (!armorFlag) {
+	if (!universe.armorFlag) {
 		universe.object[i]._oAnimFlag = 2;
 		universe.object[i]._oSelFlag = 0;
 	}
@@ -1527,7 +1527,7 @@ void AddStoryBook(Universe& universe, int i)
 
 void AddWeaponRack(Universe& universe, int i)
 {
-	if (!weaponFlag) {
+	if (!universe.weaponFlag) {
 		universe.object[i]._oAnimFlag = 2;
 		universe.object[i]._oSelFlag = 0;
 	}
