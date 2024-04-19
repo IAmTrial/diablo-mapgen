@@ -19,18 +19,6 @@
 #include "Source/trigs.h"
 #include "Source/universe/universe.h"
 
-BOOL ThemeGoodIn[4];
-BOOL treasureFlag;
-BOOL mFountainFlag;
-BOOL cauldronFlag;
-BOOL tFountainFlag;
-int themex;
-int themey;
-int themeVar1;
-BOOL pFountainFlag;
-BOOL bFountainFlag;
-BOOL bCrossFlag;
-
 /** Specifies the set of special theme IDs from which one will be selected at random. */
 const int ThemeGood[4] = { THEME_GOATSHRINE, THEME_SHRINE, THEME_SKELROOM, THEME_LIBRARY };
 /** Specifies a 5x5 area to fit theme objects. */
@@ -101,9 +89,9 @@ BOOL TFit_Shrine(Universe& universe, int i)
 			}
 		}
 	}
-	themex = xp;
-	themey = yp;
-	themeVar1 = found;
+	universe.themex = xp;
+	universe.themey = yp;
+	universe.themeVar1 = found;
 	return TRUE;
 }
 
@@ -149,8 +137,8 @@ BOOL TFit_Obj5(Universe& universe, int t)
 		r--;
 	}
 
-	themex = xp;
-	themey = yp;
+	universe.themex = xp;
+	universe.themey = yp;
 
 	return TRUE;
 }
@@ -165,7 +153,7 @@ BOOL TFit_SkelRoom(Universe& universe, int t)
 
 	for (i = 0; i < universe.nummtypes; i++) {
 		if (IsSkel(universe.Monsters[i].mtype)) {
-			themeVar1 = i;
+			universe.themeVar1 = i;
 			return TFit_Obj5(universe, t);
 		}
 	}
@@ -179,7 +167,7 @@ BOOL TFit_GoatShrine(Universe& universe, int t)
 
 	for (i = 0; i < universe.nummtypes; i++) {
 		if (IsGoat(universe.Monsters[i].mtype)) {
-			themeVar1 = i;
+			universe.themeVar1 = i;
 			return TFit_Obj5(universe, t);
 		}
 	}
@@ -215,8 +203,8 @@ BOOL TFit_Obj3(Universe& universe, int t)
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
 		for (xp = 1; xp < MAXDUNX - 1; xp++) {
 			if (CheckThemeObj3(universe, xp, yp, t, objrnd[universe.leveltype - 1])) {
-				themex = xp;
-				themey = yp;
+				universe.themex = xp;
+				universe.themey = yp;
 				return TRUE;
 			}
 		}
@@ -239,12 +227,12 @@ BOOL CheckThemeReqs(Universe& universe, int t)
 		}
 		break;
 	case THEME_BLOODFOUNTAIN:
-		if (!bFountainFlag) {
+		if (!universe.bFountainFlag) {
 			rv = FALSE;
 		}
 		break;
 	case THEME_PURIFYINGFOUNTAIN:
-		if (!pFountainFlag) {
+		if (!universe.pFountainFlag) {
 			rv = FALSE;
 		}
 		break;
@@ -254,17 +242,17 @@ BOOL CheckThemeReqs(Universe& universe, int t)
 		}
 		break;
 	case THEME_CAULDRON:
-		if (universe.leveltype != DTYPE_HELL || !cauldronFlag) {
+		if (universe.leveltype != DTYPE_HELL || !universe.cauldronFlag) {
 			rv = FALSE;
 		}
 		break;
 	case THEME_MURKYFOUNTAIN:
-		if (!mFountainFlag) {
+		if (!universe.mFountainFlag) {
 			rv = FALSE;
 		}
 		break;
 	case THEME_TEARFOUNTAIN:
-		if (!tFountainFlag) {
+		if (!universe.tFountainFlag) {
 			rv = FALSE;
 		}
 		break;
@@ -300,7 +288,7 @@ BOOL SpecialThemeFit(Universe& universe, int i, int t)
 			rv = TFit_Obj5(universe, i);
 		}
 		if (rv) {
-			bFountainFlag = FALSE;
+			universe.bFountainFlag = FALSE;
 		}
 		break;
 	case THEME_PURIFYINGFOUNTAIN:
@@ -308,7 +296,7 @@ BOOL SpecialThemeFit(Universe& universe, int i, int t)
 			rv = TFit_Obj5(universe, i);
 		}
 		if (rv) {
-			pFountainFlag = FALSE;
+			universe.pFountainFlag = FALSE;
 		}
 		break;
 	case THEME_MURKYFOUNTAIN:
@@ -316,7 +304,7 @@ BOOL SpecialThemeFit(Universe& universe, int i, int t)
 			rv = TFit_Obj5(universe, i);
 		}
 		if (rv) {
-			mFountainFlag = FALSE;
+			universe.mFountainFlag = FALSE;
 		}
 		break;
 	case THEME_TEARFOUNTAIN:
@@ -324,7 +312,7 @@ BOOL SpecialThemeFit(Universe& universe, int i, int t)
 			rv = TFit_Obj5(universe, i);
 		}
 		if (rv) {
-			tFountainFlag = FALSE;
+			universe.tFountainFlag = FALSE;
 		}
 		break;
 	case THEME_CAULDRON:
@@ -332,7 +320,7 @@ BOOL SpecialThemeFit(Universe& universe, int i, int t)
 			rv = TFit_Obj5(universe, i);
 		}
 		if (rv) {
-			cauldronFlag = FALSE;
+			universe.cauldronFlag = FALSE;
 		}
 		break;
 	case THEME_GOATSHRINE:
@@ -350,9 +338,9 @@ BOOL SpecialThemeFit(Universe& universe, int i, int t)
 		}
 		break;
 	case THEME_TREASURE:
-		rv = treasureFlag;
+		rv = universe.treasureFlag;
 		if (rv) {
-			treasureFlag = FALSE;
+			universe.treasureFlag = FALSE;
 		}
 		break;
 	}
@@ -411,21 +399,21 @@ void InitThemes(Universe& universe)
 	universe.zharlib = -1;
 	universe.numthemes = 0;
 	universe.armorFlag = TRUE;
-	bFountainFlag = TRUE;
-	cauldronFlag = TRUE;
-	mFountainFlag = TRUE;
-	pFountainFlag = TRUE;
-	tFountainFlag = TRUE;
-	treasureFlag = TRUE;
-	bCrossFlag = FALSE;
+	universe.bFountainFlag = TRUE;
+	universe.cauldronFlag = TRUE;
+	universe.mFountainFlag = TRUE;
+	universe.pFountainFlag = TRUE;
+	universe.tFountainFlag = TRUE;
+	universe.treasureFlag = TRUE;
+	universe.bCrossFlag = FALSE;
 	universe.weaponFlag = TRUE;
 
 	if (universe.currlevel == 16)
 		return;
 
 	if (universe.leveltype == DTYPE_CATHEDRAL) {
-		for (i = 0; i < sizeof(ThemeGoodIn) / sizeof(ThemeGoodIn[0]); i++)
-			ThemeGoodIn[i] = FALSE;
+		for (i = 0; i < sizeof(universe.ThemeGoodIn) / sizeof(universe.ThemeGoodIn[0]); i++)
+			universe.ThemeGoodIn[i] = FALSE;
 
 		for (i = 0; i < universe.TransVal && universe.numthemes < MAXTHEMES; i++) {
 			if (CheckThemeRoom(universe, i)) {
@@ -567,14 +555,14 @@ void Theme_Shrine(Universe& universe, int t)
 	char monstrnd[4] = { 6, 6, 3, 9 };
 
 	TFit_Shrine(universe, t);
-	if (themeVar1 == 1) {
-		AddObject(universe, OBJ_CANDLE2, themex - 1, themey);
-		AddObject(universe, OBJ_SHRINER, themex, themey);
-		AddObject(universe, OBJ_CANDLE2, themex + 1, themey);
+	if (universe.themeVar1 == 1) {
+		AddObject(universe, OBJ_CANDLE2, universe.themex - 1, universe.themey);
+		AddObject(universe, OBJ_SHRINER, universe.themex, universe.themey);
+		AddObject(universe, OBJ_CANDLE2, universe.themex + 1, universe.themey);
 	} else {
-		AddObject(universe, OBJ_CANDLE2, themex, themey - 1);
-		AddObject(universe, OBJ_SHRINEL, themex, themey);
-		AddObject(universe, OBJ_CANDLE2, themex, themey + 1);
+		AddObject(universe, OBJ_CANDLE2, universe.themex, universe.themey - 1);
+		AddObject(universe, OBJ_SHRINEL, universe.themex, universe.themey);
+		AddObject(universe, OBJ_CANDLE2, universe.themex, universe.themey + 1);
 	}
 	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
@@ -625,8 +613,8 @@ void Theme_SkelRoom(Universe& universe, int t)
 
 	TFit_SkelRoom(universe, t);
 
-	xp = themex;
-	yp = themey;
+	xp = universe.themex;
+	yp = universe.themey;
 
 	AddObject(universe, OBJ_SKFIRE, xp, yp);
 
@@ -741,14 +729,14 @@ void Theme_Library(Universe& universe, int t)
 
 	TFit_Shrine(universe, t);
 
-	if (themeVar1 == 1) {
-		AddObject(universe, OBJ_BOOKCANDLE, themex - 1, themey);
-		AddObject(universe, OBJ_BOOKCASER, themex, themey);
-		AddObject(universe, OBJ_BOOKCANDLE, themex + 1, themey);
+	if (universe.themeVar1 == 1) {
+		AddObject(universe, OBJ_BOOKCANDLE, universe.themex - 1, universe.themey);
+		AddObject(universe, OBJ_BOOKCASER, universe.themex, universe.themey);
+		AddObject(universe, OBJ_BOOKCANDLE, universe.themex + 1, universe.themey);
 	} else {
-		AddObject(universe, OBJ_BOOKCANDLE, themex, themey - 1);
-		AddObject(universe, OBJ_BOOKCASEL, themex, themey);
-		AddObject(universe, OBJ_BOOKCANDLE, themex, themey + 1);
+		AddObject(universe, OBJ_BOOKCANDLE, universe.themex, universe.themey - 1);
+		AddObject(universe, OBJ_BOOKCASEL, universe.themex, universe.themey);
+		AddObject(universe, OBJ_BOOKCANDLE, universe.themex, universe.themey + 1);
 	}
 
 	for (yp = 1; yp < MAXDUNY - 1; yp++) {
@@ -808,7 +796,7 @@ void Theme_BloodFountain(Universe& universe, int t)
 	char monstrnd[4] = { 6, 8, 3, 9 };
 
 	TFit_Obj5(universe, t);
-	AddObject(universe, OBJ_BLOODFTN, themex, themey);
+	AddObject(universe, OBJ_BLOODFTN, universe.themex, universe.themey);
 	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
@@ -847,7 +835,7 @@ void Theme_PurifyingFountain(Universe& universe, int t)
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(universe, t);
-	AddObject(universe, OBJ_PURIFYINGFTN, themex, themey);
+	AddObject(universe, OBJ_PURIFYINGFTN, universe.themex, universe.themey);
 	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
@@ -864,7 +852,7 @@ void Theme_ArmorStand(Universe& universe, int t)
 
 	if (universe.armorFlag) {
 		TFit_Obj3(universe, t);
-		AddObject(universe, OBJ_ARMORSTAND, themex, themey);
+		AddObject(universe, OBJ_ARMORSTAND, universe.themex, universe.themey);
 	}
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
@@ -891,11 +879,11 @@ void Theme_GoatShrine(Universe& universe, int t)
 	int xx, yy;
 
 	TFit_GoatShrine(universe, t);
-	AddObject(universe, OBJ_GOATSHRINE, themex, themey);
-	for (yy = themey - 1; yy <= themey + 1; yy++) {
-		for (xx = themex - 1; xx <= themex + 1; xx++) {
-			if (universe.dTransVal[xx][yy] == universe.themes[t].ttval && !universe.nSolidTable[universe.dPiece[xx][yy]] && (xx != themex || yy != themey)) {
-				AddMonster(universe, xx, yy, DIR_SW, themeVar1, TRUE);
+	AddObject(universe, OBJ_GOATSHRINE, universe.themex, universe.themey);
+	for (yy = universe.themey - 1; yy <= universe.themey + 1; yy++) {
+		for (xx = universe.themex - 1; xx <= universe.themex + 1; xx++) {
+			if (universe.dTransVal[xx][yy] == universe.themes[t].ttval && !universe.nSolidTable[universe.dPiece[xx][yy]] && (xx != universe.themex || yy != universe.themey)) {
+				AddMonster(universe, xx, yy, DIR_SW, universe.themeVar1, TRUE);
 			}
 		}
 	}
@@ -911,7 +899,7 @@ void Theme_Cauldron(Universe& universe, int t)
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(universe, t);
-	AddObject(universe, OBJ_CAULDRON, themex, themey);
+	AddObject(universe, OBJ_CAULDRON, universe.themex, universe.themey);
 	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
@@ -925,7 +913,7 @@ void Theme_MurkyFountain(Universe& universe, int t)
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(universe, t);
-	AddObject(universe, OBJ_MURKYFTN, themex, themey);
+	AddObject(universe, OBJ_MURKYFTN, universe.themex, universe.themey);
 	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
@@ -939,7 +927,7 @@ void Theme_TearFountain(Universe& universe, int t)
 	char monstrnd[4] = { 6, 7, 3, 9 };
 
 	TFit_Obj5(universe, t);
-	AddObject(universe, OBJ_TEARFTN, themex, themey);
+	AddObject(universe, OBJ_TEARFTN, universe.themex, universe.themey);
 	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
 }
 
@@ -966,7 +954,7 @@ void Theme_BrnCross(Universe& universe, int t)
 		}
 	}
 	PlaceThemeMonsts(universe, t, monstrnd[universe.leveltype - 1]);
-	bCrossFlag = TRUE;
+	universe.bCrossFlag = TRUE;
 }
 
 /**
@@ -982,7 +970,7 @@ void Theme_WeaponRack(Universe& universe, int t)
 
 	if (universe.weaponFlag) {
 		TFit_Obj3(universe, t);
-		AddObject(universe, OBJ_WEAPONRACK, themex, themey);
+		AddObject(universe, OBJ_WEAPONRACK, universe.themex, universe.themey);
 	}
 	for (yp = 0; yp < MAXDUNY; yp++) {
 		for (xp = 0; xp < MAXDUNX; xp++) {
@@ -1027,8 +1015,8 @@ void CreateThemeRooms(Universe& universe)
 	}
 	universe.InitObjFlag = TRUE;
 	for (i = 0; i < universe.numthemes; i++) {
-		themex = 0;
-		themey = 0;
+		universe.themex = 0;
+		universe.themey = 0;
 		switch (universe.themes[i].ttype) {
 		case THEME_BARREL:
 			Theme_Barrel(universe, i);

@@ -388,4 +388,17 @@ struct Universe {
 	BOOL weaponFlag;
 	int zharlib;
 	ThemeStruct themes[MAXTHEMES];
+
+	// themes.cpp
+	BOOL ThemeGoodIn[4];
+	BOOL treasureFlag;
+	BOOL mFountainFlag;
+	BOOL cauldronFlag;
+	BOOL tFountainFlag;
+	int themex;
+	int themey;
+	int themeVar1;
+	BOOL pFountainFlag;
+	BOOL bFountainFlag;
+	BOOL bCrossFlag;
 };
