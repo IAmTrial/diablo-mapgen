@@ -148,31 +148,31 @@ void printAsciiLevel(Universe& universe)
 		}
 	}
 
-	Point position = Spawn;
+	Point position = universe.Spawn;
 	steps[position.x][position.y] = true;
 
 	const char pathxdir[9] = { 0, 0, -1, 1, 0, -1, 1, 1, -1 };
 	const char pathydir[9] = { 0, -1, 0, 0, 1, -1, -1, 1, 1 };
 
 	for (int i = 0; i < MAX_PATH_LENGTH; ++i) {
-		if (Path[i] == 0)
+		if (universe.Path[i] == 0)
 			break;
-		position.x += pathxdir[Path[i]];
-		position.y += pathydir[Path[i]];
+		position.x += pathxdir[universe.Path[i]];
+		position.y += pathydir[universe.Path[i]];
 		steps[position.x][position.y] = true;
 	}
 
 	for (int boby = 16; boby < MAXDUNY - 17; boby++) {
 		for (int bobx = 16; bobx < MAXDUNX - 17; bobx++) {
-			if (Point { bobx, boby } == Spawn)
+			if (Point { bobx, boby } == universe.Spawn)
 				std::cout << red("^");
-			else if (Point { bobx, boby } == StairsDown)
+			else if (Point { bobx, boby } == universe.StairsDown)
 				std::cout << green("v");
 			else if (universe.dObject[bobx][boby] && universe.nSolidTable[universe.dPiece[bobx][boby]])
 				std::cout << yellow("#");
 			else if (universe.dMonster[bobx][boby])
 				std::cout << red("m");
-			else if (Point { bobx, boby } == POI && !universe.nSolidTable[universe.dPiece[bobx][boby]])
+			else if (Point { bobx, boby } == universe.POI && !universe.nSolidTable[universe.dPiece[bobx][boby]])
 				std::cout << red("!");
 			else if (universe.dObject[bobx][boby])
 				std::cout << yellow("*");

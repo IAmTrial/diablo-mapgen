@@ -29,14 +29,6 @@
 #include "Source/trigs.h"
 #include "Source/universe/universe.h"
 
-int MonsterItems;
-int ObjectItems;
-
-Point Spawn = { -1, -1 };
-Point StairsDown = { -1, -1 };
-Point POI = { -1, -1 };
-
-char Path[MAX_PATH_LENGTH];
 
 Configuration Config;
 
@@ -83,7 +75,7 @@ void ShutDownEngine()
 
 void InitiateLevel(Universe& universe, int level)
 {
-	POI = { -1, -1 };
+	universe.POI = { -1, -1 };
 	universe.currlevel = level;
 
 	universe.oobread = false;
@@ -123,21 +115,21 @@ void InitTriggers(Universe& universe)
 
 void FindStairCordinates(Universe& universe)
 {
-	Spawn = { -1, -1 };
-	StairsDown = { -1, -1 };
+	universe.Spawn = { -1, -1 };
+	universe.StairsDown = { -1, -1 };
 
 	for (int i = 0; i < universe.numtrigs; i++) {
 		if (universe.trigs[i]._tmsg == WM_DIABNEXTLVL) {
-			StairsDown = { universe.trigs[i]._tx, universe.trigs[i]._ty };
+			universe.StairsDown = { universe.trigs[i]._tx, universe.trigs[i]._ty };
 		} else if (universe.trigs[i]._tmsg == WM_DIABPREVLVL) {
 			if (universe.leveltype == DTYPE_CATHEDRAL)
-				Spawn = { universe.trigs[i]._tx + 1, universe.trigs[i]._ty + 2 };
+				universe.Spawn = { universe.trigs[i]._tx + 1, universe.trigs[i]._ty + 2 };
 			else if (universe.leveltype == DTYPE_CATACOMBS)
-				Spawn = { universe.trigs[i]._tx + 1, universe.trigs[i]._ty + 1 };
+				universe.Spawn = { universe.trigs[i]._tx + 1, universe.trigs[i]._ty + 1 };
 			else if (universe.leveltype == DTYPE_CAVES)
-				Spawn = { universe.trigs[i]._tx, universe.trigs[i]._ty + 1 };
+				universe.Spawn = { universe.trigs[i]._tx, universe.trigs[i]._ty + 1 };
 			else if (universe.leveltype == DTYPE_HELL)
-				Spawn = { universe.trigs[i]._tx + 1, universe.trigs[i]._ty };
+				universe.Spawn = { universe.trigs[i]._tx + 1, universe.trigs[i]._ty };
 		}
 	}
 }
@@ -183,7 +175,7 @@ std::optional<uint32_t> CreateDungeon(Universe& universe, DungeonMode mode)
 			// Locate Lazarus warp point
 			Point point = { universe.quests[Q_BETRAYER]._qtx, universe.quests[Q_BETRAYER]._qty };
 			if (!universe.nSolidTable[universe.dPiece[point.x][point.y]])
-				POI = point;
+				universe.POI = point;
 		}
 
 		FindStairCordinates(universe);

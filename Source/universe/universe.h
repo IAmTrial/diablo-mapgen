@@ -10,6 +10,22 @@
 #include "structs.h"
 #include "types.h"
 
+
+struct Point {
+	int x;
+	int y;
+
+	bool operator==(const Point &other) const
+	{
+		return x == other.x && y == other.y;
+	}
+
+	bool operator!=(const Point &other) const
+	{
+		return !(*this == other);
+	}
+};
+
 struct Universe {
 	constexpr Universe() = default;
 
@@ -410,4 +426,12 @@ struct Universe {
 
 	// trigs.cpp
 	BOOL townwarps[3];
+
+	// funkMapGen.h
+	int MonsterItems;
+	int ObjectItems;
+	Point Spawn = { -1, -1 };
+	Point StairsDown = { -1, -1 };
+	Point POI = { -1, -1 };
+	char Path[MAX_PATH_LENGTH];
 };

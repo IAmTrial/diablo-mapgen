@@ -65,7 +65,7 @@ BOOL PosOkPlayer(Universe& universe, int pnum, int x, int y)
 
 int PathLength(Universe& universe, Point start, Point end)
 {
-	return FindPath(universe, PosOkPlayer, 0, start.x, start.y, end.x, end.y, Path);
+	return FindPath(universe, PosOkPlayer, 0, start.x, start.y, end.x, end.y, universe.Path);
 }
 
 /**
@@ -179,7 +179,7 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 	tickLenth += 20; // Load screens
 
 	if (universe.currlevel < 9) {
-		int walkTicks = GetWalkTime(universe, Spawn, StairsDown);
+		int walkTicks = GetWalkTime(universe, universe.Spawn, universe.StairsDown);
 		if (walkTicks == -1) {
 			if (Config.verbose)
 				std::cerr << "Path: Gave up on walking to the stairs" << std::endl;
@@ -189,10 +189,10 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 	} else if (universe.currlevel == 9) {
 		LocatePuzzler(universe);
 		int pathToPuzzler = -1;
-		if (POI != Point { -1, -1 }) {
-			int walkTicks = GetWalkTime(universe, Spawn, POI);
+		if (universe.POI != Point { -1, -1 }) {
+			int walkTicks = GetWalkTime(universe, universe.Spawn, universe.POI);
 			if (walkTicks != -1) {
-				int teleportTime = GetTeleportTime(Spawn, StairsDown);
+				int teleportTime = GetTeleportTime(universe.Spawn, universe.StairsDown);
 				if (teleportTime != -1) {
 					pathToPuzzler += walkTicks;
 					pathToPuzzler += 40; // Pick up Puzzler
@@ -209,7 +209,7 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 			if (Config.verbose)
 				std::cerr << "Path: Went to town to get a book of teleport" << std::endl;
 			tickLenth += 880; // Buying a book of teleport
-			int walkTicks = GetTeleportTime(Spawn, StairsDown);
+			int walkTicks = GetTeleportTime(universe.Spawn, universe.StairsDown);
 			if (walkTicks == -1) {
 				if (Config.verbose)
 					std::cerr << "Path: Couldn't find the stairs" << std::endl;
@@ -232,13 +232,13 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 		}
 
 		// Locate Lazarous warp
-		if (POI != Point { -1, -1 }) {
+		if (universe.POI != Point { -1, -1 }) {
 			if (Config.verbose)
 				std::cerr << "Path: Found the warp to Lazarus" << std::endl;
-			target = POI;
+			target = universe.POI;
 		}
 
-		int teleportTime = GetShortestTeleportTime(Spawn, StairsDownPrevious, target);
+		int teleportTime = GetShortestTeleportTime(universe.Spawn, StairsDownPrevious, target);
 		if (teleportTime == -1) {
 			if (Config.verbose)
 				std::cerr << "Path: Couldn't find the stairs" << std::endl;
@@ -246,7 +246,7 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 		}
 		tickLenth += teleportTime;
 
-		if (POI == Point { -1, -1 }) {
+		if (universe.POI == Point { -1, -1 }) {
 			if (Config.verbose)
 				std::cerr << "Path: Told Cain about Lazarus" << std::endl;
 			tickLenth += 20;  // Pick up staff
@@ -255,7 +255,7 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 
 		tickLenth += 460; // Defeat Lazarus
 
-		int teleportTime2 = GetTeleportTime(target, StairsDown);
+		int teleportTime2 = GetTeleportTime(target, universe.StairsDown);
 		if (teleportTime2 == -1) {
 			if (Config.verbose)
 				std::cerr << "Path: Couldn't find the stairs" << std::endl;
@@ -263,7 +263,7 @@ bool IsGoodLevelSoursororStrategy(Universe& universe)
 		}
 		tickLenth += teleportTime2;
 	} else {
-		int teleportTime = GetShortestTeleportTime(Spawn, StairsDownPrevious, StairsDown);
+		int teleportTime = GetShortestTeleportTime(universe.Spawn, StairsDownPrevious, universe.StairsDown);
 		if (teleportTime == -1) {
 			if (Config.verbose)
 				std::cerr << "Path: Couldn't find the stairs" << std::endl;
@@ -331,13 +331,13 @@ bool ScannerPath::skipLevel(int level)
 
 bool ScannerPath::levelMatches(std::optional<uint32_t> levelSeed)
 {
-	std::memset(Path, 0, sizeof(Path));
+	std::memset(universe.Path, 0, sizeof(universe.Path));
 	if (!IsGoodLevel(universe)) {
 		Ended = true;
 		return Config.verbose;
 	}
 
-	StairsDownPrevious = StairsDown;
+	StairsDownPrevious = universe.StairsDown;
 
 	int level = universe.currlevel;
 	if (level == 16) {

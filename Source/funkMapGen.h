@@ -28,6 +28,7 @@ struct Configuration {
 	bool verbose = false;
 };
 
+// TODO: Mark these as OpenCL __global
 extern Configuration Config;
 
 class Scanner {
@@ -60,13 +61,5 @@ public:
 	virtual ~Scanner() = default;
 };
 
-extern int MonsterItems;
-extern int ObjectItems;
-
-extern Point Spawn;
-extern Point StairsDown;
-extern Point POI;
-
-extern char Path[MAX_PATH_LENGTH];
 
 void InitDungeonMonsters(Universe& universe);

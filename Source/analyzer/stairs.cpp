@@ -49,7 +49,7 @@ BOOL PosOkPlayer(Universe& universe, int pnum, int x, int y)
 
 int PathLength(Universe& universe, Point start, Point end)
 {
-	return FindPath(universe, PosOkPlayer, 0, start.x, start.y, end.x, end.y, Path);
+	return FindPath(universe, PosOkPlayer, 0, start.x, start.y, end.x, end.y, universe.Path);
 }
 
 int GetDistance(Universe& universe, Point start, Point end, int maxDistance)
@@ -96,8 +96,8 @@ bool ScannerStairs::levelMatches(std::optional<uint32_t> levelSeed)
 	else if (universe.leveltype == DTYPE_CATACOMBS)
 		maxDistance = 5;
 
-	std::memset(Path, 0, sizeof(Path));
-	int steps = GetDistance(universe, Spawn, StairsDown, maxDistance);
+	std::memset(universe.Path, 0, sizeof(universe.Path));
+	int steps = GetDistance(universe, universe.Spawn, universe.StairsDown, maxDistance);
 	if (steps == -1) {
 		if (Config.verbose)
 			std::cerr << "Stairs: Gave up on walking to the stairs on " << (int)universe.currlevel << std::endl;

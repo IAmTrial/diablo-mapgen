@@ -367,7 +367,7 @@ const uint8_t Dlvl4Solid[SolidX][SolidY] = {
 
 bool matchesSolidPattern(Universe& universe)
 {
-	if (StairsDown != Point { Spawn.x + 6, Spawn.y + 2 })
+	if (universe.StairsDown != Point { universe.Spawn.x + 6, universe.Spawn.y + 2 })
 		return false;
 
 	const uint8_t(*pattern)[SolidX][SolidY];
@@ -388,8 +388,8 @@ bool matchesSolidPattern(Universe& universe)
 		for (int column = 0; column < SolidY; column++) {
 			if ((*pattern)[row][column] == 9)
 				continue;
-			int x = Spawn.x + row - xoffset;
-			int y = Spawn.y + column - yoffset;
+			int x = universe.Spawn.x + row - xoffset;
+			int y = universe.Spawn.y + column - yoffset;
 
 			if (x < 0 || y < 0 || x >= MAXDUNX || y >= MAXDUNY || universe.nSolidTable[universe.dPiece[y][x]] != ((*pattern)[row][column] % 2)) {
 				misses++;
@@ -408,46 +408,46 @@ bool matchesSolidPattern(Universe& universe)
 bool matchesObjectPattern(Universe& universe)
 {
 	if (universe.currlevel == 3) {
-		if (StairsDown != Point { Spawn.x + 6, Spawn.y + 2 })
+		if (universe.StairsDown != Point { universe.Spawn.x + 6, universe.Spawn.y + 2 })
 			return false;
-		if (!universe.dObject[Spawn.x + 2][Spawn.y + 3] || universe.dObject[Spawn.x + 2][Spawn.y + 3] != abs(universe.dObject[Spawn.x + 2][Spawn.y + 2]))
+		if (!universe.dObject[universe.Spawn.x + 2][universe.Spawn.y + 3] || universe.dObject[universe.Spawn.x + 2][universe.Spawn.y + 3] != abs(universe.dObject[universe.Spawn.x + 2][universe.Spawn.y + 2]))
 			return false;
-		if (!universe.dObject[Spawn.x + 3][Spawn.y + 3])
+		if (!universe.dObject[universe.Spawn.x + 3][universe.Spawn.y + 3])
 			return false;
 		return true;
 	}
 	if (universe.currlevel == 4) {
-		if (StairsDown != Point { Spawn.x + 6, Spawn.y + 2 })
+		if (universe.StairsDown != Point { universe.Spawn.x + 6, universe.Spawn.y + 2 })
 			return false;
-		if (!universe.dObject[Spawn.x + 0][Spawn.y + 3] || universe.dObject[Spawn.x + 0][Spawn.y + 3] != abs(universe.dObject[Spawn.x + 0][Spawn.y + 2]))
+		if (!universe.dObject[universe.Spawn.x + 0][universe.Spawn.y + 3] || universe.dObject[universe.Spawn.x + 0][universe.Spawn.y + 3] != abs(universe.dObject[universe.Spawn.x + 0][universe.Spawn.y + 2]))
 			return false;
-		if (!universe.dObject[Spawn.x + 2][Spawn.y + 5] || universe.dObject[Spawn.x + 2][Spawn.y + 5] != abs(universe.dObject[Spawn.x + 2][Spawn.y + 4]))
+		if (!universe.dObject[universe.Spawn.x + 2][universe.Spawn.y + 5] || universe.dObject[universe.Spawn.x + 2][universe.Spawn.y + 5] != abs(universe.dObject[universe.Spawn.x + 2][universe.Spawn.y + 4]))
 			return false;
 	}
 	if (universe.currlevel == 6) {
-		if (StairsDown != Point { Spawn.x + 5, Spawn.y + 1 })
+		if (universe.StairsDown != Point { universe.Spawn.x + 5, universe.Spawn.y + 1 })
 			return false;
-		if (!universe.dObject[Spawn.x + 1][Spawn.y + 3])
+		if (!universe.dObject[universe.Spawn.x + 1][universe.Spawn.y + 3])
 			return false;
-		if (!universe.dObject[Spawn.x + 2][Spawn.y + 3])
+		if (!universe.dObject[universe.Spawn.x + 2][universe.Spawn.y + 3])
 			return false;
-		if (!universe.dObject[Spawn.x + 1][Spawn.y + 4])
+		if (!universe.dObject[universe.Spawn.x + 1][universe.Spawn.y + 4])
 			return false;
-		if (!universe.dObject[Spawn.x + 2][Spawn.y + 4])
+		if (!universe.dObject[universe.Spawn.x + 2][universe.Spawn.y + 4])
 			return false;
-		if (!universe.dObject[Spawn.x + 3][Spawn.y + 5])
+		if (!universe.dObject[universe.Spawn.x + 3][universe.Spawn.y + 5])
 			return false;
 	}
 	if (universe.currlevel == 7) {
-		if (StairsDown != Point { Spawn.x + 5, Spawn.y + 1 })
+		if (universe.StairsDown != Point { universe.Spawn.x + 5, universe.Spawn.y + 1 })
 			return false;
-		if (!universe.dObject[Spawn.x - 3][Spawn.y + 1])
+		if (!universe.dObject[universe.Spawn.x - 3][universe.Spawn.y + 1])
 			return false;
-		if (!universe.dObject[Spawn.x - 3][Spawn.y + 4])
+		if (!universe.dObject[universe.Spawn.x - 3][universe.Spawn.y + 4])
 			return false;
-		if (!universe.dObject[Spawn.x - 2][Spawn.y + 4])
+		if (!universe.dObject[universe.Spawn.x - 2][universe.Spawn.y + 4])
 			return false;
-		if (!universe.dObject[Spawn.x + 3][Spawn.y + 7])
+		if (!universe.dObject[universe.Spawn.x + 3][universe.Spawn.y + 7])
 			return false;
 	}
 

@@ -17,7 +17,7 @@ bool ScannerWarp::skipLevel(int level)
 
 bool ScannerWarp::levelMatches(std::optional<uint32_t> levelSeed)
 {
-	if (POI == Point { -1, -1 })
+	if (universe.POI == Point { -1, -1 })
 		return false;
 
 	std::cout << universe.sgGameInitInfo.dwSeed << std::endl;

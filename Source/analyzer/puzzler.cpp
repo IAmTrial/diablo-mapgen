@@ -108,7 +108,7 @@ void CreateItemsFromObject(Universe& universe, int oid)
 
 void DropAllItems(Universe& universe)
 {
-	MonsterItems = universe.numitems;
+	universe.MonsterItems = universe.numitems;
 	for (int i = 0; i < universe.nummonsters; i++) {
 		int mid = universe.monstactive[i];
 		if (universe.monster[mid].MType->mtype == MT_GOLEM)
@@ -117,7 +117,7 @@ void DropAllItems(Universe& universe)
 		SpawnItem(universe, mid, universe.monster[mid]._mx, universe.monster[mid]._my, TRUE);
 	}
 
-	ObjectItems = universe.numitems;
+	universe.ObjectItems = universe.numitems;
 	for (int i = 0; i < universe.nobjects; i++) {
 		int oid = universe.objectactive[i];
 		CreateItemsFromObject(universe, oid);
@@ -135,11 +135,11 @@ void LocatePuzzler(Universe& universe)
 {
 	DropAllItems(universe);
 
-	POI = { -1, -1 };
+	universe.POI = { -1, -1 };
 	for (int i = 0; i < universe.numitems; i++) {
 		int ii = universe.itemactive[i];
 		if (universe.item[ii]._iMagical == ITEM_QUALITY_UNIQUE && universe.item[ii]._iUid == 60) {
-			POI = { universe.item[ii]._ix, universe.item[ii]._iy };
+			universe.POI = { universe.item[ii]._ix, universe.item[ii]._iy };
 			break;
 		}
 	}
@@ -148,7 +148,7 @@ void LocatePuzzler(Universe& universe)
 bool ScannerPuzzler::levelMatches(std::optional<uint32_t> levelSeed)
 {
 	LocatePuzzler(universe);
-	if (POI == Point { -1, -1 })
+	if (universe.POI == Point { -1, -1 })
 		return false;
 
 	if (Config.verbose) {
@@ -168,9 +168,9 @@ bool ScannerPuzzler::levelMatches(std::optional<uint32_t> levelSeed)
 		std::cerr << "Item Count: " << universe.numitems << std::endl;
 		for (int i = 0; i < universe.numitems; i++) {
 			std::string prefix = "";
-			if (i >= ObjectItems)
+			if (i >= universe.ObjectItems)
 				prefix = "Object ";
-			else if (i >= MonsterItems)
+			else if (i >= universe.MonsterItems)
 				prefix = "Monster ";
 			std::cerr << prefix << "Item " << i << ": " << universe.item[universe.itemactive[i]]._iIName << " (" << universe.item[universe.itemactive[i]]._iSeed << ")" << std::endl;
 		}
