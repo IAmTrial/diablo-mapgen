@@ -126,18 +126,18 @@ void FindStairCordinates(Universe& universe)
 	Spawn = { -1, -1 };
 	StairsDown = { -1, -1 };
 
-	for (int i = 0; i < numtrigs; i++) {
-		if (trigs[i]._tmsg == WM_DIABNEXTLVL) {
-			StairsDown = { trigs[i]._tx, trigs[i]._ty };
-		} else if (trigs[i]._tmsg == WM_DIABPREVLVL) {
+	for (int i = 0; i < universe.numtrigs; i++) {
+		if (universe.trigs[i]._tmsg == WM_DIABNEXTLVL) {
+			StairsDown = { universe.trigs[i]._tx, universe.trigs[i]._ty };
+		} else if (universe.trigs[i]._tmsg == WM_DIABPREVLVL) {
 			if (universe.leveltype == DTYPE_CATHEDRAL)
-				Spawn = { trigs[i]._tx + 1, trigs[i]._ty + 2 };
+				Spawn = { universe.trigs[i]._tx + 1, universe.trigs[i]._ty + 2 };
 			else if (universe.leveltype == DTYPE_CATACOMBS)
-				Spawn = { trigs[i]._tx + 1, trigs[i]._ty + 1 };
+				Spawn = { universe.trigs[i]._tx + 1, universe.trigs[i]._ty + 1 };
 			else if (universe.leveltype == DTYPE_CAVES)
-				Spawn = { trigs[i]._tx, trigs[i]._ty + 1 };
+				Spawn = { universe.trigs[i]._tx, universe.trigs[i]._ty + 1 };
 			else if (universe.leveltype == DTYPE_HELL)
-				Spawn = { trigs[i]._tx + 1, trigs[i]._ty };
+				Spawn = { universe.trigs[i]._tx + 1, universe.trigs[i]._ty };
 		}
 	}
 }

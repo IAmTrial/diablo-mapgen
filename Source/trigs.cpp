@@ -14,10 +14,6 @@
 #include "Source/universe/universe.h"
 
 BOOL townwarps[3];
-BOOL trigflag;
-int numtrigs;
-TriggerStruct trigs[MAXTRIGGERS];
-int TWarpFrom;
 
 /** Specifies the dungeon piece IDs which constitute stairways leading down to the cathedral from town. */
 const int TownDownList[] = { 716, 715, 719, 720, 721, 723, 724, 725, 726, 727, -1 };
@@ -60,33 +56,33 @@ const int L6UpList[] = { 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
 const int L6DownList[] = { 57, 58, 59, 60, 61, 62, 63, 64, -1 };
 #endif
 
-void InitNoTriggers()
+void InitNoTriggers(Universe& universe)
 {
-	numtrigs = 0;
-	trigflag = FALSE;
+	universe.numtrigs = 0;
+	universe.trigflag = FALSE;
 }
 
 void InitL1Triggers(Universe& universe)
 {
 	int i, j;
 
-	numtrigs = 0;
+	universe.numtrigs = 0;
 #ifdef HELLFIRE
 	if (currlevel < 17) {
 #endif
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
 				if (universe.dPiece[i][j] == 129) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
-					trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
-					numtrigs++;
+					universe.trigs[universe.numtrigs]._tx = i;
+					universe.trigs[universe.numtrigs]._ty = j;
+					universe.trigs[universe.numtrigs]._tmsg = WM_DIABPREVLVL;
+					universe.numtrigs++;
 				}
 				if (universe.dPiece[i][j] == 115) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
-					trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
-					numtrigs++;
+					universe.trigs[universe.numtrigs]._tx = i;
+					universe.trigs[universe.numtrigs]._ty = j;
+					universe.trigs[universe.numtrigs]._tmsg = WM_DIABNEXTLVL;
+					universe.numtrigs++;
 				}
 			}
 		}
@@ -95,62 +91,62 @@ void InitL1Triggers(Universe& universe)
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
 				if (universe.dPiece[i][j] == 184) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
-					trigs[numtrigs]._tmsg = WM_DIABTWARPUP;
-					trigs[numtrigs]._tlvl = 0;
-					numtrigs++;
+					universe.trigs[universe.numtrigs]._tx = i;
+					universe.trigs[universe.numtrigs]._ty = j;
+					universe.trigs[universe.numtrigs]._tmsg = WM_DIABTWARPUP;
+					universe.trigs[universe.numtrigs]._tlvl = 0;
+					universe.numtrigs++;
 				}
 				if (universe.dPiece[i][j] == 158) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
-					trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
-					numtrigs++;
+					universe.trigs[universe.numtrigs]._tx = i;
+					universe.trigs[universe.numtrigs]._ty = j;
+					universe.trigs[universe.numtrigs]._tmsg = WM_DIABPREVLVL;
+					universe.numtrigs++;
 				}
 				if (universe.dPiece[i][j] == 126) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
-					trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
-					numtrigs++;
+					universe.trigs[universe.numtrigs]._tx = i;
+					universe.trigs[universe.numtrigs]._ty = j;
+					universe.trigs[universe.numtrigs]._tmsg = WM_DIABNEXTLVL;
+					universe.numtrigs++;
 				}
 			}
 		}
 	}
 #endif
-	trigflag = FALSE;
+	universe.trigflag = FALSE;
 }
 
 void InitL2Triggers(Universe& universe)
 {
 	int i, j;
 
-	numtrigs = 0;
+	universe.numtrigs = 0;
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
 			if (universe.dPiece[i][j] == 267 && (i != universe.quests[Q_SCHAMB]._qtx || j != universe.quests[Q_SCHAMB]._qty)) {
-				trigs[numtrigs]._tx = i;
-				trigs[numtrigs]._ty = j;
-				trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
-				numtrigs++;
+				universe.trigs[universe.numtrigs]._tx = i;
+				universe.trigs[universe.numtrigs]._ty = j;
+				universe.trigs[universe.numtrigs]._tmsg = WM_DIABPREVLVL;
+				universe.numtrigs++;
 			}
 
 			if (universe.dPiece[i][j] == 559) {
-				trigs[numtrigs]._tx = i;
-				trigs[numtrigs]._ty = j;
-				trigs[numtrigs]._tmsg = WM_DIABTWARPUP;
-				trigs[numtrigs]._tlvl = 0;
-				numtrigs++;
+				universe.trigs[universe.numtrigs]._tx = i;
+				universe.trigs[universe.numtrigs]._ty = j;
+				universe.trigs[universe.numtrigs]._tmsg = WM_DIABTWARPUP;
+				universe.trigs[universe.numtrigs]._tlvl = 0;
+				universe.numtrigs++;
 			}
 
 			if (universe.dPiece[i][j] == 271) {
-				trigs[numtrigs]._tx = i;
-				trigs[numtrigs]._ty = j;
-				trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
-				numtrigs++;
+				universe.trigs[universe.numtrigs]._tx = i;
+				universe.trigs[universe.numtrigs]._ty = j;
+				universe.trigs[universe.numtrigs]._tmsg = WM_DIABNEXTLVL;
+				universe.numtrigs++;
 			}
 		}
 	}
-	trigflag = FALSE;
+	universe.trigflag = FALSE;
 }
 
 void InitL3Triggers(Universe& universe)
@@ -160,145 +156,145 @@ void InitL3Triggers(Universe& universe)
 #ifdef HELLFIRE
 	if (currlevel < 17) {
 #endif
-		numtrigs = 0;
+		universe.numtrigs = 0;
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
 				if (universe.dPiece[i][j] == 171) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
-					trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
-					numtrigs++;
+					universe.trigs[universe.numtrigs]._tx = i;
+					universe.trigs[universe.numtrigs]._ty = j;
+					universe.trigs[universe.numtrigs]._tmsg = WM_DIABPREVLVL;
+					universe.numtrigs++;
 				}
 
 				if (universe.dPiece[i][j] == 168) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
-					trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
-					numtrigs++;
+					universe.trigs[universe.numtrigs]._tx = i;
+					universe.trigs[universe.numtrigs]._ty = j;
+					universe.trigs[universe.numtrigs]._tmsg = WM_DIABNEXTLVL;
+					universe.numtrigs++;
 				}
 
 				if (universe.dPiece[i][j] == 549) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
-					trigs[numtrigs]._tmsg = WM_DIABTWARPUP;
-					numtrigs++;
+					universe.trigs[universe.numtrigs]._tx = i;
+					universe.trigs[universe.numtrigs]._ty = j;
+					universe.trigs[universe.numtrigs]._tmsg = WM_DIABTWARPUP;
+					universe.numtrigs++;
 				}
 			}
 		}
 #ifdef HELLFIRE
 	} else {
-		numtrigs = 0;
+		universe.numtrigs = 0;
 		for (j = 0; j < MAXDUNY; j++) {
 			for (i = 0; i < MAXDUNX; i++) {
 				if (universe.dPiece[i][j] == 66) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
-					trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
-					numtrigs++;
+					universe.trigs[universe.numtrigs]._tx = i;
+					universe.trigs[universe.numtrigs]._ty = j;
+					universe.trigs[universe.numtrigs]._tmsg = WM_DIABPREVLVL;
+					universe.numtrigs++;
 				}
 
 				if (universe.dPiece[i][j] == 63) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
-					trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
-					numtrigs++;
+					universe.trigs[universe.numtrigs]._tx = i;
+					universe.trigs[universe.numtrigs]._ty = j;
+					universe.trigs[universe.numtrigs]._tmsg = WM_DIABNEXTLVL;
+					universe.numtrigs++;
 				}
 
 				if (universe.dPiece[i][j] == 80) {
-					trigs[numtrigs]._tx = i;
-					trigs[numtrigs]._ty = j;
-					trigs[numtrigs]._tmsg = WM_DIABTWARPUP;
-					numtrigs++;
+					universe.trigs[universe.numtrigs]._tx = i;
+					universe.trigs[universe.numtrigs]._ty = j;
+					universe.trigs[universe.numtrigs]._tmsg = WM_DIABTWARPUP;
+					universe.numtrigs++;
 				}
 			}
 		}
 	}
 #endif
-	trigflag = FALSE;
+	universe.trigflag = FALSE;
 }
 
 void InitL4Triggers(Universe& universe)
 {
 	int i, j;
 
-	numtrigs = 0;
+	universe.numtrigs = 0;
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
 			if (universe.dPiece[i][j] == 83) {
-				trigs[numtrigs]._tx = i;
-				trigs[numtrigs]._ty = j;
-				trigs[numtrigs]._tmsg = WM_DIABPREVLVL;
-				numtrigs++;
+				universe.trigs[universe.numtrigs]._tx = i;
+				universe.trigs[universe.numtrigs]._ty = j;
+				universe.trigs[universe.numtrigs]._tmsg = WM_DIABPREVLVL;
+				universe.numtrigs++;
 			}
 
 			if (universe.dPiece[i][j] == 422) {
-				trigs[numtrigs]._tx = i;
-				trigs[numtrigs]._ty = j;
-				trigs[numtrigs]._tmsg = WM_DIABTWARPUP;
-				trigs[numtrigs]._tlvl = 0;
-				numtrigs++;
+				universe.trigs[universe.numtrigs]._tx = i;
+				universe.trigs[universe.numtrigs]._ty = j;
+				universe.trigs[universe.numtrigs]._tmsg = WM_DIABTWARPUP;
+				universe.trigs[universe.numtrigs]._tlvl = 0;
+				universe.numtrigs++;
 			}
 
 			if (universe.dPiece[i][j] == 120) {
-				trigs[numtrigs]._tx = i;
-				trigs[numtrigs]._ty = j;
-				trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
-				numtrigs++;
+				universe.trigs[universe.numtrigs]._tx = i;
+				universe.trigs[universe.numtrigs]._ty = j;
+				universe.trigs[universe.numtrigs]._tmsg = WM_DIABNEXTLVL;
+				universe.numtrigs++;
 			}
 			if (universe.dPiece[i][j] == 336 || universe.dPiece[i][j] == 370) {
-				trigs[numtrigs]._tx = i;
-				trigs[numtrigs]._ty = j;
-				trigs[numtrigs]._tmsg = WM_DIABNEXTLVL;
-				numtrigs++;
+				universe.trigs[universe.numtrigs]._tx = i;
+				universe.trigs[universe.numtrigs]._ty = j;
+				universe.trigs[universe.numtrigs]._tmsg = WM_DIABNEXTLVL;
+				universe.numtrigs++;
 			}
 		}
 	}
-	trigflag = FALSE;
+	universe.trigflag = FALSE;
 }
 
-void InitSKingTriggers()
+void InitSKingTriggers(Universe& universe)
 {
-	trigflag = FALSE;
-	numtrigs = 1;
-	trigs[0]._tx = 82;
-	trigs[0]._ty = 42;
-	trigs[0]._tmsg = WM_DIABRTNLVL;
+	universe.trigflag = FALSE;
+	universe.numtrigs = 1;
+	universe.trigs[0]._tx = 82;
+	universe.trigs[0]._ty = 42;
+	universe.trigs[0]._tmsg = WM_DIABRTNLVL;
 }
 
-void InitSChambTriggers()
+void InitSChambTriggers(Universe& universe)
 {
-	trigflag = FALSE;
-	numtrigs = 1;
-	trigs[0]._tx = 70;
-	trigs[0]._ty = 39;
-	trigs[0]._tmsg = WM_DIABRTNLVL;
+	universe.trigflag = FALSE;
+	universe.numtrigs = 1;
+	universe.trigs[0]._tx = 70;
+	universe.trigs[0]._ty = 39;
+	universe.trigs[0]._tmsg = WM_DIABRTNLVL;
 }
 
-void InitPWaterTriggers()
+void InitPWaterTriggers(Universe& universe)
 {
-	trigflag = FALSE;
-	numtrigs = 1;
-	trigs[0]._tx = 30;
-	trigs[0]._ty = 83;
-	trigs[0]._tmsg = WM_DIABRTNLVL;
+	universe.trigflag = FALSE;
+	universe.numtrigs = 1;
+	universe.trigs[0]._tx = 30;
+	universe.trigs[0]._ty = 83;
+	universe.trigs[0]._tmsg = WM_DIABRTNLVL;
 }
 
-void InitVPTriggers()
+void InitVPTriggers(Universe& universe)
 {
-	trigflag = FALSE;
-	numtrigs = 1;
-	trigs[0]._tx = 35;
-	trigs[0]._ty = 32;
-	trigs[0]._tmsg = WM_DIABRTNLVL;
+	universe.trigflag = FALSE;
+	universe.numtrigs = 1;
+	universe.trigs[0]._tx = 35;
+	universe.trigs[0]._ty = 32;
+	universe.trigs[0]._tmsg = WM_DIABRTNLVL;
 }
 
 void Freeupstairs(Universe& universe)
 {
 	int i, tx, ty, xx, yy;
 
-	for (i = 0; i < numtrigs; i++) {
-		tx = trigs[i]._tx;
-		ty = trigs[i]._ty;
+	for (i = 0; i < universe.numtrigs; i++) {
+		tx = universe.trigs[i]._tx;
+		ty = universe.trigs[i]._ty;
 
 		for (yy = -2; yy <= 2; yy++) {
 			for (xx = -2; xx <= 2; xx++) {

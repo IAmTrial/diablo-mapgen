@@ -1044,13 +1044,13 @@ void InitMonsters(Universe& universe)
 	if (!universe.setlevel && universe.currlevel == 16)
 		LoadDiabMonsts(universe);
 #endif
-	nt = numtrigs;
+	nt = universe.numtrigs;
 	if (universe.currlevel == 15)
 		nt = 1;
 	for (i = 0; i < nt; i++) {
 		for (s = -2; s < 2; s++) {
 			for (t = -2; t < 2; t++)
-				DoVision(universe, s + trigs[i]._tx, t + trigs[i]._ty, 15, FALSE, FALSE);
+				DoVision(universe, s + universe.trigs[i]._tx, t + universe.trigs[i]._ty, 15, FALSE, FALSE);
 		}
 	}
 #ifndef SPAWN
@@ -1095,7 +1095,7 @@ void InitMonsters(Universe& universe)
 	for (i = 0; i < nt; i++) {
 		for (s = -2; s < 2; s++) {
 			for (t = -2; t < 2; t++)
-				DoUnVision(universe, s + trigs[i]._tx, t + trigs[i]._ty, 15);
+				DoUnVision(universe, s + universe.trigs[i]._tx, t + universe.trigs[i]._ty, 15);
 		}
 	}
 }

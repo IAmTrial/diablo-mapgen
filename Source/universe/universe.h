@@ -401,4 +401,10 @@ struct Universe {
 	BOOL pFountainFlag;
 	BOOL bFountainFlag;
 	BOOL bCrossFlag;
+
+	// trigs.h
+	BOOL trigflag;
+	int numtrigs;
+	TriggerStruct trigs[MAXTRIGGERS];
+	int TWarpFrom;
 };

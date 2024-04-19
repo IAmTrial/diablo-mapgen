@@ -167,7 +167,7 @@ void LoadSetMap(Universe& universe)
 		DRLG_ListTrans(universe, sizeof(SkelKingTrans4) / 4, &SkelKingTrans4[0]);
 		AddL1Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
 		AddSKingObjs(universe);
-		InitSKingTriggers();
+		InitSKingTriggers(universe);
 		break;
 	case SL_BONECHAMB:
 		LoadPreL2Dungeon(universe, "Levels\\L2Data\\Bonecha2.DUN", 69, 39);
@@ -177,7 +177,7 @@ void LoadSetMap(Universe& universe)
 		DRLG_ListTrans(universe, sizeof(SkelChamTrans3) / 4, &SkelChamTrans3[0]);
 		AddL2Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
 		AddSChamObjs(universe);
-		InitSChambTriggers();
+		InitSChambTriggers(universe);
 		break;
 	case SL_MAZE:
 		LoadPreL1Dungeon(universe, "Levels\\L1Data\\Lv1MazeA.DUN", 20, 50);
@@ -190,7 +190,7 @@ void LoadSetMap(Universe& universe)
 			universe.quests[Q_PWATER]._qactive = QUEST_ACTIVE;
 		LoadPreL3Dungeon(universe, "Levels\\L3Data\\Foulwatr.DUN", 19, 50);
 		LoadL3Dungeon(universe, "Levels\\L3Data\\Foulwatr.DUN", 20, 50);
-		InitPWaterTriggers();
+		InitPWaterTriggers(universe);
 		break;
 	case SL_VILEBETRAYER:
 		if (universe.quests[Q_BETRAYER]._qactive == QUEST_DONE) {
@@ -203,7 +203,7 @@ void LoadSetMap(Universe& universe)
 		AddL1Objs(universe, 0, 0, MAXDUNX, MAXDUNY);
 		AddVileObjs(universe);
 		DRLG_SetMapTrans(universe, "Levels\\L1Data\\Vile1.DUN");
-		InitNoTriggers();
+		InitNoTriggers(universe);
 		break;
 	}
 }

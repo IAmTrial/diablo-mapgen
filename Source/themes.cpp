@@ -352,8 +352,8 @@ BOOL CheckThemeRoom(Universe& universe, int tv)
 {
 	int i, j, tarea;
 
-	for (i = 0; i < numtrigs; i++) {
-		if (universe.dTransVal[trigs[i]._tx][trigs[i]._ty] == tv)
+	for (i = 0; i < universe.numtrigs; i++) {
+		if (universe.dTransVal[universe.trigs[i]._tx][universe.trigs[i]._ty] == tv)
 			return FALSE;
 	}
 

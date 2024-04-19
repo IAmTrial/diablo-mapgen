@@ -10,20 +10,15 @@
 #include "types.h"
 #include "Source/universe/universe.h"
 
-extern BOOL trigflag;
-extern int numtrigs;
-extern TriggerStruct trigs[MAXTRIGGERS];
-extern int TWarpFrom;
-
-void InitNoTriggers();
+void InitNoTriggers(Universe& universe);
 void InitL1Triggers(Universe& universe);
 void InitL2Triggers(Universe& universe);
 void InitL3Triggers(Universe& universe);
 void InitL4Triggers(Universe& universe);
-void InitSKingTriggers();
-void InitSChambTriggers();
-void InitPWaterTriggers();
-void InitVPTriggers();
+void InitSKingTriggers(Universe& universe);
+void InitSChambTriggers(Universe& universe);
+void InitPWaterTriggers(Universe& universe);
+void InitVPTriggers(Universe& universe);
 void Freeupstairs(Universe& universe);
 
 #endif /* __TRIGS_H__ */
