@@ -13,8 +13,6 @@
 #include "Source/quests.h"
 #include "Source/universe/universe.h"
 
-BOOL townwarps[3];
-
 /** Specifies the dungeon piece IDs which constitute stairways leading down to the cathedral from town. */
 const int TownDownList[] = { 716, 715, 719, 720, 721, 723, 724, 725, 726, 727, -1 };
 /** Specifies the dungeon piece IDs which constitute stairways leading down to the catacombs from town. */

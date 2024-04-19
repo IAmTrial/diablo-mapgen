@@ -407,4 +407,7 @@ struct Universe {
 	int numtrigs;
 	TriggerStruct trigs[MAXTRIGGERS];
 	int TWarpFrom;
+
+	// trigs.cpp
+	BOOL townwarps[3];
 };
