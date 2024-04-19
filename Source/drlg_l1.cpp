@@ -1035,8 +1035,8 @@ static int DRLG_PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmin, 
 		DRLG_MRectTrans(universe, sx, sy + 2, sx + 5, sy + 4);
 		universe.TransVal = t;
 
-		quests[Q_PWATER]._qtx = 2 * sx + 21;
-		quests[Q_PWATER]._qty = 2 * sy + 22;
+		universe.quests[Q_PWATER]._qtx = 2 * sx + 21;
+		universe.quests[Q_PWATER]._qty = 2 * sy + 22;
 	}
 
 	if (setview == TRUE) {

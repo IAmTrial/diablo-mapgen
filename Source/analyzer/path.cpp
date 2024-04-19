@@ -307,7 +307,7 @@ ScannerPath::ScannerPath(Universe& universe) : Scanner(universe) {}
 
 bool ScannerPath::skipSeed()
 {
-	if (quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
+	if (universe.quests[Q_LTBANNER]._qactive != QUEST_NOTAVAIL) {
 		if (Config.verbose)
 			std::cerr << "Game Seed: " << universe.sgGameInitInfo.dwSeed << " thrown out: Sign Quest" << std::endl;
 		return true;

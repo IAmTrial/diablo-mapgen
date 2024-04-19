@@ -362,4 +362,13 @@ struct Universe {
 	/** A linked list of the A* frontier, sorted by distance */
 	PATHNODE *path_2_nodes;
 	PATHNODE path_unusednodes[MAXPATHNODES];
+
+	// quests.h
+	BOOL questlog;
+	/** Contains the quests of the current game. */
+	QuestStruct quests[MAXQUESTS];
+	int ReturnLvlX;
+	int ReturnLvlY;
+	int ReturnLvlT;
+	int ReturnLvl;
 };

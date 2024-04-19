@@ -127,7 +127,7 @@ void InitL2Triggers(Universe& universe)
 	numtrigs = 0;
 	for (j = 0; j < MAXDUNY; j++) {
 		for (i = 0; i < MAXDUNX; i++) {
-			if (universe.dPiece[i][j] == 267 && (i != quests[Q_SCHAMB]._qtx || j != quests[Q_SCHAMB]._qty)) {
+			if (universe.dPiece[i][j] == 267 && (i != universe.quests[Q_SCHAMB]._qtx || j != universe.quests[Q_SCHAMB]._qty)) {
 				trigs[numtrigs]._tx = i;
 				trigs[numtrigs]._ty = j;
 				trigs[numtrigs]._tmsg = WM_DIABPREVLVL;

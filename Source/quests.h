@@ -11,13 +11,7 @@
 #include "types.h"
 #include "Source/universe/universe.h"
 
-extern BOOL questlog;
 extern BYTE *pQLogCel;
-extern QuestStruct quests[MAXQUESTS];
-extern int ReturnLvlX;
-extern int ReturnLvlY;
-extern int ReturnLvlT;
-extern int ReturnLvl;
 
 void InitQuests(Universe& universe);
 void CheckQuests();

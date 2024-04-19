@@ -391,8 +391,8 @@ void AddCandles(Universe& universe)
 {
 	int tx, ty;
 
-	tx = quests[Q_PWATER]._qtx;
-	ty = quests[Q_PWATER]._qty;
+	tx = universe.quests[Q_PWATER]._qtx;
+	ty = universe.quests[Q_PWATER]._qty;
 	AddObject(universe, OBJ_STORYCANDLE, tx - 2, ty + 1);
 	AddObject(universe, OBJ_STORYCANDLE, tx + 3, ty + 1);
 	AddObject(universe, OBJ_STORYCANDLE, tx - 1, ty + 2);
@@ -959,7 +959,7 @@ void InitObjects(Universe& universe)
 		GetRndSeed(universe);
 		if (universe.currlevel == 9 && universe.gbMaxPlayers == 1)
 			AddSlainHero(universe);
-		if (universe.currlevel == quests[Q_MUSHROOM]._qlevel && quests[Q_MUSHROOM]._qactive == QUEST_INIT)
+		if (universe.currlevel == universe.quests[Q_MUSHROOM]._qlevel && universe.quests[Q_MUSHROOM]._qactive == QUEST_INIT)
 			AddMushPatch(universe);
 
 #ifdef HELLFIRE
@@ -1024,7 +1024,7 @@ void InitObjects(Universe& universe)
 					sp_id = TEXT_BLINDING;
 #endif
 				}
-				quests[Q_BLIND]._qmsg = sp_id;
+				universe.quests[Q_BLIND]._qmsg = sp_id;
 				AddBookLever(universe, 0, 0, MAXDUNX, MAXDUNY, universe.setpc_x, universe.setpc_y, universe.setpc_w + universe.setpc_x + 1, universe.setpc_h + universe.setpc_y + 1, sp_id);
 				mem = LoadFileInMem("Levels\\L2Data\\Blind2.DUN", NULL);
 				// BUGFIX: should not invoke LoadMapObjs for Blind2.DUN, as Blind2.DUN is missing an objects layer.
@@ -1047,7 +1047,7 @@ void InitObjects(Universe& universe)
 					sp_id = TEXT_BLOODY;
 #endif
 				}
-				quests[Q_BLOOD]._qmsg = sp_id;
+				universe.quests[Q_BLOOD]._qmsg = sp_id;
 				AddBookLever(universe, 0, 0, MAXDUNX, MAXDUNY, universe.setpc_x, universe.setpc_y + 3, universe.setpc_x + 2, universe.setpc_y + 7, sp_id);
 				AddObject(universe, OBJ_PEDISTAL, 2 * universe.setpc_x + 25, 2 * universe.setpc_y + 32);
 			}
@@ -1074,7 +1074,7 @@ void InitObjects(Universe& universe)
 					sp_id = TEXT_BLOODWAR;
 #endif
 				}
-				quests[Q_WARLORD]._qmsg = sp_id;
+				universe.quests[Q_WARLORD]._qmsg = sp_id;
 				AddBookLever(universe, 0, 0, MAXDUNX, MAXDUNY, universe.setpc_x, universe.setpc_y, universe.setpc_x + universe.setpc_w, universe.setpc_y + universe.setpc_h, sp_id);
 				mem = LoadFileInMem("Levels\\L4Data\\Warlord.DUN", NULL);
 				LoadMapObjs(universe, mem, 2 * universe.setpc_x, 2 * universe.setpc_y);

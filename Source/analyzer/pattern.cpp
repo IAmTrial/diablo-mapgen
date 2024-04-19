@@ -246,32 +246,32 @@ void ForceSeeds(Universe& universe, int level)
 {
 	// Church
 	universe.glSeedTbl[1] = universe.sgGameInitInfo.dwSeed; // Matches level seed 1691869883, dungeon seed 1342003104, game seed 1230144506 24 18:48
-	quests[Q_BUTCHER]._qactive = QUEST_INIT;
-	quests[Q_PWATER]._qactive = QUEST_INIT;
+	universe.quests[Q_BUTCHER]._qactive = QUEST_INIT;
+	universe.quests[Q_PWATER]._qactive = QUEST_INIT;
 	universe.glSeedTbl[2] = universe.sgGameInitInfo.dwSeed;         // Matches level seed 3227087147, dungeon seed  755133500, game seed 1229972777 22 19:06
-	quests[Q_SKELKING]._qactive = QUEST_NOTAVAIL; // QUEST_INIT;
+	universe.quests[Q_SKELKING]._qactive = QUEST_NOTAVAIL; // QUEST_INIT;
 	universe.glSeedTbl[3] = universe.sgGameInitInfo.dwSeed;
-	quests[Q_LTBANNER]._qactive = QUEST_NOTAVAIL;
+	universe.quests[Q_LTBANNER]._qactive = QUEST_NOTAVAIL;
 	universe.glSeedTbl[4] = universe.sgGameInitInfo.dwSeed;
 
 	// Catacombs
-	quests[Q_BLOOD]._qactive = QUEST_INIT;
+	universe.quests[Q_BLOOD]._qactive = QUEST_INIT;
 	universe.glSeedTbl[5] = universe.sgGameInitInfo.dwSeed; // Matches level seed 3155785492, dungeon seed 1293295771, game seed 1229975451 22 19:50
-	quests[Q_SCHAMB]._qactive = QUEST_INIT;
+	universe.quests[Q_SCHAMB]._qactive = QUEST_INIT;
 	universe.glSeedTbl[6] = universe.sgGameInitInfo.dwSeed; // Matches level seed 417801337, dungeon seed 2062861350, game seed 1230145611 24 19:06
-	quests[Q_BLIND]._qactive = QUEST_INIT;
+	universe.quests[Q_BLIND]._qactive = QUEST_INIT;
 	universe.glSeedTbl[7] = universe.sgGameInitInfo.dwSeed; // Matches level seed 3750712200, dungeon seed  894816128, game seed 1230145480 24 19:04
 	universe.glSeedTbl[8] = universe.sgGameInitInfo.dwSeed; // Matches level seed 4191463473, dungeon seed 1560480383, game seed 1230145480 24 19:04
 
 	// Caves
 	universe.glSeedTbl[9] = universe.sgGameInitInfo.dwSeed; // Matches level seed 3916317768, dungeon seed  764458097, game seed 1230001659 23 03:07
-	quests[Q_ANVIL]._qactive = QUEST_INIT;
+	universe.quests[Q_ANVIL]._qactive = QUEST_INIT;
 	universe.glSeedTbl[10] = universe.sgGameInitInfo.dwSeed; // Matches level seed  618024415, dungeon seed 1375523899, game seed 1229973508 22 19:18
 	universe.glSeedTbl[11] = universe.sgGameInitInfo.dwSeed; // Matches level seed 2376709555, dungeon seed  651290160, game seed 1229976092 22 20:01
 	universe.glSeedTbl[12] = universe.sgGameInitInfo.dwSeed; // Matches level seed 1903656652, dungeon seed 2134483070, game seed 1230145177 24 18:59
 
 	// Hell
-	quests[Q_WARLORD]._qactive = QUEST_NOTAVAIL;
+	universe.quests[Q_WARLORD]._qactive = QUEST_NOTAVAIL;
 	universe.glSeedTbl[13] = universe.sgGameInitInfo.dwSeed; // Matches level seed 4250794344, dungeon seed  723487375, game seed 1229976431 22 20:07
 	universe.glSeedTbl[14] = universe.sgGameInitInfo.dwSeed; // Matches level seed 1005627431, dungeon seed 2144005606, game seed 1229976755 22 20:12
 	universe.glSeedTbl[15] = universe.sgGameInitInfo.dwSeed; // Matches level seed 2844841604, dungeon seed 1342549707, game seed 1230053637 23 17:33

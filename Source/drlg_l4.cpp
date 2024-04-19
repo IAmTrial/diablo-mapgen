@@ -1197,11 +1197,11 @@ static void L4firstRoom(Universe& universe)
 	int x, y, w, h, rndx, rndy, xmin, xmax, ymin, ymax, tx, ty;
 
 	if (universe.currlevel != 16) {
-		if (universe.currlevel == quests[Q_WARLORD]._qlevel && quests[Q_WARLORD]._qactive != QUEST_NOTAVAIL) {
+		if (universe.currlevel == universe.quests[Q_WARLORD]._qlevel && universe.quests[Q_WARLORD]._qactive != QUEST_NOTAVAIL) {
 			/// ASSERT: assert(universe.gbMaxPlayers == 1);
 			w = 11;
 			h = 11;
-		} else if (universe.currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
+		} else if (universe.currlevel == universe.quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
 			w = 11;
 			h = 11;
 		} else {
@@ -1236,7 +1236,7 @@ static void L4firstRoom(Universe& universe)
 		universe.l4holdx = x;
 		universe.l4holdy = y;
 	}
-	if (QuestStatus(universe, Q_WARLORD) || universe.currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
+	if (QuestStatus(universe, Q_WARLORD) || universe.currlevel == universe.quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
 		universe.SP4x1 = x + 1;
 		universe.SP4y1 = y + 1;
 		universe.SP4x2 = universe.SP4x1 + w;
@@ -1398,8 +1398,8 @@ static BOOL DRLG_L4PlaceMiniSet(Universe& universe, const BYTE *miniset, int tmi
 	}
 
 	if (universe.currlevel == 15) {
-		quests[Q_BETRAYER]._qtx = sx + 1;
-		quests[Q_BETRAYER]._qty = sy + 1;
+		universe.quests[Q_BETRAYER]._qtx = sx + 1;
+		universe.quests[Q_BETRAYER]._qty = sy + 1;
 	}
 	if (setview == TRUE) {
 		universe.ViewX = 2 * sx + 21;
@@ -1620,7 +1620,7 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 		if (universe.currlevel == 16) {
 			L4SaveQuads(universe);
 		}
-		if (QuestStatus(universe, Q_WARLORD) || universe.currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
+		if (QuestStatus(universe, Q_WARLORD) || universe.currlevel == universe.quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
 			for (spi = universe.SP4x1; spi < universe.SP4x2; spi++) {
 				for (spj = universe.SP4y1; spj < universe.SP4y2; spj++) {
 					universe.dflags[spi][spj] = 1;
@@ -1690,7 +1690,7 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 			if (entry == ENTRY_MAIN) {
 				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, TRUE, 0);
 				if (doneflag) {
-					if (universe.gbMaxPlayers == 1 && quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
+					if (universe.gbMaxPlayers == 1 && universe.quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
 						doneflag = DRLG_L4PlaceMiniSet(universe, L4PENTA, 1, 1, -1, -1, FALSE, 1);
 					} else {
 						doneflag = DRLG_L4PlaceMiniSet(universe, L4PENTA2, 1, 1, -1, -1, FALSE, 1);
@@ -1700,7 +1700,7 @@ std::optional<uint32_t> DRLG_L4(Universe& universe, int entry, DungeonMode mode)
 			} else {
 				doneflag = DRLG_L4PlaceMiniSet(universe, L4USTAIRS, 1, 1, -1, -1, FALSE, 0);
 				if (doneflag) {
-					if (universe.gbMaxPlayers == 1 && quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
+					if (universe.gbMaxPlayers == 1 && universe.quests[Q_DIABLO]._qactive != QUEST_ACTIVE) {
 						doneflag = DRLG_L4PlaceMiniSet(universe, L4PENTA, 1, 1, -1, -1, TRUE, 1);
 					} else {
 						doneflag = DRLG_L4PlaceMiniSet(universe, L4PENTA2, 1, 1, -1, -1, TRUE, 1);

@@ -15,7 +15,6 @@
 #include "Source/lighting.h"
 #include "Source/monstdat.h"
 #include "Source/quests.h"
-#include "Source/quests.h"
 #include "Source/themes.h"
 #include "Source/trigs.h"
 #include "Source/universe/universe.h"
@@ -265,7 +264,7 @@ void GetLevelMTypes(Universe& universe)
 		if (QuestStatus(universe, Q_WARLORD))
 			AddMonsterType(universe, UniqMonst[UMT_WARLORD].mtype, PLACE_UNIQUE);
 
-		if (universe.gbMaxPlayers != 1 && universe.currlevel == quests[Q_SKELKING]._qlevel) {
+		if (universe.gbMaxPlayers != 1 && universe.currlevel == universe.quests[Q_SKELKING]._qlevel) {
 
 			AddMonsterType(universe, MT_SKING, PLACE_UNIQUE);
 
@@ -545,7 +544,7 @@ void monster_some_crypt(Universe& universe)
 	if (universe.currlevel == 24 && universe.UberDiabloMonsterIndex >= 0 && universe.UberDiabloMonsterIndex < universe.nummonsters) {
 		mon = &universe.monster[universe.UberDiabloMonsterIndex];
 		PlayEffect(universe.UberDiabloMonsterIndex, 2);
-		quests[Q_NAKRUL]._qlog = FALSE;
+		universe.quests[Q_NAKRUL]._qlog = FALSE;
 		mon->mArmorClass -= 50;
 		hp = mon->_mmaxhp / 2;
 		mon->mMagicRes = 0;
@@ -736,7 +735,7 @@ void PlaceUniqueMonst(Universe& universe, int uniqindex, int miniontype, int bos
 		if (Monst->_mAi == AI_LAZHELP)
 			Monst->mtalkmsg = 0;
 #ifndef HELLFIRE
-		if (Monst->_mAi != AI_LAZURUS || quests[Q_BETRAYER]._qvar1 <= 3) {
+		if (Monst->_mAi != AI_LAZURUS || universe.quests[Q_BETRAYER]._qvar1 <= 3) {
 			if (Monst->mtalkmsg) {
 				Monst->_mgoal = MGOAL_INQUIRING;
 			}
@@ -825,15 +824,15 @@ static void PlaceUniques(Universe& universe)
 			done = (universe.Monsters[mt].mtype == UniqMonst[u].mtype);
 		}
 		mt--;
-		if (u == UMT_GARBUD && quests[Q_GARBUD]._qactive == QUEST_NOTAVAIL)
+		if (u == UMT_GARBUD && universe.quests[Q_GARBUD]._qactive == QUEST_NOTAVAIL)
 			done = FALSE;
-		if (u == UMT_ZHAR && quests[Q_ZHAR]._qactive == QUEST_NOTAVAIL)
+		if (u == UMT_ZHAR && universe.quests[Q_ZHAR]._qactive == QUEST_NOTAVAIL)
 			done = FALSE;
-		if (u == UMT_SNOTSPIL && quests[Q_LTBANNER]._qactive == QUEST_NOTAVAIL)
+		if (u == UMT_SNOTSPIL && universe.quests[Q_LTBANNER]._qactive == QUEST_NOTAVAIL)
 			done = FALSE;
-		if (u == UMT_LACHDAN && quests[Q_VEIL]._qactive == QUEST_NOTAVAIL)
+		if (u == UMT_LACHDAN && universe.quests[Q_VEIL]._qactive == QUEST_NOTAVAIL)
 			done = FALSE;
-		if (u == UMT_WARLORD && quests[Q_WARLORD]._qactive == QUEST_NOTAVAIL)
+		if (u == UMT_WARLORD && universe.quests[Q_WARLORD]._qactive == QUEST_NOTAVAIL)
 			done = FALSE;
 		if (done)
 			PlaceUniqueMonst(universe, u, mt, 8);
@@ -850,7 +849,7 @@ void PlaceQuestMonsters(Universe& universe)
 			PlaceUniqueMonst(universe, UMT_BUTCHER, 0, 0);
 		}
 
-		if (universe.currlevel == quests[Q_SKELKING]._qlevel && universe.gbMaxPlayers != 1) {
+		if (universe.currlevel == universe.quests[Q_SKELKING]._qlevel && universe.gbMaxPlayers != 1) {
 			skeltype = 0;
 
 			for (skeltype = 0; skeltype < universe.nummtypes; skeltype++) {
@@ -892,10 +891,10 @@ void PlaceQuestMonsters(Universe& universe)
 			AddMonsterType(universe, UniqMonst[UMT_LACHDAN].mtype, PLACE_SCATTER);
 		}
 		if (QuestStatus(universe, Q_ZHAR) && zharlib == -1) {
-			quests[Q_ZHAR]._qactive = QUEST_NOTAVAIL;
+			universe.quests[Q_ZHAR]._qactive = QUEST_NOTAVAIL;
 		}
 
-		if (universe.currlevel == quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
+		if (universe.currlevel == universe.quests[Q_BETRAYER]._qlevel && universe.gbMaxPlayers != 1) {
 			AddMonsterType(universe, UniqMonst[UMT_LAZURUS].mtype, PLACE_UNIQUE);
 			AddMonsterType(universe, UniqMonst[UMT_RED_VEX].mtype, PLACE_UNIQUE);
 			PlaceUniqueMonst(universe, UMT_LAZURUS, 0, 0);

@@ -15,20 +15,13 @@
 #include "Source/universe/universe.h"
 
 int qtopline;
-BOOL questlog;
 BYTE *pQLogCel;
-/** Contains the quests of the current game. */
-QuestStruct quests[MAXQUESTS];
 int qline;
 int qlist[MAXQUESTS];
 int numqlines;
 int WaterDone;
-int ReturnLvlX;
-int ReturnLvlY;
-int ReturnLvlT;
 /** current frame # for the quest pentagram selector */
 int questpentframe;
-int ReturnLvl;
 
 /** Contains the data related to each quest_id. */
 const QuestData questlist[MAXQUESTS] = {
@@ -104,17 +97,17 @@ void InitQuests(Universe& universe)
 
 	if (universe.gbMaxPlayers == 1) {
 		for (i = 0; i < MAXQUESTS; i++) {
-			quests[i]._qactive = QUEST_NOTAVAIL;
+			universe.quests[i]._qactive = QUEST_NOTAVAIL;
 		}
 	} else {
 		for (i = 0; i < MAXQUESTS; i++) {
 			if (!(questlist[i]._qflags & QUEST_ANY)) {
-				quests[i]._qactive = QUEST_NOTAVAIL;
+				universe.quests[i]._qactive = QUEST_NOTAVAIL;
 			}
 		}
 	}
 
-	questlog = FALSE;
+	universe.questlog = FALSE;
 	questpentframe = 1;
 	WaterDone = 0;
 	initiatedQuests = 0;
@@ -122,68 +115,68 @@ void InitQuests(Universe& universe)
 	for (z = 0; z < MAXQUESTS; z++) {
 		if (universe.gbMaxPlayers > 1 && !(questlist[z]._qflags & QUEST_ANY))
 			continue;
-		quests[z]._qtype = questlist[z]._qdtype;
+		universe.quests[z]._qtype = questlist[z]._qdtype;
 		if (universe.gbMaxPlayers > 1) {
-			quests[z]._qlevel = questlist[z]._qdmultlvl;
+			universe.quests[z]._qlevel = questlist[z]._qdmultlvl;
 			if (!delta_quest_inited(initiatedQuests)) {
-				quests[z]._qactive = QUEST_INIT;
-				quests[z]._qvar1 = 0;
-				quests[z]._qlog = FALSE;
+				universe.quests[z]._qactive = QUEST_INIT;
+				universe.quests[z]._qvar1 = 0;
+				universe.quests[z]._qlog = FALSE;
 			}
 			initiatedQuests++;
 		} else {
-			quests[z]._qactive = QUEST_INIT;
-			quests[z]._qlevel = questlist[z]._qdlvl;
-			quests[z]._qvar1 = 0;
-			quests[z]._qlog = FALSE;
+			universe.quests[z]._qactive = QUEST_INIT;
+			universe.quests[z]._qlevel = questlist[z]._qdlvl;
+			universe.quests[z]._qvar1 = 0;
+			universe.quests[z]._qlog = FALSE;
 		}
 
-		quests[z]._qslvl = questlist[z]._qslvl;
-		quests[z]._qtx = 0;
-		quests[z]._qty = 0;
-		quests[z]._qidx = z;
-		quests[z]._qlvltype = questlist[z]._qlvlt;
-		quests[z]._qvar2 = 0;
-		quests[z]._qmsg = questlist[z]._qdmsg;
+		universe.quests[z]._qslvl = questlist[z]._qslvl;
+		universe.quests[z]._qtx = 0;
+		universe.quests[z]._qty = 0;
+		universe.quests[z]._qidx = z;
+		universe.quests[z]._qlvltype = questlist[z]._qlvlt;
+		universe.quests[z]._qvar2 = 0;
+		universe.quests[z]._qmsg = questlist[z]._qdmsg;
 	}
 
 	if (universe.gbMaxPlayers == 1) {
 		SetRndSeed(universe, universe.glSeedTbl[15]);
 		if (random_(universe, 0, 2) != 0)
-			quests[Q_PWATER]._qactive = QUEST_NOTAVAIL;
+			universe.quests[Q_PWATER]._qactive = QUEST_NOTAVAIL;
 		else
-			quests[Q_SKELKING]._qactive = QUEST_NOTAVAIL;
+			universe.quests[Q_SKELKING]._qactive = QUEST_NOTAVAIL;
 
-		quests[QuestGroup1[random_(universe, 0, sizeof(QuestGroup1) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
-		quests[QuestGroup2[random_(universe, 0, sizeof(QuestGroup2) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
-		quests[QuestGroup3[random_(universe, 0, sizeof(QuestGroup3) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
-		quests[QuestGroup4[random_(universe, 0, sizeof(QuestGroup4) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
+		universe.quests[QuestGroup1[random_(universe, 0, sizeof(QuestGroup1) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
+		universe.quests[QuestGroup2[random_(universe, 0, sizeof(QuestGroup2) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
+		universe.quests[QuestGroup3[random_(universe, 0, sizeof(QuestGroup3) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
+		universe.quests[QuestGroup4[random_(universe, 0, sizeof(QuestGroup4) / sizeof(int))]]._qactive = QUEST_NOTAVAIL;
 	}
 #ifdef _DEBUG
 	if (questdebug != -1)
-		quests[questdebug]._qactive = QUEST_ACTIVE;
+		universe.quests[questdebug]._qactive = QUEST_ACTIVE;
 #endif
 
 #ifdef SPAWN
 	for (z = 0; z < MAXQUESTS; z++) {
-		quests[z]._qactive = QUEST_NOTAVAIL;
+		universe.quests[z]._qactive = QUEST_NOTAVAIL;
 	}
 #endif
 
-	if (quests[Q_SKELKING]._qactive == QUEST_NOTAVAIL)
-		quests[Q_SKELKING]._qvar2 = 2;
-	if (quests[Q_ROCK]._qactive == QUEST_NOTAVAIL)
-		quests[Q_ROCK]._qvar2 = 2;
-	quests[Q_LTBANNER]._qvar1 = 1;
+	if (universe.quests[Q_SKELKING]._qactive == QUEST_NOTAVAIL)
+		universe.quests[Q_SKELKING]._qvar2 = 2;
+	if (universe.quests[Q_ROCK]._qactive == QUEST_NOTAVAIL)
+		universe.quests[Q_ROCK]._qvar2 = 2;
+	universe.quests[Q_LTBANNER]._qvar1 = 1;
 	if (universe.gbMaxPlayers != 1)
-		quests[Q_BETRAYER]._qvar1 = 2;
+		universe.quests[Q_BETRAYER]._qvar1 = 2;
 }
 
 BOOL QuestStatus(Universe& universe, int i)
 {
-	if (universe.currlevel != quests[i]._qlevel)
+	if (universe.currlevel != universe.quests[i]._qlevel)
 		return FALSE;
-	if (quests[i]._qactive == QUEST_NOTAVAIL)
+	if (universe.quests[i]._qactive == QUEST_NOTAVAIL)
 		return FALSE;
 	return TRUE;
 }
@@ -197,10 +190,10 @@ void DrawButcher(Universe& universe)
 	DRLG_RectTrans(universe, x + 3, y + 3, x + 10, y + 10);
 }
 
-void DrawSkelKing(int q, int x, int y)
+void DrawSkelKing(Universe& universe, int q, int x, int y)
 {
-	quests[q]._qtx = 2 * x + 28;
-	quests[q]._qty = 2 * y + 23;
+	universe.quests[q]._qtx = 2 * x + 28;
+	universe.quests[q]._qty = 2 * y + 23;
 }
 
 void DrawWarLord(Universe& universe, int x, int y)
@@ -263,8 +256,8 @@ void DrawSChamber(Universe& universe, int q, int x, int y)
 	}
 	xx = 2 * x + 22;
 	yy = 2 * y + 23;
-	quests[q]._qtx = xx;
-	quests[q]._qty = yy;
+	universe.quests[q]._qtx = xx;
+	universe.quests[q]._qty = yy;
 	mem_free_dbg(setp);
 }
 
@@ -352,7 +345,7 @@ void DRLG_CheckQuests(Universe& universe, int x, int y)
 
 	for (i = 0; i < MAXQUESTS; i++) {
 		if (QuestStatus(universe, i)) {
-			switch (quests[i]._qtype) {
+			switch (universe.quests[i]._qtype) {
 			case Q_BUTCHER:
 				DrawButcher(universe);
 				break;
@@ -369,7 +362,7 @@ void DRLG_CheckQuests(Universe& universe, int x, int y)
 				DrawWarLord(universe, x, y);
 				break;
 			case Q_SKELKING:
-				DrawSkelKing(i, x, y);
+				DrawSkelKing(universe, i, x, y);
 				break;
 			case Q_SCHAMB:
 				DrawSChamber(universe, i, x, y);
@@ -383,38 +376,38 @@ void SetReturnLvlPos(Universe& universe)
 {
 	switch (universe.setlvlnum) {
 	case SL_SKELKING:
-		ReturnLvlX = quests[Q_SKELKING]._qtx + 1;
-		ReturnLvlY = quests[Q_SKELKING]._qty;
-		ReturnLvl = quests[Q_SKELKING]._qlevel;
-		ReturnLvlT = DTYPE_CATHEDRAL;
+		universe.ReturnLvlX = universe.quests[Q_SKELKING]._qtx + 1;
+		universe.ReturnLvlY = universe.quests[Q_SKELKING]._qty;
+		universe.ReturnLvl = universe.quests[Q_SKELKING]._qlevel;
+		universe.ReturnLvlT = DTYPE_CATHEDRAL;
 		break;
 	case SL_BONECHAMB:
-		ReturnLvlX = quests[Q_SCHAMB]._qtx + 1;
-		ReturnLvlY = quests[Q_SCHAMB]._qty;
-		ReturnLvl = quests[Q_SCHAMB]._qlevel;
-		ReturnLvlT = DTYPE_CATACOMBS;
+		universe.ReturnLvlX = universe.quests[Q_SCHAMB]._qtx + 1;
+		universe.ReturnLvlY = universe.quests[Q_SCHAMB]._qty;
+		universe.ReturnLvl = universe.quests[Q_SCHAMB]._qlevel;
+		universe.ReturnLvlT = DTYPE_CATACOMBS;
 		break;
 	case SL_POISONWATER:
-		ReturnLvlX = quests[Q_PWATER]._qtx;
-		ReturnLvlY = quests[Q_PWATER]._qty + 1;
-		ReturnLvl = quests[Q_PWATER]._qlevel;
-		ReturnLvlT = DTYPE_CATHEDRAL;
+		universe.ReturnLvlX = universe.quests[Q_PWATER]._qtx;
+		universe.ReturnLvlY = universe.quests[Q_PWATER]._qty + 1;
+		universe.ReturnLvl = universe.quests[Q_PWATER]._qlevel;
+		universe.ReturnLvlT = DTYPE_CATHEDRAL;
 		break;
 	case SL_VILEBETRAYER:
-		ReturnLvlX = quests[Q_BETRAYER]._qtx + 1;
-		ReturnLvlY = quests[Q_BETRAYER]._qty - 1;
-		ReturnLvl = quests[Q_BETRAYER]._qlevel;
-		ReturnLvlT = DTYPE_HELL;
+		universe.ReturnLvlX = universe.quests[Q_BETRAYER]._qtx + 1;
+		universe.ReturnLvlY = universe.quests[Q_BETRAYER]._qty - 1;
+		universe.ReturnLvl = universe.quests[Q_BETRAYER]._qlevel;
+		universe.ReturnLvlT = DTYPE_HELL;
 		break;
 	}
 }
 
 void GetReturnLvlPos(Universe& universe)
 {
-	if (quests[Q_BETRAYER]._qactive == QUEST_DONE)
-		quests[Q_BETRAYER]._qvar2 = 2;
-	universe.ViewX = ReturnLvlX;
-	universe.ViewY = ReturnLvlY;
-	universe.currlevel = ReturnLvl;
-	universe.leveltype = ReturnLvlT;
+	if (universe.quests[Q_BETRAYER]._qactive == QUEST_DONE)
+		universe.quests[Q_BETRAYER]._qvar2 = 2;
+	universe.ViewX = universe.ReturnLvlX;
+	universe.ViewY = universe.ReturnLvlY;
+	universe.currlevel = universe.ReturnLvl;
+	universe.leveltype = universe.ReturnLvlT;
 }

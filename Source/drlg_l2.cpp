@@ -2807,21 +2807,21 @@ static BOOL CreateDungeon(Universe& universe)
 
 	switch (universe.currlevel) {
 	case 5:
-		if (quests[Q_BLOOD]._qactive != QUEST_NOTAVAIL) {
+		if (universe.quests[Q_BLOOD]._qactive != QUEST_NOTAVAIL) {
 			ForceHW = TRUE;
 			ForceH = 20;
 			ForceW = 14;
 		}
 		break;
 	case 6:
-		if (quests[Q_SCHAMB]._qactive != QUEST_NOTAVAIL) {
+		if (universe.quests[Q_SCHAMB]._qactive != QUEST_NOTAVAIL) {
 			ForceHW = TRUE;
 			ForceW = 10;
 			ForceH = 10;
 		}
 		break;
 	case 7:
-		if (quests[Q_BLIND]._qactive != QUEST_NOTAVAIL) {
+		if (universe.quests[Q_BLIND]._qactive != QUEST_NOTAVAIL) {
 			ForceHW = TRUE;
 			ForceW = 15;
 			ForceH = 15;
@@ -3518,13 +3518,13 @@ void LoadPreL2Dungeon(Universe& universe, const char *sFileName, int vx, int vy)
 std::optional<uint32_t> CreateL2Dungeon(Universe& universe, DWORD rseed, int entry, DungeonMode mode)
 {
 	if (universe.gbMaxPlayers == 1) {
-		if (universe.currlevel == 7 && quests[Q_BLIND]._qactive == QUEST_NOTAVAIL) {
+		if (universe.currlevel == 7 && universe.quests[Q_BLIND]._qactive == QUEST_NOTAVAIL) {
 			universe.currlevel = 6;
 			CreateL2Dungeon(universe, universe.glSeedTbl[6], 4, mode);
 			universe.currlevel = 7;
 		}
 		if (universe.currlevel == 8) {
-			if (quests[Q_BLIND]._qactive == QUEST_NOTAVAIL) {
+			if (universe.quests[Q_BLIND]._qactive == QUEST_NOTAVAIL) {
 				universe.currlevel = 6;
 				CreateL2Dungeon(universe, universe.glSeedTbl[6], 4, mode);
 				universe.currlevel = 8;

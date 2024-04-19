@@ -181,7 +181,7 @@ std::optional<uint32_t> CreateDungeon(Universe& universe, DungeonMode mode)
 
 		if (universe.currlevel == 15) {
 			// Locate Lazarus warp point
-			Point point = { quests[Q_BETRAYER]._qtx, quests[Q_BETRAYER]._qty };
+			Point point = { universe.quests[Q_BETRAYER]._qtx, universe.quests[Q_BETRAYER]._qty };
 			if (!universe.nSolidTable[universe.dPiece[point.x][point.y]])
 				POI = point;
 		}
