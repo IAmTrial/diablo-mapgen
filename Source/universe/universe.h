@@ -371,4 +371,14 @@ struct Universe {
 	int ReturnLvlY;
 	int ReturnLvlT;
 	int ReturnLvl;
+
+	// quests.cpp
+	int qtopline;
+	BYTE *pQLogCel;
+	int qline;
+	int qlist[MAXQUESTS];
+	int numqlines;
+	int WaterDone;
+	/** current frame # for the quest pentagram selector */
+	int questpentframe;
 };

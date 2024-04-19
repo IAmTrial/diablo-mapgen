@@ -14,15 +14,6 @@
 #include "Source/gendung.h"
 #include "Source/universe/universe.h"
 
-int qtopline;
-BYTE *pQLogCel;
-int qline;
-int qlist[MAXQUESTS];
-int numqlines;
-int WaterDone;
-/** current frame # for the quest pentagram selector */
-int questpentframe;
-
 /** Contains the data related to each quest_id. */
 const QuestData questlist[MAXQUESTS] = {
 	// clang-format off
@@ -108,8 +99,8 @@ void InitQuests(Universe& universe)
 	}
 
 	universe.questlog = FALSE;
-	questpentframe = 1;
-	WaterDone = 0;
+	universe.questpentframe = 1;
+	universe.WaterDone = 0;
 	initiatedQuests = 0;
 
 	for (z = 0; z < MAXQUESTS; z++) {
